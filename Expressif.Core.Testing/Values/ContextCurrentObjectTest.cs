@@ -190,32 +190,32 @@ public class ContextCurrentObjectTest
     private static IEnumerable<TestCaseData> NonRecordValues()
     {
         yield return new TestCaseData(
-            new Expressif.Values.Tuple(new RecordValue()),
+            new Expressif.Values.TupleValue(new RecordValue()),
             "name",
             "Cannot access field 'name' directly on a tuple. Select a position such as $0 before accessing a field.")
             .SetName("Tuple");
         yield return new TestCaseData(
-            new Pair("BE", new RecordValue()),
+            new PairValue("BE", new RecordValue()),
             "name",
             "Cannot access field 'name' directly on a pair. Select $key for its key or $value for its value before accessing a field.")
             .SetName("Pair");
         yield return new TestCaseData(
-            new Group("BE", new object?[] { new RecordValue() }),
+            new GroupValue("BE", new object?[] { new RecordValue() }),
             "name",
             "Cannot access field 'name' directly on a group. Select $key for its key or $value for its value before accessing a field.")
             .SetName("Group");
         yield return new TestCaseData(
-            new Vector(1, 2),
+            new VectorValue(1, 2),
             "name",
             "Cannot access field 'name' directly on a value of type 'vector'. This type does not expose named fields.")
             .SetName("Vector");
         yield return new TestCaseData(
-            new Grouping([new Pair("BE", new object?[] { new RecordValue() })]),
+            new GroupingValue([new PairValue("BE", new object?[] { new RecordValue() })]),
             "name",
             "Cannot access field 'name' directly on a value of type 'grouping'. This type does not expose named fields.")
             .SetName("Grouping");
         yield return new TestCaseData(
-            new Expressif.Values.Dictionary([new Pair("BE", new RecordValue())]),
+            new Expressif.Values.DictionaryValue([new PairValue("BE", new RecordValue())]),
             "name",
             "Cannot access field 'name' directly on a value of type 'dictionary'. This type does not expose named fields.")
             .SetName("Dictionary");
@@ -225,7 +225,7 @@ public class ContextCurrentObjectTest
     public void Name_ExpressifImplementationProperty_ThrowsException()
     {
         var context = new Context();
-        context.CurrentObject.Set(new Expressif.Values.Tuple(1, 2));
+        context.CurrentObject.Set(new Expressif.Values.TupleValue(1, 2));
         Assert.That(() => context.CurrentObject["Count"], Throws.TypeOf<NotNameableContextObjectException>()
             .With.Message.EqualTo(
                 "Cannot access field 'Count' directly on a tuple. Select a position such as $0 before accessing a field."));

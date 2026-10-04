@@ -11,7 +11,7 @@ public class BindingModelImmutabilityTest
         var replacement = new LiteralParameter("replacement");
         IParameter[] parameters = [original];
 
-        var function = new Function("identity", parameters);
+        var function = Function.FromParameters("identity", parameters);
         parameters[0] = replacement;
 
         Assert.Multiple(() =>
@@ -85,5 +85,8 @@ public class BindingModelImmutabilityTest
     }
 
     private static void AssertReadOnly<T>(IReadOnlyList<T> values, T replacement)
-        => Assert.That(() => ((IList<T>)values)[0] = replacement, Throws.TypeOf<NotSupportedException>());
+    {
+        if (values is IList<T> list)
+            Assert.That(() => list[0] = replacement, Throws.TypeOf<NotSupportedException>());
+    }
 }

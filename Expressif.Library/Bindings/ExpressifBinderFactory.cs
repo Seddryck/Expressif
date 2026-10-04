@@ -3,7 +3,7 @@ using Expressif.Discovery;
 using Expressif.Library.Special;
 using Expressif.Functions.Accumulation;
 using Expressif.Predicates;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Bindings;
 

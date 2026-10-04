@@ -1,7 +1,6 @@
 using Expressif.Library.Array;
 using Expressif.Values;
 using Expressif.Bindings;
-using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Library.Grouping;
 
@@ -27,7 +26,7 @@ public sealed class DrillDown : IFunction<GroupingValue, GroupingValue>
         {
             var prefix = group.Key is TupleValue tuple ? tuple.ToArray() : new[] { group.Key };
             var subgroups = GroupingOperations.Group(group.Values.Select(item =>
-                new PairValue(new Values.Tuple([.. prefix, .. Expressions.Select(expression => expression.Invoke(item))]), item)));
+                new PairValue(new Expressif.Values.TupleValue([.. prefix, .. Expressions.Select(expression => expression.Invoke(item))]), item)));
             pairs.AddRange(subgroups.Select(group => new PairValue(group.Key, group.Values)));
         }
         return new GroupingValue(pairs);

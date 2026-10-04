@@ -85,7 +85,7 @@ public class ExpressionBinderTest
 
         var expression = ((ClosedRootExpression)ExpressifBinderFactory.Create().Bind(syntax)).Expression;
 
-        Assert.That(expression.Members.Single().Syntax, Is.EqualTo(FunctionSyntax.ImplicitFoldAccumulator));
+        Assert.That(expression.Members.Single().Role, Is.EqualTo(BoundFunctionRole.ImplicitAccumulator));
     }
 
     [Test]
@@ -100,7 +100,7 @@ public class ExpressionBinderTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(accumulator.Syntax, Is.EqualTo(FunctionSyntax.ImplicitFoldAccumulator));
+            Assert.That(accumulator.Role, Is.EqualTo(BoundFunctionRole.ImplicitAccumulator));
             Assert.That(accumulator.Name, Is.EqualTo("sum"));
         });
     }
@@ -125,7 +125,7 @@ public class ExpressionBinderTest
         var syntax = SyntaxFactory.Open(null, SyntaxFactory.RecordAccess("firstName", true));
         var expression = ((OpenRootExpression)ExpressifBinderFactory.Create().Bind(syntax)).Expression;
 
-        Assert.That(expression.Members.Single().Syntax, Is.EqualTo(FunctionSyntax.RootFieldShorthand));
+        Assert.That(expression.Members.Single().Notation, Is.EqualTo(SourceNotation.RootField));
     }
 
     [Test]
@@ -142,7 +142,7 @@ public class ExpressionBinderTest
         Assert.Multiple(() =>
         {
             Assert.That(expression.Members.Select(x => x.Name), Is.EqualTo(new[] { "map", "reverse" }));
-            Assert.That(expression.Members.First().Syntax, Is.EqualTo(FunctionSyntax.MapShorthand));
+            Assert.That(expression.Members.First().Notation, Is.EqualTo(SourceNotation.MapShorthand));
             Assert.That(((OpenExpressionParameter)expression.Members.First().Parameters.Single()).Expression.Members.Count(), Is.EqualTo(2));
         });
     }
@@ -166,7 +166,7 @@ public class ExpressionBinderTest
         {
             Assert.That(expression.Members.Select(x => x.Name), Is.EqualTo(new[] { "map", "sum" }));
             Assert.That(map.Name, Is.EqualTo("map"));
-            Assert.That(map.Syntax, Is.EqualTo(FunctionSyntax.MapShorthand));
+            Assert.That(map.Notation, Is.EqualTo(SourceNotation.MapShorthand));
             Assert.That(mappedExpression.Members.Select(x => x.Name), Is.EqualTo(new[] { "absolute", "add" }));
         });
     }

@@ -1,5 +1,5 @@
 using Expressif.Functions.Coercions;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Introspection;
 

@@ -22,7 +22,7 @@ public class RotateTest
     {
         var input = ParseTuple(value);
         var result = TestExpression.Create(operation).Evaluate(input);
-        Assert.That(result, Is.TypeOf<Expressif.Values.Tuple>().And.EqualTo(ParseTuple(expected)));
+        Assert.That(result, Is.TypeOf<Expressif.Values.TupleValue>().And.EqualTo(ParseTuple(expected)));
     }
 
     private static object? ParseTuple(string value)
@@ -71,7 +71,7 @@ public class RotateTest
     [Test]
     public void Evaluate_Pair_ReturnsTuple()
         => Assert.That(new Rotate().Evaluate(new PairValue("a", 10)),
-            Is.TypeOf<Expressif.Values.Tuple>().And.EqualTo(new TupleValue(10, "a")));
+            Is.TypeOf<Expressif.Values.TupleValue>().And.EqualTo(new TupleValue(10, "a")));
 
     [TestCase("rotate(1, 2)")]
     [TestCase("rotate(unknown := 1)")]

@@ -2,240 +2,102 @@ using Expressif.Bindings;
 using Expressif.Functions;
 using Expressif.Predicates;
 using Expressif.Serialization;
-using Expressif.Values.Special;
-using System.Linq.Expressions;
 
 namespace Expressif;
 
-public class AbstractPredicationBuilder
+/// <summary>Starts a typed, persistent Boolean rule.</summary>
+public sealed class PredicationBuilder
 {
-    private IContext Context { get; }
-    private FunctionFactory Factory { get; }
-    private PredicationSerializer Serializer { get; }
+    private readonly FunctionFactory factory;
 
-    protected AbstractPredicationBuilder(
-        FunctionFactory factory,
-        IContext? context = null)
-        => (Factory, Context, Serializer) = (
-            factory ?? throw new ArgumentNullException(nameof(factory)),
-            context ?? new Context(),
-            new PredicationSerializer());
+    internal PredicationBuilder(FunctionFactory factory)
+        => this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
 
-    protected AbstractPredicationBuilder(AbstractPredicationBuilder builder)
-        => (Context, Factory, Serializer, Pile) = (builder.Context, builder.Factory, builder.Serializer, builder.Pile);
+    public Rule Create<T>()
+        where T : IPredicate
+        => Create(typeof(T));
 
-    protected internal IPredication? Pile { get; set; }
+    public Rule Create<T>(params object?[] arguments)
+        where T : IPredicate
+        => Create(typeof(T), arguments);
 
-    protected IPredication BuildNot(Type type, object?[] parameters)
-        => new UnaryPredication(
-            new UnaryOperator("!"),
-            new SinglePredication(new Bindings.Function(type.Name, Parametrize(parameters))));
+    public Rule Create(Type type, params object?[] arguments)
+        => new(factory, CreateLeaf(type, arguments));
 
-    public IPredicate Build()
+    private static IPredication CreateLeaf(Type type, object?[] arguments)
     {
-        if (Pile is null)
-            throw new InvalidOperationException();
-        return Factory.InstantiatePredication(Pile, Context);
-    }
-
-    protected virtual IParameter[] Parametrize(object?[] parameters)
-    {
-        var typedParameters = new List<IParameter>();
-        foreach (var parameter in parameters)
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(arguments);
+        if (!typeof(IPredicate).IsAssignableFrom(type))
         {
-            typedParameters.Add(parameter switch
-            {
-                IParameter p => p,
-                Expression<Func<IContext, object?>> expression => new ContextParameter(expression.Compile()),
-                _ => new LiteralParameter(parameter?.ToString() ?? Null.Keyword)
-            });
+            throw new ArgumentException(
+                $"The type '{type.FullName}' does not implement '{nameof(IPredicate)}'.",
+                nameof(type));
         }
-        return [.. typedParameters];
+
+        var parameters = arguments.Select(argument => argument switch
+        {
+            IParameter parameter => parameter,
+            _ => new LiteralParameter(argument),
+        });
+        return new SinglePredication(Bindings.Function.FromParameters(type.Name, parameters));
     }
 
-    public string Serialize()
+    /// <summary>Represents a non-empty immutable Boolean rule.</summary>
+    public sealed class Rule
     {
-        if (Pile is null)
-            throw new InvalidOperationException();
+        private readonly FunctionFactory factory;
+        private readonly IPredication predication;
 
-        return Serializer.Serialize(Pile);
-    }
-}
+        internal Rule(FunctionFactory factory, IPredication predication)
+            => (this.factory, this.predication) = (factory, predication);
 
-public class PredicationBuilder : AbstractPredicationBuilder
-{
-    public PredicationBuilder(
-        FunctionFactory factory,
-        IContext? context = null)
-        : base(factory, context) { }
+        public Rule And<T>()
+            where T : IPredicate
+            => And(typeof(T));
+        public Rule And<T>(params object?[] arguments)
+            where T : IPredicate
+            => And(typeof(T), arguments);
+        public Rule And(Type type, params object?[] arguments) => Combine("And", CreateLeaf(type, arguments));
+        public Rule And(Rule rule) => Combine("And", RequireCompatible(rule));
 
-    public PredicationBuilderNext Create<T>()
-        where T : IPredicate
-        => Create(typeof(T), []);
+        public Rule Or<T>()
+            where T : IPredicate
+            => Or(typeof(T));
+        public Rule Or<T>(params object?[] arguments)
+            where T : IPredicate
+            => Or(typeof(T), arguments);
+        public Rule Or(Type type, params object?[] arguments) => Combine("Or", CreateLeaf(type, arguments));
+        public Rule Or(Rule rule) => Combine("Or", RequireCompatible(rule));
 
-    public PredicationBuilderNext Create<T>(params object?[] parameters)
-        where T : IPredicate
-        => Create(typeof(T), parameters);
+        public Rule Xor<T>()
+            where T : IPredicate
+            => Xor(typeof(T));
+        public Rule Xor<T>(params object?[] arguments)
+            where T : IPredicate
+            => Xor(typeof(T), arguments);
+        public Rule Xor(Type type, params object?[] arguments) => Combine("Xor", CreateLeaf(type, arguments));
+        public Rule Xor(Rule rule) => Combine("Xor", RequireCompatible(rule));
 
-    public PredicationBuilderNext Create<T>(params Expression<Func<IContext, object?>>[] parameters)
-        where T : IPredicate
-        => Create(typeof(T), parameters);
+        public Rule Not() => new(factory, new UnaryPredication(new UnaryOperator("!"), predication));
 
-    public PredicationBuilderNext Create(Type type, params object?[] parameters)
-    {
-        EnsurePredicate(type);
-        Pile = new SinglePredication(new Bindings.Function(type.Name, Parametrize(parameters)));
-        return new(this);
-    }
+        public Predication Build()
+            => new(factory.InstantiatePredication(predication));
 
-    public PredicationBuilderNext Not<T>()
-        where T : IPredicate
-        => Not<T>([]);
+        public string ToSource() => new PredicationSerializer().Serialize(predication);
 
-    public PredicationBuilderNext Not<T>(params object?[] parameters)
-        where T : IPredicate
-        => Not(typeof(T), parameters);
+        private Rule Combine(string operation, IPredication right)
+            => new(factory, new BinaryPredication(new BinaryOperator(operation), predication, right));
 
-    public PredicationBuilderNext Not<T>(params Expression<Func<IContext, object?>>[] parameters)
-        where T : IPredicate
-        => Not(typeof(T), parameters);
+        private IPredication RequireCompatible(Rule rule)
+        {
+            ArgumentNullException.ThrowIfNull(rule);
+            if (!ReferenceEquals(factory, rule.factory))
+            {
+                throw new ArgumentException("Rules must originate from the same Expressif environment.", nameof(rule));
+            }
 
-    public PredicationBuilderNext Not(Type type, params object?[] parameters)
-    {
-        EnsurePredicate(type);
-        Pile = BuildNot(type, Parametrize(parameters));
-        return new(this);
-    }
-
-    private static void EnsurePredicate(Type type)
-    {
-        if (!type.GetInterfaces().Contains(typeof(IPredicate)))
-            throw new ArgumentException($"The type '{type.FullName}' doesn't implement the interface '{nameof(IPredicate)}'. Only types implementing this interface can be chained to create a predication.", nameof(type));
-    }
-}
-
-public class PredicationBuilderNext : AbstractPredicationBuilder
-{
-    public PredicationBuilderNext(AbstractPredicationBuilder builder)
-        : base(builder) { }
-
-    public PredicationBuilderNext And<T>()
-        where T : IPredicate
-        => And(typeof(T), []);
-    public PredicationBuilderNext And<T>(params object?[] parameters)
-        where T : IPredicate
-        => And(typeof(T), parameters);
-    public PredicationBuilderNext And<T>(params Expression<Func<IContext, object?>>[] parameters)
-        where T : IPredicate
-        => And(typeof(T), parameters);
-
-    public PredicationBuilderNext And(Type type, params object?[] parameters)
-    {
-        var right = new SinglePredication(new Bindings.Function(type.Name, Parametrize(parameters)));
-        Pile = new BinaryPredication(new BinaryOperator("And"), Pile!, right);
-        return this;
-    }
-
-    public PredicationBuilderNext And(AbstractPredicationBuilder builder)
-    {
-        Pile = new BinaryPredication(new BinaryOperator("And"), Pile!, builder.Pile!);
-        return this;
-    }
-
-    public PredicationBuilderNext AndNot<T>()
-        where T : IPredicate
-        => AndNot(typeof(T), []);
-    public PredicationBuilderNext AndNot<T>(params object?[] parameters)
-        where T : IPredicate
-        => AndNot(typeof(T), parameters);
-    public PredicationBuilderNext AndNot<T>(Expression<Func<IContext, object?>>[] parameters)
-        where T : IPredicate
-        => AndNot(typeof(T), parameters);
-
-    public PredicationBuilderNext AndNot(Type type, params object?[] parameters)
-    {
-        var right = BuildNot(type, parameters);
-        Pile = new BinaryPredication(new BinaryOperator("And"), Pile!, right);
-        return this;
-    }
-
-    public PredicationBuilderNext Or<T>()
-        where T : IPredicate
-        => Or(typeof(T), []);
-    public PredicationBuilderNext Or<T>(params object?[] parameters)
-        where T : IPredicate
-        => Or(typeof(T), parameters);
-    public PredicationBuilderNext Or<T>(Expression<Func<IContext, object?>>[] parameters)
-        where T : IPredicate
-        => Or(typeof(T), parameters);
-
-    public PredicationBuilderNext Or(Type type, params object?[] parameters)
-    {
-        var right = new SinglePredication(new Bindings.Function(type.Name, Parametrize(parameters)));
-        Pile = new BinaryPredication(new BinaryOperator("Or"), Pile!, right);
-        return new(this);
-    }
-
-    public PredicationBuilderNext Or(AbstractPredicationBuilder builder)
-    {
-        Pile = new BinaryPredication(new BinaryOperator("Or"), Pile!, builder.Pile!);
-        return this;
-    }
-
-    public PredicationBuilderNext OrNot<T>()
-        where T : IPredicate
-        => OrNot(typeof(T), []);
-    public PredicationBuilderNext OrNot<T>(params object?[] parameters)
-        where T : IPredicate
-        => OrNot(typeof(T), parameters);
-    public PredicationBuilderNext OrNot<T>(Expression<Func<IContext, object?>>[] parameters)
-        where T : IPredicate
-        => OrNot(typeof(T), parameters);
-
-    public PredicationBuilderNext OrNot(Type type, params object?[] parameters)
-    {
-        var right = BuildNot(type, parameters);
-        Pile = new BinaryPredication(new BinaryOperator("Or"), Pile!, right);
-        return new(this);
-    }
-
-    public PredicationBuilderNext Xor<T>()
-        where T : IPredicate
-        => Xor(typeof(T), []);
-    public PredicationBuilderNext Xor<T>(params object?[] parameters)
-        where T : IPredicate
-        => Xor(typeof(T), parameters);
-    public PredicationBuilderNext Xor<T>(Expression<Func<IContext, object?>>[] parameters)
-        where T : IPredicate
-        => Xor(typeof(T), parameters);
-
-    public PredicationBuilderNext Xor(Type type, params object?[] parameters)
-    {
-        var right = new SinglePredication(new Bindings.Function(type.Name, Parametrize(parameters)));
-        Pile = new BinaryPredication(new BinaryOperator("Xor"), Pile!, right);
-        return new(this);
-    }
-
-    public PredicationBuilderNext Xor(AbstractPredicationBuilder builder)
-    {
-        Pile = new BinaryPredication(new BinaryOperator("Xor"), Pile!, builder.Pile!);
-        return this;
-    }
-
-    public PredicationBuilderNext XorNot<T>()
-        where T : IPredicate
-        => XorNot(typeof(T), []);
-    public PredicationBuilderNext XorNot<T>(params object?[] parameters)
-        where T : IPredicate
-        => XorNot(typeof(T), parameters);
-    public PredicationBuilderNext XorNot<T>(Expression<Func<IContext, object?>>[] parameters)
-        where T : IPredicate
-        => XorNot(typeof(T), parameters);
-
-    public PredicationBuilderNext XorNot(Type type, params object?[] parameters)
-    {
-        var right = BuildNot(type, parameters);
-        Pile = new BinaryPredication(new BinaryOperator("Xor"), Pile!, right);
-        return new(this);
+            return rule.predication;
+        }
     }
 }

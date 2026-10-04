@@ -38,11 +38,11 @@ internal sealed class ParameterSerializer
             OpenExpressionParameter { Expression.InputBinding: { } bound } => SerializeInputBound(bound),
             OpenExpressionParameter open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
             InputExpressionParameter { Expression.Parameter: ObjectPropertyParameter property } input
-                when input.Expression.Members.All(member => member.Syntax == FunctionSyntax.FieldShorthand)
-                => SerializeFieldPath(input, property.Name, FunctionSyntax.RootFieldShorthand),
+                when input.Expression.Members.All(member => member.Notation == SourceNotation.CurrentField)
+                => SerializeFieldPath(input, property.Name, SourceNotation.RootField),
             InputExpressionParameter { Expression.Parameter: EnclosingObjectPropertyParameter property } input
-                when input.Expression.Members.All(member => member.Syntax == FunctionSyntax.FieldShorthand)
-                => SerializeFieldPath(input, property.Name, FunctionSyntax.EnclosingRootFieldShorthand),
+                when input.Expression.Members.All(member => member.Notation == SourceNotation.CurrentField)
+                => SerializeFieldPath(input, property.Name, SourceNotation.EnclosingRootField),
             InputExpressionParameter input => new ExpressionSerializer().Serialize(input.Expression),
             IncomingValueParameter => "...",
             QuotedLiteralParameter q => $"\"{RecordSyntax.EscapeDoubleQuoted(q.Value)}\"",
@@ -79,20 +79,20 @@ internal sealed class ParameterSerializer
         foreach (var member in members)
         {
             var text = FunctionSerializer.Serialize(member);
-            if (previousWasField && member.Syntax == FunctionSyntax.FieldShorthand)
+            if (previousWasField && member.Notation == SourceNotation.CurrentField)
                 parts[^1] += text;
             else
                 parts.Add(text);
-            previousWasField = member.Syntax is FunctionSyntax.FieldShorthand or FunctionSyntax.InputFieldShorthand
-                or FunctionSyntax.RootFieldShorthand or FunctionSyntax.EnclosingRootFieldShorthand;
+            previousWasField = member.Notation is SourceNotation.CurrentField or SourceNotation.InputFieldShorthand
+                or SourceNotation.RootField or SourceNotation.EnclosingRootField;
         }
         return parts;
     }
 
-    private string SerializeFieldPath(InputExpressionParameter input, string name, FunctionSyntax syntax)
+    private string SerializeFieldPath(InputExpressionParameter input, string name, SourceNotation syntax)
     {
         var members = input.Expression.Members.ToArray();
-        if (members.Any(member => member.Syntax != FunctionSyntax.FieldShorthand))
+        if (members.Any(member => member.Notation != SourceNotation.CurrentField))
             throw new NotSupportedException();
         return FunctionSerializer.Serialize(new Function("field", [new LiteralParameter(name)], syntax))
             + string.Concat(members.Select(FunctionSerializer.Serialize));
@@ -132,6 +132,16 @@ internal sealed class ParameterSerializer
             OrderingValue ordering => ordering.ToString(),
             bool boolean => boolean ? "#true" : "#false",
             decimal numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            sbyte numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            byte numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            short numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            ushort numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            int numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            uint numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            long numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            ulong numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            float numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            double numeric => numeric.ToString(CultureInfo.InvariantCulture),
             { } typed when literalType is not null || (canonicalQuoted && quotedLiteralRegistry.CanSerialize(typed))
                 => quotedLiteralRegistry.Serialize(
                     typed,
@@ -144,6 +154,7 @@ internal sealed class ParameterSerializer
             TimeOnly time => $"#\"{time.ToString("HH:mm:ss", CultureInfo.InvariantCulture)}\"",
             string text when RecordSyntax.IsBareToken(text) => text,
             string text => $"\"{RecordSyntax.EscapeDoubleQuoted(text)}\"",
+            char character => $"\"{RecordSyntax.EscapeDoubleQuoted(character.ToString())}\"",
             _ => throw new NotSupportedException($"Literal value type '{value.GetType().Name}' cannot be serialized."),
         };
 

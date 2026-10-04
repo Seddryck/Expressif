@@ -14,10 +14,10 @@ public class TopGroupsTest
     public void Evaluate_VisitsGroupsOnceAndPreservesValuesAcrossCalls()
     {
         var observer = new Observer();
-        IFunction<Expressif.Values.Grouping, Expressif.Values.Grouping> function =
+        IFunction<Expressif.Values.GroupingValue, Expressif.Values.GroupingValue> function =
             new Expressif.Library.Grouping.TopGroups(() => 2, () => observer);
         var item = new object();
-        var input = new Expressif.Values.Grouping([new PairValue(1, new object?[] { item, null, item }), new PairValue(2, new[] { 4 })]);
+        var input = new Expressif.Values.GroupingValue([new PairValue(1, new object?[] { item, null, item }), new PairValue(2, new[] { 4 })]);
         var first = function.Evaluate(input);
         var second = function.Evaluate(input);
         Assert.Multiple(() =>
@@ -34,7 +34,7 @@ public class TopGroupsTest
     [Test]
     public void Evaluate_NormalizesMixedNumericScores()
     {
-        var input = new Expressif.Values.Grouping([new PairValue(2, new[] { 1 }), new PairValue(10m, new[] { 2 })]);
+        var input = new Expressif.Values.GroupingValue([new PairValue(2, new[] { 1 }), new PairValue(10m, new[] { 2 })]);
         var function = new Expressif.Library.Grouping.TopGroups(() => 1, () => new Observer());
         Assert.That(function.Evaluate(input)[0].Key, Is.EqualTo(10m));
     }
@@ -51,7 +51,7 @@ public class TopGroupsTest
 
         public object? Evaluate(object? value)
         {
-            var group = (Group)value!;
+            var group = (GroupValue)value!;
             Keys.Add(group.Key);
             return group.Key;
         }

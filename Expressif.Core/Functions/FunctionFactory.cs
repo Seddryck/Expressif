@@ -160,7 +160,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             var evaluator = BuildStructuredValueEvaluator(parameter, context)!;
             return CreateFunctionCast(
                 () => evaluator.Invoke(EvaluationRuntime.Frame is { IsInputBound: true } frame
-                    ? frame.Current : ArgumentScope.Root(context.CurrentObject.Value, EvaluationRuntime.Frame?.Current)),
+                    ? frame.Current : ArgumentScope.Root(EvaluationRuntime.ArgumentInput, EvaluationRuntime.Frame?.Current)),
                 scalarType);
         }
 
@@ -171,7 +171,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                 : BuildOpenExpressionRecordEvaluator(open, context);
             return CreateFunctionCast(
                 () => evaluator.Invoke(EvaluationRuntime.Frame is { IsInputBound: true } frame
-                    ? frame.Current : ArgumentScope.Root(context.CurrentObject.Value, EvaluationRuntime.Frame?.Current)),
+                    ? frame.Current : ArgumentScope.Root(EvaluationRuntime.ArgumentInput, EvaluationRuntime.Frame?.Current)),
                 scalarType);
         }
 
@@ -179,8 +179,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
     }
 
     internal static bool IsExplicitlyRooted(OpenExpressionParameter expression)
-        => expression.Expression.Members.FirstOrDefault()?.Syntax
-            is FunctionSyntax.RootFieldShorthand or FunctionSyntax.EnclosingRootFieldShorthand;
+        => expression.Expression.Members.FirstOrDefault()?.Notation
+            is SourceNotation.RootField or SourceNotation.EnclosingRootField;
 
     internal static bool IsExplicitlyRooted(IParameter parameter)
         => parameter is ObjectPropertyParameter or EnclosingObjectPropertyParameter
@@ -392,7 +392,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
     {
         if (function.Identity == new OperatorIdentity("system", "named-expression-invocation"))
             return BuildNamedExpressionInvocation(function, context);
-        if (function.Syntax == FunctionSyntax.InputBindingStage
+        if (function.Role == BoundFunctionRole.InputBinding
             && function.Parameters is [OpenExpressionParameter { Expression.InputBinding: { } binding }])
             return BuildInputBoundFunction(binding, context);
         var name = function.Name.ToKebabCase();
@@ -404,7 +404,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         if (TryResolve(accumulatorRegistry, function, out var accumulatorType)
             && (function.ImplementationKind == FunctionImplementationKind.Accumulator
                 || (function.ImplementationKind == FunctionImplementationKind.Unspecified
-                    && (function.Syntax == FunctionSyntax.ImplicitFoldAccumulator || !hasRegularFunction))))
+                    && (function.Role == BoundFunctionRole.ImplicitAccumulator || !hasRegularFunction))))
         {
             return BuildAccumulatorFunction(function, accumulatorType, context);
         }
@@ -705,26 +705,26 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                 throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
             return new DelegatedFunction(value => value);
         }
-        if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand
+        if (function.Notation == SourceNotation.ScopedTupleProjectionShorthand
             && function.Parameters is [ScopedTupleProjectionParameter scoped])
             return new DelegatedFunction(_ => ResolveScopedTupleProjection(scoped));
-        if (function.Syntax == FunctionSyntax.InputTupleProjectionShorthand
+        if (function.Notation == SourceNotation.InputTupleProjectionShorthand
             && function.Parameters is [TupleProjectionParameter projection])
         {
             return new DelegatedFunction(input => ResolveTupleProjection(
                 EvaluationRuntime.Frame is { IsInputBound: true } frame ? frame.Ambient : input, projection));
         }
-        if (function.Syntax == FunctionSyntax.InputFieldShorthand
+        if (function.Notation == SourceNotation.InputFieldShorthand
             && TryGetFieldName(function.Parameters, out var inputField))
         {
             return new DelegatedFunction(input => NamedValueAccessor.Get(
                 EvaluationRuntime.Frame is { IsInputBound: true } frame ? frame.Ambient : input, inputField));
         }
 
-        if (function.Syntax == FunctionSyntax.RootFieldShorthand)
+        if (function.Notation == SourceNotation.RootField)
             return BuildRootFieldFunction(function);
 
-        if (function.Syntax == FunctionSyntax.EnclosingRootFieldShorthand)
+        if (function.Notation == SourceNotation.EnclosingRootField)
             return BuildEnclosingRootFieldFunction(function);
 
         return null;
@@ -794,7 +794,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         if (parameter is OpenExpressionParameter open)
         {
             var evaluator = BuildOpenExpressionRecordEvaluator(open, context);
-            return input => WithCurrentObject(context, input, () => evaluator.Invoke(input));
+            return input => InArgumentScope(input, () => evaluator.Invoke(input));
         }
 
         if (parameter is InputExpressionParameter inputExpression)
@@ -804,8 +804,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             var chain = CreateChain(members, members
                 .Select(member => InstantiateOrWrapAggregation(member, context))
                 .ToArray());
-            return input => WithCurrentObject(
-                context,
+            return input => InArgumentScope(
                 input,
                 // Value construction retains its supplying scope; apply invokes a new one.
                 () => establishScope
@@ -818,7 +817,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             return structured;
 
         var provider = (Func<object?>)CreateParameter(parameter, typeof(object), context);
-        return input => WithCurrentObject(context, input, provider);
+        return input => InArgumentScope(input, provider);
     }
 
     private Func<object?, object?>? BuildStructuredValueEvaluator(IParameter parameter, IContext context)
@@ -837,7 +836,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         {
             var key = BuildValueEvaluator(pair.Key, context);
             var value = BuildValueEvaluator(pair.Value, context);
-            return input => new Expressif.Values.Pair(key.Invoke(input), value.Invoke(input));
+            return input => new Expressif.Values.PairValue(key.Invoke(input), value.Invoke(input));
         }
 
         if (parameter is GroupingParameter grouping)
@@ -849,8 +848,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                     Value = BuildValueEvaluator(entry.Value, context),
                 })
                 .ToArray();
-            return input => new Values.Grouping(entries.Select(entry =>
-                new Pair(entry.Key.Invoke(input), entry.Value.Invoke(input))));
+            return input => new Values.GroupingValue(entries.Select(entry =>
+                new PairValue(entry.Key.Invoke(input), entry.Value.Invoke(input))));
         }
 
         if (parameter is DictionaryParameter dictionary)
@@ -862,8 +861,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                     Value = BuildValueEvaluator(entry.Value, context),
                 })
                 .ToArray();
-            return input => new Values.Dictionary(entries.Select(entry =>
-                new Pair(entry.Key.Invoke(input), entry.Value.Invoke(input))));
+            return input => new Values.DictionaryValue(entries.Select(entry =>
+                new PairValue(entry.Key.Invoke(input), entry.Value.Invoke(input))));
         }
 
         if (parameter is RecordLiteralParameter record)
@@ -887,18 +886,10 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         return null;
     }
 
-    private static object? WithCurrentObject(IContext context, object? input, Func<object?> evaluator)
+    private static object? InArgumentScope(object? input, Func<object?> evaluator)
     {
-        var previous = context.CurrentObject.Value;
-        context.CurrentObject.Set(input);
-        try
-        {
-            return evaluator.Invoke();
-        }
-        finally
-        {
-            context.CurrentObject.Set(previous);
-        }
+        using var scope = EvaluationRuntime.EnterArgument(input);
+        return evaluator.Invoke();
     }
 
     private static bool TryGetFieldName(IReadOnlyList<IParameter> parameters, out string fieldName)

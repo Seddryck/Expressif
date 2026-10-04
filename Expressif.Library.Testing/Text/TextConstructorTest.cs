@@ -48,8 +48,7 @@ public class TextConstructorTest
     [Test]
     public void Expression_VariableSpread_ExpandsInPlace()
     {
-        var context = new Context();
-        context.Variables.Add<string[]>("names", new[] { "Nikola", "Tesla" });
+        var context = EvaluationContext.CreateBuilder().AddValue("names", new[] { "Nikola", "Tesla" }).Build();
 
         Assert.That(
             TestExpression.Create("text(\"foo\", ...@names, \"bar\")", context).Evaluate(null),

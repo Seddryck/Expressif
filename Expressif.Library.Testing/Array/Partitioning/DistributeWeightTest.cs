@@ -39,11 +39,11 @@ public class DistributeWeightTest
     public void Expression_WeightProjection_BalancesTuples()
         => Assert.That(
             TestExpression.Create("distribute-weight(tuple-second)")
-                .Evaluate(new[] { new Expressif.Values.Tuple("A", 8), new Expressif.Values.Tuple("B", 7) }),
+                .Evaluate(new[] { new Expressif.Values.TupleValue("A", 8), new Expressif.Values.TupleValue("B", 7) }),
             Is.EqualTo(new object?[][]
             {
-                [new Expressif.Values.Tuple("A", 8)],
-                [new Expressif.Values.Tuple("B", 7)],
+                [new Expressif.Values.TupleValue("A", 8)],
+                [new Expressif.Values.TupleValue("B", 7)],
             }));
 
     [Test]

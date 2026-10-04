@@ -52,10 +52,12 @@ public class PredicationFactoryTest
     [Test]
     public void Instantiate_NumericEqualToVariableParameter_Valid()
     {
-        var context = new Context();
-        context.Variables.Add<int>("myVar", 2m);
-        var predicate = new PredicationFactory().Instantiate(new SinglePredication(new Function("EqualTo", new[] { new VariableParameter("myVar") })), context);
+        var predicate = new PredicationFactory().Instantiate(
+            new SinglePredication(new Function("EqualTo", new[] { new VariableParameter("myVar") })),
+            new Context());
         Assert.That(predicate, Is.Not.Null);
+        var context = EvaluationContext.CreateBuilder().AddValue("myVar", 2m).Build();
+        using var scope = EvaluationRuntime.Enter(new EvaluationFrame(current: null, ambient: null), context);
         Assert.Multiple(() =>
         {
             Assert.That(predicate, Is.TypeOf<EqualTo>());
@@ -66,10 +68,12 @@ public class PredicationFactoryTest
     [Test]
     public void Instantiate_NumericEqualToObjectPropertyParameter_Valid()
     {
-        var context = new Context();
-        context.CurrentObject.Set(new { Digits = 3m });
-        var predicate = new PredicationFactory().Instantiate(new SinglePredication(new Function("EqualTo", new[] { new ObjectPropertyParameter("Digits") })), context);
+        var predicate = new PredicationFactory().Instantiate(
+            new SinglePredication(new Function("EqualTo", new[] { new ObjectPropertyParameter("Digits") })),
+            new Context());
         Assert.That(predicate, Is.Not.Null);
+        var input = new { Digits = 3m };
+        using var scope = EvaluationRuntime.Enter(new EvaluationFrame(input, input), EvaluationContext.Empty);
         Assert.Multiple(() =>
         {
             Assert.That(predicate, Is.TypeOf<EqualTo>());
@@ -80,10 +84,12 @@ public class PredicationFactoryTest
     [Test]
     public void Instantiate_NumericEqualToObjectIndexParameter_Valid()
     {
-        var context = new Context();
-        context.CurrentObject.Set(new List<decimal> { 0, 4 });
-        var predicate = new PredicationFactory().Instantiate(new SinglePredication(new Function("EqualTo", new[] { new ObjectIndexParameter(1) })), context);
+        var predicate = new PredicationFactory().Instantiate(
+            new SinglePredication(new Function("EqualTo", new[] { new ObjectIndexParameter(1) })),
+            new Context());
         Assert.That(predicate, Is.Not.Null);
+        var input = new List<decimal> { 0, 4 };
+        using var scope = EvaluationRuntime.Enter(new EvaluationFrame(input, input), EvaluationContext.Empty);
         Assert.Multiple(() =>
         {
             Assert.That(predicate, Is.TypeOf<EqualTo>());

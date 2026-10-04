@@ -1,7 +1,6 @@
 using System.Collections;
 using Expressif.Values;
 using Expressif.Bindings;
-using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Library.Array.Grouping;
 
@@ -21,8 +20,8 @@ public sealed class Key : IFunction<object?, PairValue>
     public PairValue Evaluate(object? value)
     {
         var keys = Expressions.Select(expression => expression.Invoke(value)).ToArray();
-        var key = keys.Length == 1 ? keys[0] : new Expressif.Values.Tuple(keys);
-        return new Expressif.Values.Pair(key, value);
+        var key = keys.Length == 1 ? keys[0] : new Expressif.Values.TupleValue(keys);
+        return new Expressif.Values.PairValue(key, value);
     }
 
     object? IFunction.Evaluate(object? value) => Evaluate(value);

@@ -48,7 +48,7 @@ public class ExistsTest
     [Test]
     public void Exists_GroupingSkipsRightKeyAndAcceptsEmptyBuckets()
     {
-        var grouping = new Expressif.Values.Grouping([new PairValue(1, System.Array.Empty<object?>())]);
+        var grouping = new Expressif.Values.GroupingValue([new PairValue(1, System.Array.Empty<object?>())]);
         var predicate = new Exists(() => grouping, value => value,
             _ => throw new AssertionException("Grouping lookup must skip right-key."));
         Assert.That(predicate.Evaluate(1), Is.True);

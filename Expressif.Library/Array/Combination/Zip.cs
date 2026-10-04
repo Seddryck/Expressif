@@ -41,14 +41,14 @@ public sealed class Zip : BaseZipFunction
     protected override object EvaluateZip(IEnumerable left, IEnumerable right)
         => Enumerate(left, right);
 
-    private static IEnumerable<Expressif.Values.Tuple> Enumerate(IEnumerable left, IEnumerable right)
+    private static IEnumerable<Expressif.Values.TupleValue> Enumerate(IEnumerable left, IEnumerable right)
     {
         var leftEnumerator = GetEnumerator(left);
         var rightEnumerator = GetEnumerator(right);
         try
         {
             while (leftEnumerator.MoveNext() && rightEnumerator.MoveNext())
-                yield return new Expressif.Values.Tuple(leftEnumerator.Current, rightEnumerator.Current);
+                yield return new Expressif.Values.TupleValue(leftEnumerator.Current, rightEnumerator.Current);
         }
         finally
         {
@@ -73,12 +73,12 @@ public sealed class ZipCycle : BaseZipFunction
         var leftValues = left.Cast<object?>().ToArray();
         var rightValues = right.Cast<object?>().ToArray();
         if (leftValues.Length == 0 && rightValues.Length == 0)
-            return System.Array.Empty<Expressif.Values.Tuple>();
+            return System.Array.Empty<Expressif.Values.TupleValue>();
         if (leftValues.Length == 0 || rightValues.Length == 0)
             return null;
 
         return Enumerable.Range(0, Math.Max(leftValues.Length, rightValues.Length))
-            .Select(index => new Expressif.Values.Tuple(
+            .Select(index => new Expressif.Values.TupleValue(
                 leftValues[index % leftValues.Length],
                 rightValues[index % rightValues.Length]))
             .ToArray();
@@ -98,7 +98,7 @@ public sealed class ZipPadded : BaseZipFunction
     protected override object EvaluateZip(IEnumerable left, IEnumerable right)
         => Enumerate(left, right);
 
-    private static IEnumerable<Expressif.Values.Tuple> Enumerate(IEnumerable left, IEnumerable right)
+    private static IEnumerable<Expressif.Values.TupleValue> Enumerate(IEnumerable left, IEnumerable right)
     {
         var leftEnumerator = GetEnumerator(left);
         var rightEnumerator = GetEnumerator(right);
@@ -111,7 +111,7 @@ public sealed class ZipPadded : BaseZipFunction
                 if (!hasLeft && !hasRight)
                     yield break;
 
-                yield return new Expressif.Values.Tuple(
+                yield return new Expressif.Values.TupleValue(
                     hasLeft ? leftEnumerator.Current : null,
                     hasRight ? rightEnumerator.Current : null);
             }
@@ -142,7 +142,7 @@ public sealed class ZipStrict : BaseZipFunction
             ? null
             : leftValues.Zip(
                 rightValues,
-                (leftValue, rightValue) => new Expressif.Values.Tuple(leftValue, rightValue))
+                (leftValue, rightValue) => new Expressif.Values.TupleValue(leftValue, rightValue))
                 .ToArray();
     }
 }

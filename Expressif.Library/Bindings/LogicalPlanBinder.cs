@@ -6,7 +6,6 @@ using Expressif.Functions.Accumulation;
 using Expressif.Planning;
 using Expressif.Predicates;
 using Expressif.Values;
-using Expressif.Values.Types;
 using Expressif.Types;
 
 namespace Expressif.Bindings;
@@ -216,24 +215,26 @@ internal sealed class LogicalPlanBinder
             return Function.FromArguments(
                 new OperatorIdentity(call.Function.Namespace, accumulator),
                 [],
-                FunctionSyntax.ImplicitFoldAccumulator,
+                BoundFunctionRole.ImplicitAccumulator,
+                SourceNotation.StandardCall,
                 FunctionImplementationKind.Accumulator);
         }
 
-        var syntax = ResolveSyntax(call, inputBound);
+        var role = ResolveRole(call);
+        var notation = ResolveNotation(call, inputBound);
         var implementationKind = ImplementationKind(call);
-        if (syntax is FunctionSyntax.ScopedTupleProjectionShorthand
-            or FunctionSyntax.InputTupleProjectionShorthand)
+        if (notation is SourceNotation.ScopedTupleProjectionShorthand
+            or SourceNotation.InputTupleProjectionShorthand)
         {
-            return BindTupleProjection(call, syntax, implementationKind);
+            return BindTupleProjection(call, notation, implementationKind);
         }
         var arguments = BindFunctionArguments(call);
-        return Function.FromArguments(call.Function.Identity, arguments, syntax, implementationKind);
+        return Function.FromArguments(call.Function.Identity, arguments, role, notation, implementationKind);
     }
 
     private static Function BindTupleProjection(
         LogicalCall call,
-        FunctionSyntax syntax,
+        SourceNotation syntax,
         FunctionImplementationKind implementationKind)
     {
         if (call.Arguments.Count != 1)
@@ -244,7 +245,7 @@ internal sealed class LogicalPlanBinder
             throw Error("Operator 'tuple-at' requires one explicit non-spread position argument.");
         var position = RequireInteger(argument.Value, "tuple-at position");
         IParameter parameter;
-        if (syntax == FunctionSyntax.ScopedTupleProjectionShorthand)
+        if (syntax == SourceNotation.ScopedTupleProjectionShorthand)
         {
             parameter = new ScopedTupleProjectionParameter(position, call.ContextDepth);
         }
@@ -260,6 +261,7 @@ internal sealed class LogicalPlanBinder
         return Function.FromArguments(
             call.Function.Identity,
             [new FunctionArgument(null, parameter)],
+            BoundFunctionRole.Operator,
             syntax,
             implementationKind);
     }
@@ -349,7 +351,7 @@ internal sealed class LogicalPlanBinder
         return Function.FromArguments(
             call.Function.Identity,
             parameters.Select(parameter => new FunctionArgument(null, parameter)).ToArray(),
-            FunctionSyntax.Standard,
+            SourceNotation.StandardCall,
             ImplementationKind(call));
     }
 
@@ -380,7 +382,7 @@ internal sealed class LogicalPlanBinder
             [new FunctionArgument(null, new WithDefinitionParameter(
                 projections.ToArray(),
                 BindValue(body.Value)))],
-            FunctionSyntax.Standard,
+            SourceNotation.StandardCall,
             ImplementationKind(call));
     }
 
@@ -818,44 +820,50 @@ internal sealed class LogicalPlanBinder
         return true;
     }
 
-    private FunctionSyntax ResolveSyntax(
-        LogicalCall call,
-        bool inputBound)
+    private static BoundFunctionRole ResolveRole(LogicalCall call)
     {
         if (call.Function.Kind == "accumulator")
-            return FunctionSyntax.ImplicitFoldAccumulator;
+            return BoundFunctionRole.ImplicitAccumulator;
         if (call.Function.Name == "conditional-forward")
-            return FunctionSyntax.ConditionalForward;
+            return BoundFunctionRole.ConditionalForward;
         if (call.Function.Name == "conditional-backward")
-            return FunctionSyntax.ConditionalBackward;
+            return BoundFunctionRole.ConditionalBackward;
+        return BoundFunctionRole.Operator;
+    }
+
+    private SourceNotation ResolveNotation(LogicalCall call, bool inputBound)
+    {
+        if (call.SourceNotation != SourceNotation.StandardCall)
+            return call.SourceNotation;
+
         if (call.Function.Name == "field")
         {
             if (!call.IsReferenceShorthand)
-                return FunctionSyntax.Standard;
+                return SourceNotation.StandardCall;
             return call.ContextDepth switch
             {
-                0 when inputBound && !call.IsReferenceContinuation => FunctionSyntax.InputFieldShorthand,
-                0 => FunctionSyntax.FieldShorthand,
-                1 => FunctionSyntax.RootFieldShorthand,
-                2 => FunctionSyntax.EnclosingRootFieldShorthand,
+                0 when inputBound && !call.IsReferenceContinuation => SourceNotation.InputFieldShorthand,
+                0 => SourceNotation.CurrentField,
+                1 => SourceNotation.RootField,
+                2 => SourceNotation.EnclosingRootField,
                 _ => throw Error($"Field context depth '{call.ContextDepth}' is not supported."),
             };
         }
         if (call.Function.Name == "tuple-at")
         {
             if (!call.IsReferenceShorthand)
-                return FunctionSyntax.Standard;
+                return SourceNotation.StandardCall;
             if (call.Arguments.Count != 1)
                 throw Error("Operator 'tuple-at' requires exactly one position argument.");
             if (call.ContextDepth > 0)
-                return FunctionSyntax.ScopedTupleProjectionShorthand;
+                return SourceNotation.ScopedTupleProjectionShorthand;
             return inputBound
-                ? FunctionSyntax.InputTupleProjectionShorthand
-                : FunctionSyntax.TupleProjectionShorthand;
+                ? SourceNotation.InputTupleProjectionShorthand
+                : SourceNotation.TupleProjectionShorthand;
         }
         if (call.ContextDepth != 0)
             throw Error($"Operator '{call.Function.Name}' does not support context depth '{call.ContextDepth}'.");
-        return FunctionSyntax.Standard;
+        return SourceNotation.StandardCall;
     }
 
     private void ValidateCoercePipeline(IReadOnlyList<Function> members, Type? inputType)
@@ -879,9 +887,9 @@ internal sealed class LogicalPlanBinder
     private bool TryGetContract(Function function, out Type outputType)
     {
         outputType = null!;
-        if (function.Syntax is FunctionSyntax.ScopedTupleProjectionShorthand
-            or FunctionSyntax.InputFieldShorthand
-            or FunctionSyntax.InputTupleProjectionShorthand
+        if (function.Notation is SourceNotation.ScopedTupleProjectionShorthand
+            or SourceNotation.InputFieldShorthand
+            or SourceNotation.InputTupleProjectionShorthand
             || !functions.TryResolve(function.Name, out var implementationType))
         {
             return false;
@@ -922,11 +930,11 @@ internal sealed class LogicalPlanBinder
     {
         QuotedLiteralParameter => typeof(string),
         LiteralParameter { Value: { } value } => value.GetType(),
-        TupleParameter => typeof(Expressif.Values.Tuple),
-        VectorParameter => typeof(Vector),
-        PairParameter => typeof(Pair),
-        GroupingParameter => typeof(Grouping),
-        DictionaryParameter => typeof(Expressif.Values.Dictionary),
+        TupleParameter => typeof(Expressif.Values.TupleValue),
+        VectorParameter => typeof(VectorValue),
+        PairParameter => typeof(PairValue),
+        GroupingParameter => typeof(GroupingValue),
+        DictionaryParameter => typeof(Expressif.Values.DictionaryValue),
         RecordLiteralParameter => typeof(RecordValue),
         ArrayParameter => typeof(object[]),
         _ => null,

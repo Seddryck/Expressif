@@ -2,7 +2,7 @@ using Expressif.Predicates;
 using Expressif.Library.Special;
 using Expressif.Planning;
 using Expressif.Testing.Conformance;
-using Expressif.Values.Types;
+using Expressif.Types;
 using Expressif.Values;
 
 namespace Expressif.Testing.Special;
@@ -46,7 +46,7 @@ public class TypeTest
             Assert.That(Evaluate(new TupleValue(1, 2), "array"), Is.False);
             Assert.That(Evaluate(new PairValue("USA", 42), "pair"), Is.True);
             Assert.That(Evaluate(new PairValue("USA", 42), "tuple"), Is.True);
-            Assert.That(Evaluate(new Group("USA", new[] { 1, 2 }), "tuple"), Is.True);
+            Assert.That(Evaluate(new GroupValue("USA", new[] { 1, 2 }), "tuple"), Is.True);
             Assert.That(Evaluate(new RecordValue(), "record"), Is.True);
         });
 

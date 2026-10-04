@@ -15,7 +15,7 @@ internal sealed class ConditionalFunctionBinder : IFunctionBinder<ConditionalFor
             syntax.Name,
             syntax.Arguments.Select(argument => context.BindArgument(FunctionBinderSyntax.RequireValue(argument))).ToArray(),
             syntax.Name.Equals("conditional-forward", StringComparison.OrdinalIgnoreCase)
-                ? FunctionSyntax.ConditionalForward
-                : FunctionSyntax.ConditionalBackward);
+                ? BoundFunctionRole.ConditionalForward
+                : BoundFunctionRole.ConditionalBackward);
     }
 }

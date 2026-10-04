@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Expressif.Values;
 
-public sealed class ContextObject
+internal sealed class ContextObject
 {
     public object? Value { get; private set; }
 

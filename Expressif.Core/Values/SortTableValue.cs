@@ -1,5 +1,5 @@
 using System.Collections;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Values;
 
@@ -18,8 +18,8 @@ public sealed class SortTableValue : IReadOnlyDictionary<string, object?>, IExpr
         Rows = rows?.ToArray() ?? throw new ArgumentNullException(nameof(rows));
         fields = new Dictionary<string, object?>
         {
-            ["headers"] = Headers.Select(header => new Tuple(header.Comparer, header.Ascending, header.NullsFirst)).ToArray(),
-            ["rows"] = Rows.Select(row => new Tuple(new Tuple(row.Keys.ToArray()), row.Value)).ToArray(),
+            ["headers"] = Headers.Select(header => new TupleValue(header.Comparer, header.Ascending, header.NullsFirst)).ToArray(),
+            ["rows"] = Rows.Select(row => new TupleValue(new TupleValue(row.Keys.ToArray()), row.Value)).ToArray(),
         };
     }
 

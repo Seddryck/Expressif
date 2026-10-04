@@ -1,5 +1,5 @@
 using Expressif.Values;
-using PairValueType = Expressif.Values.Pair;
+using PairValueType = Expressif.Values.PairValue;
 
 namespace Expressif.Library.Pair;
 
@@ -21,7 +21,7 @@ public sealed class Pair : IFunction<object?, PairValueType>
         => (Key, Value) = (key, value);
 
     public PairValueType Evaluate(object? input)
-        => new Expressif.Values.Pair(Key.Invoke(input), Value.Invoke(input));
+        => new Expressif.Values.PairValue(Key.Invoke(input), Value.Invoke(input));
 
     object? IFunction.Evaluate(object? value) => Evaluate(value);
 }
@@ -35,7 +35,7 @@ public sealed class PairKey : IFunction<PairValueType, object?>
     object? IFunction.Evaluate(object? value) => value switch
     {
         PairValueType pair => Evaluate(pair),
-        Group group => group.Key,
+        GroupValue group => group.Key,
         _ => null,
     };
 }
@@ -49,7 +49,7 @@ public sealed class PairValue : IFunction<PairValueType, object?>
     object? IFunction.Evaluate(object? value) => value switch
     {
         PairValueType pair => Evaluate(pair),
-        Group group => group.Value,
+        GroupValue group => group.Value,
         _ => null,
     };
 }

@@ -1,13 +1,13 @@
 using System.Collections;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Values;
 
 /// <summary>Represents one immutable grouping bucket.</summary>
 [ExpressifType(Parent = "pair")]
-public sealed class Group : IReadOnlyList<object?>, IEquatable<Group>, IExpressifValueType, IPositionalValue
+public sealed class GroupValue : IReadOnlyList<object?>, IEquatable<GroupValue>, IExpressifValueType, IPositionalValue
 {
-    public Group(object? key, IEnumerable values)
+    public GroupValue(object? key, IEnumerable values)
         => (Key, Values) = (key, Materialize(values));
 
     public object? Key { get; }
@@ -25,7 +25,7 @@ public sealed class Group : IReadOnlyList<object?>, IEquatable<Group>, IExpressi
 
     public IEnumerator<object?> GetEnumerator() => Values.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    public bool Equals(Group? other) => other is not null && PositionalValueEquality.Equals(this, other);
+    public bool Equals(GroupValue? other) => other is not null && PositionalValueEquality.Equals(this, other);
     public override bool Equals(object? obj) => PositionalValueEquality.Equals(this, obj);
     public override int GetHashCode() => PositionalValueEquality.GetHashCode(this);
     public override string ToString() => ValueFormatter.Format(this);
@@ -41,15 +41,15 @@ public sealed class Group : IReadOnlyList<object?>, IEquatable<Group>, IExpressi
 
 /// <summary>Represents an immutable ordered collection of groups with unique keys.</summary>
 [ExpressifType(Parent = "structured", LiteralSyntax = "Pair entries enclosed in #{ and }", LiteralExamples = ["#{(\"BE\" => {\"alice\", \"bob\"})}"])]
-public sealed class Grouping : IReadOnlyList<Group>, IEquatable<Grouping>, IExpressifValueType
+public sealed class GroupingValue : IReadOnlyList<GroupValue>, IEquatable<GroupingValue>, IExpressifValueType
 {
     private static readonly IEqualityComparer StructuralComparer = StructuralComparisons.StructuralEqualityComparer;
-    private readonly Group[] groups;
+    private readonly GroupValue[] groups;
 
-    public Grouping(IEnumerable<IPositionalValue> pairs)
+    public GroupingValue(IEnumerable<IPositionalValue> pairs)
     {
         ArgumentNullException.ThrowIfNull(pairs);
-        var values = new List<Group>();
+        var values = new List<GroupValue>();
         foreach (var pair in pairs)
         {
             if (pair.Arity != 2)
@@ -60,19 +60,19 @@ public sealed class Grouping : IReadOnlyList<Group>, IEquatable<Grouping>, IExpr
                 throw new ArgumentException($"A grouping cannot contain duplicate key '{ValueFormatter.Format(key)}'.", nameof(pairs));
             if (value is not IEnumerable collection || value is string)
                 throw new ArgumentException("Every grouping entry value must be a collection.", nameof(pairs));
-            values.Add(new Group(key, collection));
+            values.Add(new GroupValue(key, collection));
         }
         groups = values.ToArray();
     }
 
     public int Count => groups.Length;
-    public Group this[int index] => groups[index];
+    public GroupValue this[int index] => groups[index];
 
-    public IEnumerator<Group> GetEnumerator() => ((IEnumerable<Group>)groups).GetEnumerator();
+    public IEnumerator<GroupValue> GetEnumerator() => ((IEnumerable<GroupValue>)groups).GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => groups.GetEnumerator();
 
-    public bool Equals(Grouping? other) => other is not null && groups.SequenceEqual(other.groups);
-    public override bool Equals(object? obj) => obj is Grouping other && Equals(other);
+    public bool Equals(GroupingValue? other) => other is not null && groups.SequenceEqual(other.groups);
+    public override bool Equals(object? obj) => obj is GroupingValue other && Equals(other);
 
     public override int GetHashCode()
     {

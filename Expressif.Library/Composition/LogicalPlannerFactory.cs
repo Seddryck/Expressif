@@ -3,7 +3,6 @@ using Expressif.Discovery;
 using Expressif.Functions.Accumulation;
 using Expressif.Functions.Coercions;
 using Expressif.Planning;
-using Expressif.Values.Types;
 using Expressif.Types;
 using Expressif.Hosting;
 

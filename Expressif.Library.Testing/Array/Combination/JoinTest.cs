@@ -7,7 +7,6 @@ using Expressif.Library.Array.Sequencing;
 using Expressif.Library.Array.Set;
 using Expressif.Testing.Conformance;
 using Expressif.Values;
-using GroupingValue = Expressif.Values.Grouping;
 using JoinFunction = Expressif.Library.Array.Combination.Join;
 
 namespace Expressif.Testing.Array.Combination;

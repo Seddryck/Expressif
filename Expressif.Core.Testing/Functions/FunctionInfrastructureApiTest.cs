@@ -65,7 +65,7 @@ public class FunctionInfrastructureApiTest
                 Is.EquivalentTo(new[] { nameof(FunctionFactory.Instantiate), nameof(FunctionFactory.InstantiateClosed) }));
             Assert.That(methods, Has.All.Matches<MethodInfo>(method =>
                 method.GetParameters().Select(parameter => parameter.ParameterType)
-                    .SequenceEqual(new[] { typeof(IRootExpression), typeof(IContext) })));
+                    .SequenceEqual(new[] { typeof(IRootExpression) })));
         });
     }
 

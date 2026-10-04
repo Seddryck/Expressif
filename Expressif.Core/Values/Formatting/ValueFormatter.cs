@@ -79,19 +79,19 @@ public static class ValueFormatter
 
             switch (value)
             {
-                case Grouping grouping:
+                case GroupingValue grouping:
                     WriteCollection("#{", "}", grouping, depth);
                     break;
-                case Dictionary dictionary:
+                case DictionaryValue dictionary:
                     WriteCollection("!{", "}", dictionary, depth);
                     break;
-                case Group group:
+                case GroupValue group:
                     WritePair(group.Key, group.Value, depth);
                     break;
-                case Pair pair:
+                case PairValue pair:
                     WritePair(pair.Key, pair.Value, depth);
                     break;
-                case Vector vector:
+                case VectorValue vector:
                     WriteCollection("V(", ")", vector, depth);
                     break;
                 case SortTerm sortTerm:
@@ -100,7 +100,7 @@ public static class ValueFormatter
                 case SortKey sortKey:
                     WriteCollection("SortKey(", ")", sortKey, depth);
                     break;
-                case Tuple tuple:
+                case TupleValue tuple:
                     WriteCollection("T(", ")", tuple, depth);
                     break;
                 default:

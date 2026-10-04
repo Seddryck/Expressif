@@ -37,7 +37,7 @@ public class InputBindingTest
     [Test]
     public void Destructuring_GroupBindsKeyAndValueCollection()
     {
-        var group = new Expressif.Values.Group("BE", new[] { 10, 20, 30 });
+        var group = new Expressif.Values.GroupValue("BE", new[] { 10, 20, 30 });
         var expression = TestExpression.Create("apply((key, values) :> @values | count)");
         Assert.That(expression.Evaluate(group), Is.EqualTo(3));
         Assert.That(TestExpression.Create("apply((key, values) :> @key)").Evaluate(group), Is.EqualTo("BE"));
@@ -62,7 +62,7 @@ public class InputBindingTest
         var expression = TestExpression.Create("apply((a, b) :> @a)");
         foreach (var input in new object?[] { null, 42, "ab", new[] { 1, 2 }, new Expressif.Values.RecordValue() })
             Assert.That(() => expression.Evaluate(input), Throws.ArgumentException.With.Message.Contains("requires a tuple"));
-        foreach (var input in new[] { new Expressif.Values.Tuple(1), new Expressif.Values.Tuple(1, 2, 3) })
+        foreach (var input in new[] { new Expressif.Values.TupleValue(1), new Expressif.Values.TupleValue(1, 2, 3) })
             Assert.That(() => expression.Evaluate(input), Throws.ArgumentException.With.Message.Contains("expects 2 components"));
     }
 
@@ -80,7 +80,7 @@ public class InputBindingTest
     {
         var shorthand = TestExpression.Create("apply((a, b) :> @a | subtract(@b))");
         var explicitForwarding = TestExpression.Create("apply(@_ | (a, b) :> @a | subtract(@b))");
-        var input = new Expressif.Values.Tuple(20, 5);
+        var input = new Expressif.Values.TupleValue(20, 5);
 
         Assert.That(shorthand.Evaluate(input), Is.EqualTo(explicitForwarding.Evaluate(input)));
     }
@@ -97,18 +97,17 @@ public class InputBindingTest
     public void Named_PreservesWholeInput(string source)
     {
         var expression = TestExpression.Create(source);
-        foreach (var input in new object?[] { null, 42, "hello", new[] { 1, 2 }, new Expressif.Values.Tuple(1, 2), new Expressif.Values.RecordValue() })
+        foreach (var input in new object?[] { null, 42, "hello", new[] { 1, 2 }, new Expressif.Values.TupleValue(1, 2), new Expressif.Values.RecordValue() })
             Assert.That(expression.Evaluate(input), Is.SameAs(input));
     }
 
     [Test]
-    public void Named_RestoresContextVariableAfterInvocation()
+    public void Named_RestoresEvaluationVariableAfterInvocation()
     {
-        var context = new Context();
-        context.Variables.Add<int>("input", 100);
-        var expression = TestExpression.Create("apply(@_ | input :> @input | add(1)) | add(@input)", context);
+        var context = EvaluationContext.CreateBuilder().AddValue("input", 100).Build();
+        var expression = TestExpression.Create("apply(@_ | input :> @input | add(1)) | add(@input)")
+            .WithContext(context);
         Assert.That(expression.Evaluate(10), Is.EqualTo(111));
-        Assert.That(context.Variables["input"], Is.EqualTo(100));
     }
 
     [Test]
@@ -149,11 +148,10 @@ public class InputBindingTest
     [Test]
     public void Named_FailureDoesNotLeakBinding()
     {
-        var context = new Context();
-        context.Variables.Add<int>("input", 100);
-        var failing = TestExpression.Create("apply(@_ | input :> @missing)", context);
+        var context = EvaluationContext.CreateBuilder().AddValue("input", 100).Build();
+        var failing = TestExpression.Create("apply(@_ | input :> @missing)").WithContext(context);
         Assert.Catch(() => failing.Evaluate(10));
-        Assert.That(TestExpression.CreateClosed("@input", context).Evaluate(null), Is.EqualTo(100));
+        Assert.That(TestExpression.CreateClosed("@input").WithContext(context).Evaluate(null), Is.EqualTo(100));
     }
 
     [Test]

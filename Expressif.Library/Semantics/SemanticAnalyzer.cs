@@ -156,7 +156,7 @@ public sealed class SemanticAnalyzer
         }
 
         private bool IsAccumulator(BoundFunction function)
-            => function.Syntax == FunctionSyntax.ImplicitFoldAccumulator
+            => function.Role == BoundFunctionRole.ImplicitAccumulator
                 && accumulators.TryResolve(function.Name, out _);
 
         private void PredicateArguments(BoundFunction function, ScopeFrame<SemanticSource> frame)

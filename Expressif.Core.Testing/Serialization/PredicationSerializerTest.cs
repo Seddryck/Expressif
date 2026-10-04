@@ -29,7 +29,6 @@ public class PredicationSerializerTest
     [Test]
     public void Serialize_WithSubPredication_WithPipe()
     {
-        var predication = new TestPredicationBuilder();
         var evenPredication = new SinglePredication(new Function("even", []));
         var greaterThanPredication = new SinglePredication(new Function("GreaterThan", [new LiteralParameter("5")]));
         var moduloPredication = new SinglePredication(new Function("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));

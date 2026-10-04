@@ -6,7 +6,7 @@ namespace Expressif.Cli.Application;
 
 internal static class RunEvaluator
 {
-    public static IEnumerable<object?> Evaluate(IExpression expression, Context context, IEnumerable inputs)
+    public static IEnumerable<object?> Evaluate(IExpression expression, IEnumerable inputs)
     {
         var enumerator = inputs.GetEnumerator();
         var index = 0;
@@ -29,7 +29,6 @@ internal static class RunEvaluator
                 object? result;
                 try
                 {
-                    context.CurrentObject.Set(input);
                     result = expression.Evaluate(input);
                 }
                 catch (Exception exception) when (exception is not OutOfMemoryException)

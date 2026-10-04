@@ -1,6 +1,6 @@
 using System.Collections;
 using Expressif.Values;
-using DictionaryValueType = Expressif.Values.Dictionary;
+using DictionaryValueType = Expressif.Values.DictionaryValue;
 
 namespace Expressif.Library.Dictionary;
 
@@ -14,7 +14,7 @@ public sealed class Nest : IFunction<DictionaryValueType, DictionaryValueType>
     public DictionaryValueType Evaluate(DictionaryValueType value)
     {
         if (value.Count == 0)
-            return new Expressif.Values.Dictionary([]);
+            return new Expressif.Values.DictionaryValue([]);
 
         if (value[0].Key is not IPositionalValue first || first.Arity < 2)
             throw new ArgumentException("Every nest key must be a tuple of the same arity, at least two.", nameof(value));
@@ -36,7 +36,7 @@ public sealed class Nest : IFunction<DictionaryValueType, DictionaryValueType>
     private static DictionaryValueType Build(IReadOnlyList<(IPositionalValue Key, object? Value)> entries, int position, int arity)
     {
         if (position == arity - 1)
-            return new Expressif.Values.Dictionary(entries.Select(entry => new Expressif.Values.Pair(entry.Key.GetPosition(position), entry.Value)));
+            return new Expressif.Values.DictionaryValue(entries.Select(entry => new Expressif.Values.PairValue(entry.Key.GetPosition(position), entry.Value)));
 
         var groups = new List<(object? Key, List<(IPositionalValue Key, object? Value)> Entries)>();
         foreach (var entry in entries)
@@ -49,6 +49,6 @@ public sealed class Nest : IFunction<DictionaryValueType, DictionaryValueType>
                 groups[index].Entries.Add(entry);
         }
 
-        return new Expressif.Values.Dictionary(groups.Select(group => new Expressif.Values.Pair(group.Key, Build(group.Entries, position + 1, arity))));
+        return new Expressif.Values.DictionaryValue(groups.Select(group => new Expressif.Values.PairValue(group.Key, Build(group.Entries, position + 1, arity))));
     }
 }

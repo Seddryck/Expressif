@@ -1,5 +1,5 @@
 using System;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Values;
 
@@ -7,9 +7,9 @@ namespace Expressif.Values;
 /// Represents an immutable key/value association and specialized tuple of arity two.
 /// </summary>
 [ExpressifType(Parent = "tuple", LiteralSyntax = "Key and value expressions separated by => and enclosed in parentheses", LiteralExamples = ["(\"BE\" => 42)"])]
-public sealed class Pair : IEquatable<Pair>, IExpressifValueType, IPositionalValue
+public sealed class PairValue : IEquatable<PairValue>, IExpressifValueType, IPositionalValue
 {
-    public Pair(object? key, object? value)
+    public PairValue(object? key, object? value)
         => (Key, Value) = (key, value);
 
     public object? Key { get; }
@@ -23,7 +23,7 @@ public sealed class Pair : IEquatable<Pair>, IExpressifValueType, IPositionalVal
             _ => throw new ArgumentOutOfRangeException(nameof(index)),
         };
 
-    public bool Equals(Pair? other)
+    public bool Equals(PairValue? other)
         => other is not null && PositionalValueEquality.Equals(this, other);
 
     public override bool Equals(object? obj)

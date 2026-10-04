@@ -51,7 +51,7 @@ public sealed class Coerce : IFunction<object?, object?>
     {
         var values = Enumerable.Range(0, tuple.Arity).Select(tuple.GetPosition).ToArray();
         if (positionalTypes is [var tupleType] && tupleType == typeof(TupleValue))
-            return new Values.Tuple(values);
+            return new Expressif.Values.TupleValue(values);
         if (positionalTypes is not null)
         {
             for (var index = 0; index < Math.Min(positionalTypes.Length, values.Length); index++)
@@ -69,7 +69,7 @@ public sealed class Coerce : IFunction<object?, object?>
                 values[index] = Convert(values[index], mapping.TargetType);
             }
         }
-        return new Values.Tuple(values);
+        return new Expressif.Values.TupleValue(values);
     }
 
     private RecordValue CoerceRecord(RecordValue record)

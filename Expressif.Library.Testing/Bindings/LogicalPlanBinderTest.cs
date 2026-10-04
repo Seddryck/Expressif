@@ -5,7 +5,7 @@ using Expressif.Library.Composition;
 using Expressif.Planning;
 using Expressif.Syntax;
 using Expressif.Values;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Testing.Bindings;
 
@@ -65,7 +65,7 @@ public sealed class LogicalPlanBinderTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(projection.Syntax, Is.EqualTo(FunctionSyntax.InputTupleProjectionShorthand));
+            Assert.That(projection.Notation, Is.EqualTo(SourceNotation.InputTupleProjectionShorthand));
             Assert.That(projection.Parameters.Single(), Is.EqualTo(new TupleProjectionParameter(index, fromEnd)));
         });
     }

@@ -29,12 +29,12 @@ internal sealed class FunctionSerializer
     {
         if (TrySerializeReference(function, stringBuilder))
             return;
-        if (function.Syntax is FunctionSyntax.ConditionalForward or FunctionSyntax.ConditionalBackward)
+        if (function.Role is BoundFunctionRole.ConditionalForward or BoundFunctionRole.ConditionalBackward)
             SerializeConditional(function, stringBuilder);
         else if (function.Name is "switch" or "try")
             SerializeBranches(function, stringBuilder);
-        else if (function.Syntax is FunctionSyntax.InputFieldShorthand or FunctionSyntax.FieldShorthand
-            or FunctionSyntax.RootFieldShorthand or FunctionSyntax.EnclosingRootFieldShorthand)
+        else if (function.Notation is SourceNotation.InputFieldShorthand or SourceNotation.CurrentField
+            or SourceNotation.RootField or SourceNotation.EnclosingRootField)
             SerializeField(function, stringBuilder);
         else
             SerializeCall(function, stringBuilder);
@@ -42,7 +42,7 @@ internal sealed class FunctionSerializer
 
     private void SerializeConditional(Function function, StringBuilder output)
         => output.Append('(').Append(ParameterSerializer.Serialize(function.Parameters[0])).Append(')')
-            .Append(function.Syntax == FunctionSyntax.ConditionalForward ? " ?> " : " <? ")
+            .Append(function.Role == BoundFunctionRole.ConditionalForward ? " ?> " : " <? ")
             .Append('(').Append(ParameterSerializer.Serialize(function.Parameters[1])).Append(')');
 
     private void SerializeBranches(Function function, StringBuilder output)
@@ -64,10 +64,10 @@ internal sealed class FunctionSerializer
 
     private static void SerializeField(Function function, StringBuilder output)
     {
-        var prefix = function.Syntax switch
+        var prefix = function.Notation switch
         {
-            FunctionSyntax.RootFieldShorthand => "^.",
-            FunctionSyntax.EnclosingRootFieldShorthand => "^^.",
+            SourceNotation.RootField => "^.",
+            SourceNotation.EnclosingRootField => "^^.",
             _ => ".",
         };
         var name = function.Parameters.Single() switch
@@ -100,7 +100,7 @@ internal sealed class FunctionSerializer
 
     private bool TrySerializeReference(Function function, StringBuilder stringBuilder)
     {
-        if (function.Syntax == FunctionSyntax.InputTupleProjectionShorthand
+        if (function.Notation == SourceNotation.InputTupleProjectionShorthand
             && function.Parameters is [TupleProjectionParameter projection])
         {
             stringBuilder.Append('$');
@@ -109,7 +109,7 @@ internal sealed class FunctionSerializer
             stringBuilder.Append(projection.Index);
             return true;
         }
-        if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand)
+        if (function.Notation == SourceNotation.ScopedTupleProjectionShorthand)
         {
             stringBuilder.Append(ParameterSerializer.Serialize(function.Parameters.Single()));
             return true;

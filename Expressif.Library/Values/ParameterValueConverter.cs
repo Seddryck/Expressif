@@ -40,7 +40,7 @@ public sealed class ParameterValueConverter
         return values.ToArray();
     }
 
-    private Tuple ConvertTuple(TupleParameter tuple)
+    private TupleValue ConvertTuple(TupleParameter tuple)
     {
         var values = new List<object?>();
         foreach (var element in tuple.Elements)
@@ -60,10 +60,10 @@ public sealed class ParameterValueConverter
             }
         }
 
-        return new Tuple(values.ToArray());
+        return new TupleValue(values.ToArray());
     }
 
-    private Vector ConvertVector(VectorParameter vector)
+    private VectorValue ConvertVector(VectorParameter vector)
     {
         var values = new List<object?>();
         foreach (var element in vector.Elements)
@@ -82,7 +82,7 @@ public sealed class ParameterValueConverter
                 values.Add(value);
             }
         }
-        return new Vector(values.ToArray());
+        return new VectorValue(values.ToArray());
     }
 
     private RecordValue ConvertRecord(RecordLiteralParameter record)

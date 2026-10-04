@@ -1,5 +1,5 @@
 using Expressif.Values;
-using DictionaryValueType = Expressif.Values.Dictionary;
+using DictionaryValueType = Expressif.Values.DictionaryValue;
 
 namespace Expressif.Library.Dictionary;
 
@@ -22,7 +22,7 @@ public sealed class Dictionary : IFunction<object?, DictionaryValueType>
         var evaluated = Values.Invoke(value);
         if (evaluated.Any(item => item is not PairValue))
             throw new ArgumentException("Every dictionary argument must evaluate to a pair.", nameof(value));
-        return new Expressif.Values.Dictionary(evaluated.Cast<PairValue>());
+        return new Expressif.Values.DictionaryValue(evaluated.Cast<PairValue>());
     }
 
     object? IFunction.Evaluate(object? value) => Evaluate(value);

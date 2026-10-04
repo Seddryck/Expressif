@@ -10,7 +10,7 @@ public class DrillUpTest
     {
         var observer = new KeyObserver();
         var function = new Expressif.Library.Grouping.DrillUp(observer.Evaluate);
-        var input = new Expressif.Values.Grouping([
+        var input = new Expressif.Values.GroupingValue([
             new PairValue("B", new[] { 2, 1 }),
             new PairValue("A", System.Array.Empty<object?>()),
             new PairValue("C", new[] { 3 }),
@@ -35,7 +35,7 @@ public class DrillUpTest
         first.Set("number", 2m);
         var second = new RecordValue();
         second.Set("number", 3m);
-        var group = new Expressif.Values.Grouping([
+        var group = new Expressif.Values.GroupingValue([
             new PairValue(first, new object?[] { "A" }),
             new PairValue(second, new object?[] { "B" }),
         ]);
@@ -50,7 +50,7 @@ public class DrillUpTest
     {
         var key = new RecordValue();
         key.Set("number", 2m);
-        var group = new Expressif.Values.Grouping([
+        var group = new Expressif.Values.GroupingValue([
             new PairValue(key, new object?[] { 1 }),
         ]);
 

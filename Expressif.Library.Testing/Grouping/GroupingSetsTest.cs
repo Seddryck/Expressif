@@ -1,7 +1,6 @@
 using Expressif.Functions;
 using Expressif.Testing.Conformance;
 using Expressif.Values;
-using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Testing.Grouping;
 

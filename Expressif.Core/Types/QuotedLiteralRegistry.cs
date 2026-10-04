@@ -1,6 +1,6 @@
 using System.Globalization;
 using Expressif.Values;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Types;
 

@@ -39,7 +39,7 @@ public sealed class ChunkWhile : BaseArrayFunction
         do
         {
             var current = enumerator.Current;
-            if (operation.Evaluate(new Values.Tuple(chunk.ToArray(), current)) is not bool continues)
+            if (operation.Evaluate(new Expressif.Values.TupleValue(chunk.ToArray(), current)) is not bool continues)
                 return null;
 
             if (!continues)

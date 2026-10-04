@@ -19,8 +19,7 @@ public class TupleFunctionsTest
     [Conformance]
     public void Tuple_Valid_VariableSpread(object? input, string expression, decimal[] values, string expected)
     {
-        var context = new Context();
-        context.Variables.Add<decimal[]>("values", values);
+        var context = EvaluationContext.CreateBuilder().AddValue("values", values).Build();
 
         Assert.That(
             ValueFormatter.Format(TestExpression.Create(expression, context).Evaluate(input)),
@@ -47,7 +46,7 @@ public class TupleFunctionsTest
             NormalizeTupleSyntax(value),
             @"(?<=\(|,)\s*([A-Za-z][\w-]*)\s*(?=,|\))",
             "\"$1\"");
-        return source == "T()" ? new Expressif.Values.Tuple() : (TupleValue)TestExpression.CreateClosed(source).Evaluate(null)!;
+        return source == "T()" ? new Expressif.Values.TupleValue() : (TupleValue)TestExpression.CreateClosed(source).Evaluate(null)!;
     }
 
     private static IPositionalValue ParseTupleLike(string value)
@@ -151,7 +150,7 @@ public class TupleFunctionsTest
         if (parameter == "T()")
         {
             Assert.That(
-                new Extend(_ => new Expressif.Values.Tuple()).Evaluate(ParseTupleLike(value)),
+                new Extend(_ => new Expressif.Values.TupleValue()).Evaluate(ParseTupleLike(value)),
                 Is.EqualTo(ParseTupleLike(expected)));
             return;
         }
@@ -181,16 +180,15 @@ public class TupleFunctionsTest
             Is.EqualTo(new TupleValue("Smith", "John", "Smith")));
 
     [Test]
-    public void Pick_TypedPositionsAreReadOnEachEvaluation()
+    public void Pick_TypedPositionsAreReadFromEachEvaluationContext()
     {
-        var context = new Context();
-        context.Variables.Set("position", 0);
-        var expression = TestExpression.Create("pick(@position)", context);
+        var expression = TestExpression.Create("pick(@position)");
         var input = new TupleValue("first", "second");
 
-        Assert.That(expression.Evaluate(input), Is.EqualTo(new TupleValue("first")));
-        context.Variables.Set("position", 1);
-        Assert.That(expression.Evaluate(input), Is.EqualTo(new TupleValue("second")));
+        Assert.That(expression.WithContext(EvaluationContext.CreateBuilder().AddValue("position", 0).Build()).Evaluate(input),
+            Is.EqualTo(new TupleValue("first")));
+        Assert.That(expression.WithContext(EvaluationContext.CreateBuilder().AddValue("position", 1).Build()).Evaluate(input),
+            Is.EqualTo(new TupleValue("second")));
     }
 
     [Test]
@@ -212,16 +210,16 @@ public class TupleFunctionsTest
     [Test]
     public void Group_TupleOperations_ReturnOrdinaryTuples()
     {
-        var group = new Expressif.Values.Group("USA", new[] { 1, 2 });
+        var group = new Expressif.Values.GroupValue("USA", new[] { 1, 2 });
 
         Assert.Multiple(() =>
         {
             Assert.That(new Arity().Evaluate(group), Is.EqualTo(2));
             Assert.That(new TupleAt(() => 0).Evaluate(group), Is.EqualTo("USA"));
             Assert.That(new TupleAt(() => 1).Evaluate(group), Is.EqualTo(new[] { 1, 2 }));
-            Assert.That(new Pick(() => new[] { 0, 1 }).Evaluate(group), Is.TypeOf<Expressif.Values.Tuple>());
-            Assert.That(new Swap().Evaluate(group), Is.TypeOf<Expressif.Values.Tuple>());
-            Assert.That(new Extend(_ => new Expressif.Values.Tuple()).Evaluate(group), Is.TypeOf<Expressif.Values.Tuple>());
+            Assert.That(new Pick(() => new[] { 0, 1 }).Evaluate(group), Is.TypeOf<Expressif.Values.TupleValue>());
+            Assert.That(new Swap().Evaluate(group), Is.TypeOf<Expressif.Values.TupleValue>());
+            Assert.That(new Extend(_ => new Expressif.Values.TupleValue()).Evaluate(group), Is.TypeOf<Expressif.Values.TupleValue>());
         });
     }
 
@@ -229,17 +227,17 @@ public class TupleFunctionsTest
     public void Swap_Pair_ReturnsOrdinaryTuple()
         => Assert.That(
             new Swap().Evaluate(new PairValue("USA", 42)),
-            Is.TypeOf<Expressif.Values.Tuple>().And.EqualTo(new TupleValue(42, "USA")));
+            Is.TypeOf<Expressif.Values.TupleValue>().And.EqualTo(new TupleValue(42, "USA")));
 
     [Test]
     public void Pick_Pair_ReturnsOrdinaryTuple()
         => Assert.That(
             new Pick(() => new[] { 1, 0 }).Evaluate(new PairValue("USA", 42)),
-            Is.TypeOf<Expressif.Values.Tuple>().And.EqualTo(new TupleValue(42, "USA")));
+            Is.TypeOf<Expressif.Values.TupleValue>().And.EqualTo(new TupleValue(42, "USA")));
 
     [Test]
     public void Extend_Pair_ReturnsOrdinaryTuple()
         => Assert.That(
-            new Extend(_ => new Expressif.Values.Tuple()).Evaluate(new PairValue("USA", 42)),
-            Is.TypeOf<Expressif.Values.Tuple>().And.EqualTo(new TupleValue("USA", 42)));
+            new Extend(_ => new Expressif.Values.TupleValue()).Evaluate(new PairValue("USA", 42)),
+            Is.TypeOf<Expressif.Values.TupleValue>().And.EqualTo(new TupleValue("USA", 42)));
 }

@@ -1,6 +1,5 @@
 using System.Collections;
 using Expressif.Values;
-using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Library.Array.Combination;
 

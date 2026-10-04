@@ -37,7 +37,7 @@ public sealed class Rotate : IFunction<IPositionalValue, TupleValue?>
                     position = 0;
             }
         }
-        return new Expressif.Values.Tuple(values);
+        return new Expressif.Values.TupleValue(values);
     }
 
     object? IFunction.Evaluate(object? value) => value is IPositionalValue tuple ? Evaluate(tuple) : null;

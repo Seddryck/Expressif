@@ -122,7 +122,7 @@ public class ValueSerializersTests
         ]);
 
         var serialized = Raw.Serialize(source);
-        var parsed = Expression.CreateClosed(serialized, new Expressif.Bindings.ExpressionBinder()).Evaluate(null);
+        var parsed = Expressif.Hosting.ExpressifEnvironment.Default.CreateClosedExpression(serialized).Evaluate(null);
 
         Assert.Multiple(() =>
         {

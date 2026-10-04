@@ -2,7 +2,7 @@ using Expressif.Functions;
 using Expressif.Library.Record;
 using Expressif.Library.Sorting;
 using Expressif.Syntax;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Bindings;
 

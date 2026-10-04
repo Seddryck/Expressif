@@ -13,7 +13,6 @@ using Expressif.Discovery;
 using Expressif.Testing.Conformance;
 using Expressif.Values;
 using PivotFunction = Expressif.Library.Array.Grouping.Pivot;
-using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Testing.Array.Grouping;
 
@@ -79,7 +78,7 @@ public class PivotTest
             {
                 calls.Add("summary");
                 var grouping = (GroupingValue)value!;
-                return new Expressif.Values.Dictionary(grouping.Select(group => new PairValue(group.Key, group.Count)));
+                return new Expressif.Values.DictionaryValue(grouping.Select(group => new PairValue(group.Key, group.Count)));
             });
 
         var result = function.Evaluate(new[] { 1, 1, 2 });
@@ -99,7 +98,7 @@ public class PivotTest
             {
                 calls++;
                 Assert.That(((GroupingValue)value!).Count, Is.Zero);
-                return new Expressif.Values.Dictionary([]);
+                return new Expressif.Values.DictionaryValue([]);
             });
         Assert.That(function.Evaluate(System.Array.Empty<object>()), Is.Empty);
         Assert.That(calls, Is.EqualTo(1));

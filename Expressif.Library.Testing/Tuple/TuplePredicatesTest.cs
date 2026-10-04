@@ -17,7 +17,7 @@ public class TuplePredicatesTest
         {
             Assert.That(new IsTuple().Evaluate(new TupleValue(1, "x")), Is.True);
             Assert.That(new IsTuple().Evaluate(new PairValue("USA", 42)), Is.True);
-            Assert.That(new IsTuple().Evaluate(new Group("USA", new[] { 1, 2 })), Is.True);
+            Assert.That(new IsTuple().Evaluate(new GroupValue("USA", new[] { 1, 2 })), Is.True);
             Assert.That(new IsTuple().Evaluate(new object?[] { 1, 2 }), Is.False);
             Assert.That(new IsTuple().Evaluate(42), Is.False);
         });
@@ -60,5 +60,5 @@ public class TuplePredicatesTest
             : value;
 
     private static TupleValue ParseTuple(string value)
-        => value == "T()" ? new Expressif.Values.Tuple() : (TupleValue)TestExpression.CreateClosed(value).Evaluate(null)!;
+        => value == "T()" ? new Expressif.Values.TupleValue() : (TupleValue)TestExpression.CreateClosed(value).Evaluate(null)!;
 }

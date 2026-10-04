@@ -17,7 +17,7 @@ public class ExpressifEnvironmentTest
         var expression = environment.CreateExpression("trim | upper");
         var closedExpression = environment.CreateClosedExpression("\"alice\" | upper");
         var predication = environment.CreatePredication("lower-case");
-        var builtExpression = environment.CreateExpressionBuilder().Chain<Lower>().Build();
+        var builtExpression = environment.CreateExpressionBuilder().Create<Lower>().Build();
         var builtPredication = environment.CreatePredicationBuilder().Create<StartsWith>("Nik").Build();
 
         Assert.Multiple(() =>
@@ -41,7 +41,7 @@ public class ExpressifEnvironmentTest
         var expression = environment.CreateClosedExpression("#\"1.2.3\":semver | bump-patch");
         var factoryExpression = environment.CreateExpressionFactory()
             .CreateClosed("#\"2.3.4\":semver | bump-minor");
-        var builtExpression = environment.CreateExpressionBuilder().Chain<BumpPatch>().Build();
+        var builtExpression = environment.CreateExpressionBuilder().Create<BumpPatch>().Build();
 
         Assert.Multiple(() =>
         {
@@ -55,24 +55,23 @@ public class ExpressifEnvironmentTest
     }
 
     [Test]
-    public void ContextAndEvaluationContext_HaveSeparateLifetimes()
+    public void EvaluationContext_ConfiguresBuiltAndParsedExpressions()
     {
-        var context = new Context();
-        context.Variables.Add<string>("suffix", "!");
-        var built = ExpressifEnvironment.Default.CreateExpressionBuilder(context)
-            .Chain<Append>(ctx => ctx.Variables["suffix"])
+        var built = ExpressifEnvironment.Default.CreateExpressionBuilder()
+            .Create<Append>(Argument.From<string>(ctx => ctx.GetVariable<string>("suffix")))
             .Build();
 
         var reusable = ExpressifEnvironment.Default.CreateExpression("append(@suffix)");
-        var evaluated = reusable.WithContext(new EvaluationContext(
-            new Dictionary<string, object?> { ["suffix"] = "?" }));
+        var builtContext = EvaluationContext.CreateBuilder().AddValue("suffix", "!").Build();
+        var evaluatedContext = EvaluationContext.CreateBuilder().AddValue("suffix", "?").Build();
+        var predicateContext = EvaluationContext.CreateBuilder().AddValue("prefix", "Nik").Build();
+        var evaluated = reusable.WithContext(evaluatedContext);
         var predication = ExpressifEnvironment.Default.CreatePredication("starts-with(@prefix)")
-            .WithContext(new EvaluationContext(
-                new Dictionary<string, object?> { ["prefix"] = "Nik" }));
+            .WithContext(predicateContext);
 
         Assert.Multiple(() =>
         {
-            Assert.That(built.Evaluate("Hello"), Is.EqualTo("Hello!"));
+            Assert.That(built.WithContext(builtContext).Evaluate("Hello"), Is.EqualTo("Hello!"));
             Assert.That(evaluated.Evaluate("Hello"), Is.EqualTo("Hello?"));
             Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
         });

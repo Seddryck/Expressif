@@ -1,7 +1,6 @@
 using Expressif.Functions.Accumulation;
 using Expressif.Functions;
 using Expressif.Values;
-using GroupingValue = Expressif.Values.Grouping;
 using SummarizeAgainstFunction = Expressif.Library.Grouping.SummarizeAgainst;
 
 namespace Expressif.Testing.Grouping;

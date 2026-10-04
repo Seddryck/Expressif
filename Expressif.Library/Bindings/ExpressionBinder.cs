@@ -4,7 +4,7 @@ using Expressif.Syntax;
 using Expressif.Discovery;
 using Expressif.Library.Composition;
 using Expressif.Planning;
-using Expressif.Values.Types;
+using Expressif.Types;
 using Expressif.Values;
 using Expressif.Functions.Coercions;
 using Expressif.Hosting;
@@ -31,7 +31,7 @@ public sealed class ExpressionBinder : IExpressionBinder
     public ExpressionBinder()
         : this(new Context()) { }
 
-    public ExpressionBinder(IContext context)
+    internal ExpressionBinder(IContext context)
         : this(context, new CompositeTypeSource(BuiltInSource)) { }
 
     /// <summary>Creates a binder with the supplied immutable library environment.</summary>
@@ -39,7 +39,7 @@ public sealed class ExpressionBinder : IExpressionBinder
         : this(new Context(), environment) { }
 
     /// <summary>Creates a binder with the supplied context and immutable library environment.</summary>
-    public ExpressionBinder(IContext context, ExpressifEnvironment environment)
+    internal ExpressionBinder(IContext context, ExpressifEnvironment environment)
         : this(
             context,
             LogicalPlannerFactory.Create(
@@ -64,7 +64,7 @@ public sealed class ExpressionBinder : IExpressionBinder
     /// </summary>
     /// <param name="context">The evaluation context.</param>
     /// <param name="extensions">The source of extension operator types.</param>
-    public ExpressionBinder(IContext context, ITypeSource extensions)
+    internal ExpressionBinder(IContext context, ITypeSource extensions)
         : this(context, Compose(extensions)) { }
 
     private ExpressionBinder(IContext context, CompositeTypeSource source)

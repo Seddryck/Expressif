@@ -143,13 +143,13 @@ public class CoerceFunctionsTest
     public void Coerce_PairToTuple_MaterializesOrdinaryTuple()
         => Assert.That(
             TestExpression.CreateClosed("(\"USA\" => 42) | coerce(:tuple)").Evaluate(null),
-            Is.TypeOf<Expressif.Values.Tuple>().And.EqualTo(new TupleValue("USA", 42m)));
+            Is.TypeOf<Expressif.Values.TupleValue>().And.EqualTo(new TupleValue("USA", 42m)));
 
     [Test]
     public void Coerce_GroupToTuple_UsesKeyAndValuesPositions()
         => Assert.That(
-            new Coerce(typeof(TupleValue)).Evaluate(new Group("USA", new[] { 1, 2 })),
-            Is.TypeOf<Expressif.Values.Tuple>().And.EqualTo(new TupleValue("USA", new[] { 1, 2 })));
+            new Coerce(typeof(TupleValue)).Evaluate(new GroupValue("USA", new[] { 1, 2 })),
+            Is.TypeOf<Expressif.Values.TupleValue>().And.EqualTo(new TupleValue("USA", new[] { 1, 2 })));
 
     [Conformance]
     public void CoerceNumeric_Valid(object? value, decimal? expected)
@@ -219,7 +219,7 @@ public class CoerceFunctionsTest
     [TestCase("coerce-datetime", "2026-08-19 14:30:00", typeof(DateTime))]
     public void CoerceFunctions_AreAvailableToExpressionFactory(string name, object value, Type expectedType)
     {
-        var function = TestExpression.Create(name, new Context());
+        var function = TestExpression.Create(name);
 
         Assert.That(function.Evaluate(value), Is.TypeOf(expectedType));
     }

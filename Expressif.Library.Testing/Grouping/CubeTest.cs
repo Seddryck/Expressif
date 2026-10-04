@@ -2,7 +2,6 @@ using Expressif.Functions;
 using Expressif.Testing.Conformance;
 using Expressif.Values;
 using Cube = Expressif.Library.Grouping.Cube;
-using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Testing.Grouping;
 
@@ -30,7 +29,7 @@ public class CubeTest
     {
         IFunction<GroupingValue, GroupingValue> function = new Cube();
         var item = new object();
-        var input = new GroupingValue([new PairValue(new Expressif.Values.Tuple(null, 1), new object?[] { item, null, item })]);
+        var input = new GroupingValue([new PairValue(new Expressif.Values.TupleValue(null, 1), new object?[] { item, null, item })]);
         var first = function.Evaluate(input);
         var second = function.Evaluate(input);
         var rollUp = new Expressif.Library.Grouping.RollUp().Evaluate(input);

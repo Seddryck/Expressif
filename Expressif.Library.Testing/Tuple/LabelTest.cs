@@ -56,15 +56,14 @@ public class LabelTest
             Is.EqualTo("{a := 1, b := 2}"));
 
     [Test]
-    public void Label_TypedNamesAreReadOnEachEvaluation()
+    public void Label_TypedNamesAreReadFromEachEvaluationContext()
     {
-        var context = new Context();
-        context.Variables.Set("name", "first");
-        var expression = TestExpression.Create("label(@name)", context);
+        var expression = TestExpression.Create("label(@name)");
 
-        Assert.That(ValueFormatter.Format(expression.Evaluate(new TupleValue(42))), Is.EqualTo("{first := 42}"));
-        context.Variables.Set("name", "second");
-        Assert.That(ValueFormatter.Format(expression.Evaluate(new TupleValue(42))), Is.EqualTo("{second := 42}"));
+        var first = expression.WithContext(EvaluationContext.CreateBuilder().AddValue("name", "first").Build());
+        var second = expression.WithContext(EvaluationContext.CreateBuilder().AddValue("name", "second").Build());
+        Assert.That(ValueFormatter.Format(first.Evaluate(new TupleValue(42))), Is.EqualTo("{first := 42}"));
+        Assert.That(ValueFormatter.Format(second.Evaluate(new TupleValue(42))), Is.EqualTo("{second := 42}"));
     }
 
     [TestCase("label")]

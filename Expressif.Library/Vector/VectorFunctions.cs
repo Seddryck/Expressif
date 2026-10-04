@@ -78,7 +78,7 @@ public sealed class Normalize : IFunction<VectorValue, VectorValue>
         if (magnitude == 0)
             throw new InvalidOperationException("A zero vector cannot be normalized.");
 
-        return new Expressif.Values.Vector(VectorMath.Components(value)
+        return new Expressif.Values.VectorValue(VectorMath.Components(value)
             .Select(component => (object?)(component / magnitude))
             .ToArray());
     }

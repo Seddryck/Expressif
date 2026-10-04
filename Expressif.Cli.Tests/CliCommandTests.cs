@@ -2713,10 +2713,12 @@ public class CliCommandTests
     private sealed class FakeExpressionService : IExpressionService
     {
         public Func<string, Context, IExpression> CompileOpenHandler { get; set; }
-            = static (code, context) => Expression.Create(code, new Expressif.Bindings.ExpressionBinder(context));
+            = static (code, context) => new global::Expressif.ExpressionFactory(
+                new Expressif.Bindings.ExpressionBinder(context)).Create(code);
 
         public Func<string, Context, IExpression> CompileClosedHandler { get; set; }
-            = static (code, context) => Expression.CreateClosed(code, new Expressif.Bindings.ExpressionBinder(context));
+            = static (code, context) => new global::Expressif.ExpressionFactory(
+                new Expressif.Bindings.ExpressionBinder(context)).CreateClosed(code);
 
         public Func<IExpression, object?, object?> EvaluateHandler { get; set; }
             = static (expression, input) => expression.Evaluate(input);

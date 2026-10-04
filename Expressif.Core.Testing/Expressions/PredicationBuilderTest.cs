@@ -1,148 +1,113 @@
-using Expressif.Bindings;
+using Expressif.Hosting;
 using Expressif.Library.Text;
 
 namespace Expressif.Testing.Expressions;
 
 public class PredicationBuilderTest
 {
-    [Test]
-    public void Build_NoPredicate_ThrowException()
-        => Assert.That(() => new TestPredicationBuilder().Build(), Throws.TypeOf<InvalidOperationException>());
+    private static PredicationBuilder CreateBuilder()
+        => ExpressifEnvironment.Default.CreatePredicationBuilder();
 
     [Test]
-    public void Chain_WithoutParameter_CorrectlyEvaluate()
+    public void Create_BuildsSingleRule()
     {
-        var builder = new TestPredicationBuilder().Create<LowerCase>();
-        var predicate = builder.Build();
+        var predicate = CreateBuilder().Create<StartsWith>("Nik").Build();
+        Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
+    }
+
+    [Test]
+    public void AndOrXor_CombineRules()
+    {
+        var predicate = CreateBuilder()
+            .Create<StartsWith>("ola")
+            .Or<EndsWith>("sla")
+            .And<SortedAfter>("Alan Turing")
+            .Xor<SortedBefore>("Marie Curie")
+            .Build();
+
+        Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
+    }
+
+    [Test]
+    public void Not_NegatesWholeRule()
+    {
+        var predicate = CreateBuilder()
+            .Create<StartsWith>("Nik")
+            .And<EndsWith>("sla")
+            .Not()
+            .Build();
+
         Assert.That(predicate.Evaluate("Nikola Tesla"), Is.False);
     }
 
     [Test]
-    public void Chain_WithParameter_CorrectlyEvaluate()
+    public void Combination_TypeOverloadsBuildRule()
     {
-        var builder = new TestPredicationBuilder().Create<StartsWith>("Nik");
-        var predicate = builder.Build();
+        var predicate = CreateBuilder()
+            .Create(typeof(StartsWith), "Nik")
+            .And(typeof(EndsWith), "sla")
+            .Build();
+
         Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
     }
 
     [Test]
-    public void Not_WithParameters_CorrectlyEvaluate()
+    public void Combination_RuleOverloadsPreserveGrouping()
     {
-        var builder = new TestPredicationBuilder().Not<StartsWith>("Nik");
-        var expression = builder.Build();
-        Assert.That(expression.Evaluate("Nikola Tesla"), Is.False);
+        var builder = CreateBuilder();
+        var name = builder.Create<StartsWith>("Nik").And<EndsWith>("sla");
+        var casing = builder.Create<LowerCase>().Or<UpperCase>();
+        var rule = name.Or(casing);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(rule.Build().Evaluate("Nikola Tesla"), Is.True);
+            Assert.That(rule.ToSource(), Is.EqualTo("{{starts-with(Nik) |AND ends-with(sla)} |OR {lower-case |OR upper-case}}"));
+        });
     }
 
     [Test]
-    public void Chain_CombinationAnd_CorrectlyEvaluate()
+    public void Combination_DoesNotMutateEarlierRule()
     {
-        var builder = new TestPredicationBuilder()
-            .Create<StartsWith>("Nik")
-            .And<EndsWith>("sla");
-        var predicate = builder.Build();
-        Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
+        var startsWith = CreateBuilder().Create<StartsWith>("Nik");
+        var fullName = startsWith.And<EndsWith>("sla");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(startsWith.ToSource(), Is.EqualTo("starts-with(Nik)"));
+            Assert.That(fullName.ToSource(), Is.EqualTo("{starts-with(Nik) |AND ends-with(sla)}"));
+        });
     }
 
     [Test]
-    public void Chain_CombinationOr_CorrectlyEvaluate()
+    public void Build_CanBeRepeated()
     {
-        var builder = new TestPredicationBuilder()
-            .Create<StartsWith>("ola")
-            .Or<EndsWith>("sla");
-        var predicate = builder.Build();
-        Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
+        var rule = CreateBuilder().Create<StartsWith>("Nik");
+        var first = rule.Build();
+        var second = rule.Build();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(first, Is.Not.SameAs(second));
+            Assert.That(first.Evaluate("Nikola"), Is.True);
+            Assert.That(second.Evaluate("Ada"), Is.False);
+        });
     }
 
     [Test]
-    public void AndOrXor_Generic_CorrectlyEvaluate()
+    public void ArgumentProvider_UsesEvaluationContext()
     {
-        var builder = new TestPredicationBuilder()
-            .Create<StartsWith>("ola")
-            .Or<EndsWith>("sla")
-            .And<SortedAfter>("Alan Turing")
-            .Xor<SortedBefore>("Marie Curie");
-        var predicate = builder.Build();
-        Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
+        var rule = CreateBuilder().Create<StartsWith>(
+            Argument.From<string>(scope => scope.GetVariable<string>("prefix")));
+        var context = EvaluationContext.CreateBuilder().AddValue("prefix", "Nik").Build();
+
+        Assert.That(rule.Build().WithContext(context).Evaluate("Nikola Tesla"), Is.True);
     }
 
     [Test]
-    public void Chain_NegateGenericFluent_CorrectlyEvaluate()
+    public void ToSource_SerializesNegation()
     {
-        var builder = new TestPredicationBuilder()
-            .Create<StartsWith>("ola")
-            .OrNot<EndsWith>("Tes");
-        var predicate = builder.Build();
-        Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
+        var source = CreateBuilder().Create<StartsWith>("Nik").Not().ToSource();
+        Assert.That(source, Is.EqualTo("!{starts-with(Nik)}"));
     }
-
-    [Test]
-    public void Chain_SubPredication_CorrectlyEvaluate()
-    {
-        var subPredicate = new TestPredicationBuilder()
-            .Create<StartsWith>("Nik")
-            .And<EndsWith>("sla");
-
-        var builder = new TestPredicationBuilder()
-            .Create<LowerCase>()
-            .Or(subPredicate)
-            .Or<UpperCase>();
-
-        var predicate = builder.Build();
-        Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
-    }
-
-    [Test]
-    public void Serialize_SubPredication_CorrectlySerialized()
-    {
-        var subPredicate = new TestPredicationBuilder()
-            .Create<StartsWith>("Nik")
-            .And<EndsWith>("sla");
-
-        var builder = new TestPredicationBuilder()
-            .Create<LowerCase>()
-            .Or(subPredicate)
-            .Or<UpperCase>();
-
-        var str = builder.Serialize();
-        Assert.That(str, Is.EqualTo("{{lower-case |OR {starts-with(Nik) |AND ends-with(sla)}} |OR upper-case}"));
-    }
-
-    [Test]
-    public void Serialize_Not_CorrectlySerialized()
-    {
-        var builder = new TestPredicationBuilder().Not<StartsWith>("Nik");
-        var str = builder.Serialize();
-        Assert.That(str, Is.EqualTo("!{starts-with(Nik)}"));
-    }
-
-    [Test]
-    public void Serialize_Negate_CorrectlySerialized()
-    {
-        var builder = new TestPredicationBuilder()
-            .Create<StartsWith>("ola")
-            .OrNot<EndsWith>("sla");
-        var str = builder.Serialize();
-        Assert.That(str, Is.EqualTo("{starts-with(ola) |OR !{ends-with(sla)}}"));
-    }
-
-    [Test]
-    public void Chain_MultipleWithContext_CorrectlyEvaluate()
-    {
-        var context = new Context();
-        var builder = new TestPredicationBuilder(context)
-            .Create<StartsWith>(ctx => ctx.Variables["myVar"])
-            .And<EndsWith>(ctx => ctx.CurrentObject[1]);
-        var predication = builder.Build();
-
-        context.Variables.Add<string>("myVar", "Nik");
-        context.CurrentObject.Set(new List<string>() { "stein", "sla", "Alb" });
-        Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
-
-        context.CurrentObject.Set(new List<string>() { "sla", "stein","Alb" });
-        Assert.That(predication.Evaluate("Nikola Tesla"), Is.False);
-    }
-
-    [Test]
-    public void Serialize_NoPredicate_ThrowException()
-        => Assert.That(() => new TestPredicationBuilder().Serialize(), Throws.TypeOf<InvalidOperationException>());
 }

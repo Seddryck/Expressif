@@ -13,7 +13,7 @@ public class DrillDownTest
             value => { visited.Add($"first:{value}"); return value; },
             value => { visited.Add($"second:{value}"); return null; },
         ]);
-        var input = new Expressif.Values.Grouping([new PairValue("key", new[] { 2, 1, 2 })]);
+        var input = new Expressif.Values.GroupingValue([new PairValue("key", new[] { 2, 1, 2 })]);
 
         var first = function.Evaluate(input);
         var second = function.Evaluate(input);

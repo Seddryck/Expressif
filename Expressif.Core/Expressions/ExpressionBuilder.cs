@@ -1,105 +1,83 @@
 using Expressif.Bindings;
 using Expressif.Functions;
 using Expressif.Serialization;
-using Expressif.Values.Special;
-using System.Linq.Expressions;
 
 namespace Expressif;
 
-public class ExpressionBuilder
+/// <summary>Starts a typed, persistent expression pipeline.</summary>
+public sealed class ExpressionBuilder
 {
-    private IContext Context { get; }
-    private FunctionFactory Factory { get; }
-    private ExpressionSerializer Serializer { get; }
+    private readonly FunctionFactory factory;
 
-    public ExpressionBuilder(FunctionFactory factory)
-        : this(factory, new Context()) { }
+    internal ExpressionBuilder(FunctionFactory factory)
+        => this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
 
-    public ExpressionBuilder(
-        FunctionFactory factory,
-        IContext? context)
-        => (Factory, Context, Serializer) = (
-            factory ?? throw new ArgumentNullException(nameof(factory)),
-            context ?? new Context(),
-            new ExpressionSerializer());
-
-    private Queue<IBoundExpression> Pile { get; } = new();
-
-    public ExpressionBuilder Chain<T>()
+    public Pipeline Create<T>()
         where T : IFunction
-        => Chain(typeof(T), []);
+        => Create(typeof(T));
 
-    public ExpressionBuilder Chain<T>(params object?[] parameters)
+    public Pipeline Create<T>(params object?[] arguments)
         where T : IFunction
-        => Chain(typeof(T), parameters);
+        => Create(typeof(T), arguments);
 
-    public ExpressionBuilder Chain<T>(params Expression<Func<IContext, object?>>[] parameters)
-        where T : IFunction
-        => Chain(typeof(T), parameters);
+    public Pipeline Create(Type type, params object?[] arguments)
+        => new(factory, [CreateFunction(type, arguments)]);
 
-    public ExpressionBuilder Chain(Type type, params object?[] parameters)
+    private static Bindings.Function CreateFunction(Type type, object?[] arguments)
     {
-        if (!type.GetInterfaces().Contains(typeof(IFunction)))
-            throw new ArgumentException($"The type '{type.FullName}' doesn't implement the interface '{nameof(IFunction)}'. Only types implementing this interface can be chained to create an expression.", nameof(type));
-
-        Pile.Enqueue(new Bindings.Function(type.Name, Parametrize(parameters)));
-        return this;
-    }
-
-    protected virtual IParameter[] Parametrize(object?[] parameters)
-    {
-        var typedParameters = new List<IParameter>();
-        foreach (var parameter in parameters)
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(arguments);
+        if (!typeof(IFunction).IsAssignableFrom(type))
         {
-            typedParameters.Add(parameter switch
-            {
-                IParameter p => p,
-                Expression<Func<IContext, object?>> expression => new ContextParameter(expression.Compile()),
-                _ => new LiteralParameter(parameter?.ToString() ?? Null.Keyword)
-            });
-        }
-        return [.. typedParameters];
-    }
-
-    public ExpressionBuilder Chain(ExpressionBuilder builder)
-    {
-        foreach (var element in builder.Pile)
-            Pile.Enqueue(element);
-        return this;
-    }
-
-    public ExpressionBuilder Chain(Bindings.Function function)
-    {
-        Pile.Enqueue(function);
-        return this;
-    }
-
-    public IFunction Build()
-    {
-        IFunction? function = null;
-        if (Pile.Count == 0)
-            throw new InvalidOperationException();
-
-        while (Pile.Count != 0)
-        {
-            var member = Pile.Dequeue() switch
-            {
-                Bindings.Function f => Factory.Instantiate(f.Name, f.Parameters.ToArray(), Context),
-                ExpressionBuilder b => b.Build(),
-                IFunction f => f,
-                _ => throw new NotSupportedException()
-            };
-            function = function is null ? member : new ChainFunction([function, member]);
+            throw new ArgumentException(
+                $"The type '{type.FullName}' does not implement '{nameof(IFunction)}'.",
+                nameof(type));
         }
 
-        return function!;
+        return Bindings.Function.FromParameters(type.Name, Parametrize(arguments));
     }
 
-    public string Serialize()
-    {
-        if (Pile.Count == 0)
-            throw new InvalidOperationException();
+    private static IReadOnlyList<IParameter> Parametrize(IEnumerable<object?> arguments)
+        => BindingCollections.Freeze(arguments.Select(argument => argument switch
+        {
+            IParameter parameter => parameter,
+            _ => new LiteralParameter(argument),
+        }));
 
-        return Serializer.Serialize([.. Pile]);
+    /// <summary>Represents a non-empty immutable expression pipeline.</summary>
+    public sealed class Pipeline
+    {
+        private readonly FunctionFactory factory;
+        private readonly IReadOnlyList<Bindings.Function> stages;
+
+        internal Pipeline(FunctionFactory factory, IEnumerable<Bindings.Function> stages)
+            => (this.factory, this.stages) = (factory, BindingCollections.Freeze(stages));
+
+        public Pipeline Then<T>()
+            where T : IFunction
+            => Then(typeof(T));
+
+        public Pipeline Then<T>(params object?[] arguments)
+            where T : IFunction
+            => Then(typeof(T), arguments);
+
+        public Pipeline Then(Type type, params object?[] arguments)
+            => new(factory, stages.Append(CreateFunction(type, arguments)));
+
+        public Pipeline Then(Pipeline pipeline)
+        {
+            ArgumentNullException.ThrowIfNull(pipeline);
+            if (!ReferenceEquals(factory, pipeline.factory))
+            {
+                throw new ArgumentException("Pipelines must originate from the same Expressif environment.", nameof(pipeline));
+            }
+
+            return new(factory, stages.Concat(pipeline.stages));
+        }
+
+        public IExpression Build()
+            => new Expression(factory.Instantiate(new OpenRootExpression(new OpenExpression(stages))));
+
+        public string ToSource() => new ExpressionSerializer().Serialize(new OpenExpression(stages));
     }
 }

@@ -33,7 +33,7 @@ internal sealed class SortTermFunctionConstructor : IFunctionConstructor<Express
             target,
             (left, right) => constructionContext.InvokeTuple(
                 canonicalName,
-                new Values.Tuple(left, right)) as OrderingValue);
+                new Expressif.Values.TupleValue(left, right)) as OrderingValue);
         var evaluator = constructionContext.CreateValueEvaluator(function.Parameters[0], context);
         if (function.Parameters is [_, _, var ascendingParameter, var nullsFirstParameter])
         {
@@ -49,7 +49,7 @@ internal sealed class SortTermFunctionConstructor : IFunctionConstructor<Express
         }
 
         return new Expressif.Library.Sorting.SortTerm(
-            () => evaluator.Invoke(EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value),
+            () => evaluator.Invoke(EvaluationRuntime.ArgumentInput ?? EvaluationRuntime.Frame?.Current),
             () => comparer);
     }
 }

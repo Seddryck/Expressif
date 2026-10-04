@@ -47,7 +47,7 @@ public class OuterJoinTest
     [Test]
     public void OuterJoin_SkipsRightSelectorForKeyedSource()
     {
-        var right = new Expressif.Values.Grouping([new PairValue(1, new object?[] { "A" }), new PairValue(2, new object?[] { "B" })]);
+        var right = new Expressif.Values.GroupingValue([new PairValue(1, new object?[] { "A" }), new PairValue(2, new object?[] { "B" })]);
         var join = new Expressif.Library.Array.Combination.JoinFull(() => right, value => value,
             _ => throw new AssertionException("A keyed source must skip the right selector."));
         Assert.That(ValueFormatter.Format(join.Evaluate(new object?[] { 1 })), Is.EqualTo("{(1 => \"A\"), (null => \"B\")}"));

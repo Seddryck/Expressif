@@ -106,7 +106,7 @@ internal sealed class PredicationFactory : BaseExpressionFactory, IPredicationFa
         return CreateFunctionCast(() =>
         {
             var expression = new FunctionFactory(source).Instantiate(open.Expression, context);
-            var input = EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value;
+            var input = EvaluationRuntime.ArgumentInput ?? EvaluationRuntime.Frame?.Current;
             if (scalarType == typeof(bool))
                 return new BooleanFunctionPredicate(expression).Evaluate(input);
 

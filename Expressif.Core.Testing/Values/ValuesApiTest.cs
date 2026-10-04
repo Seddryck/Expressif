@@ -1,6 +1,6 @@
 using Expressif.Values;
 using Expressif.Values.Special;
-using Expressif.Values.Types;
+using Expressif.Types;
 using System.Reflection;
 
 namespace Expressif.Testing.Values;
@@ -8,12 +8,14 @@ namespace Expressif.Testing.Values;
 [TestFixture]
 public class ValuesApiTest
 {
-    private static readonly Assembly Core = typeof(Pair).Assembly;
+    private static readonly Assembly Core = typeof(PairValue).Assembly;
 
-    [TestCase("Expressif.Values.PairValue")]
-    [TestCase("Expressif.Values.TupleValue")]
-    [TestCase("Expressif.Values.VectorValue")]
-    [TestCase("Expressif.Values.DictionaryValue")]
+    [TestCase("Expressif.Values.Pair")]
+    [TestCase("Expressif.Values.Tuple")]
+    [TestCase("Expressif.Values.Vector")]
+    [TestCase("Expressif.Values.Dictionary")]
+    [TestCase("Expressif.Values.Group")]
+    [TestCase("Expressif.Values.Grouping")]
     [TestCase("Expressif.Values.SortTermValue")]
     [TestCase("Expressif.Values.SortKeyValue")]
     [TestCase("Expressif.Values.ILiteDataRow")]
@@ -21,18 +23,16 @@ public class ValuesApiTest
     public void ParallelPublicValueType_IsRemoved(string name)
         => Assert.That(Core.GetType(name), Is.Null);
 
-    [TestCase(typeof(Pair))]
+    [TestCase(typeof(PairValue))]
     [TestCase(typeof(TupleValue))]
     [TestCase(typeof(VectorValue))]
     [TestCase(typeof(DictionaryValue))]
-    [TestCase(typeof(Group))]
-    [TestCase(typeof(Grouping))]
+    [TestCase(typeof(GroupValue))]
+    [TestCase(typeof(GroupingValue))]
     [TestCase(typeof(RecordValue))]
     [TestCase(typeof(SortTermValue))]
     [TestCase(typeof(SortKeyValue))]
     [TestCase(typeof(SortTableValue))]
-    [TestCase(typeof(ContextVariables))]
-    [TestCase(typeof(ContextObject))]
     [TestCase(typeof(Any))]
     [TestCase(typeof(Value))]
     [TestCase(typeof(Null))]
@@ -55,8 +55,8 @@ public class ValuesApiTest
         });
     }
 
-    [TestCase("Expressif.Values.Types.TypeIntrospector")]
-    [TestCase("Expressif.Values.Types.UnknownExpressifTypeException")]
+    [TestCase("Expressif.Types.TypeIntrospector")]
+    [TestCase("Expressif.Types.UnknownExpressifTypeException")]
     [TestCase("Expressif.Values.JsonValueParser")]
     [TestCase("Expressif.Values.NamedValueAccessor")]
     [TestCase("Expressif.Values.RecordSyntax")]

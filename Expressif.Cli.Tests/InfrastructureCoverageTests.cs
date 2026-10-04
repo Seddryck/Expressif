@@ -130,13 +130,15 @@ public class InfrastructureCoverageTests
     private sealed class FakeExpressionService : IExpressionService
     {
         public Func<string, Context, IExpression> CompileClosedHandler { get; init; }
-            = static (code, context) => Expression.CreateClosed(code, new Expressif.Bindings.ExpressionBinder(context));
+            = static (code, context) => new global::Expressif.ExpressionFactory(
+                new Expressif.Bindings.ExpressionBinder(context)).CreateClosed(code);
 
         public Func<IExpression, object?, object?> EvaluateHandler { get; init; }
             = static (expression, input) => expression.Evaluate(input);
 
         public IExpression CompileOpen(string code, Context context)
-            => Expression.Create(code, new Expressif.Bindings.ExpressionBinder(context));
+            => new global::Expressif.ExpressionFactory(
+                new Expressif.Bindings.ExpressionBinder(context)).Create(code);
         public IExpression CompileClosed(string code, Context context) => CompileClosedHandler(code, context);
         public IExpression CompileOpen(Expressif.Planning.LogicalPlan plan, Context context)
             => ((Expressif.Bindings.IExpressionBinder)new Expressif.Bindings.ExpressionBinder(context)).Bind(plan);

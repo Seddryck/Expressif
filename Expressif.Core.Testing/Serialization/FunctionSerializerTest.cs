@@ -29,7 +29,7 @@ public class FunctionSerializerTest
         var function = new Function(
             "tuple-at",
             [new TupleProjectionParameter(index, fromEnd)],
-            FunctionSyntax.InputTupleProjectionShorthand);
+            SourceNotation.InputTupleProjectionShorthand);
 
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo(expected));
     }

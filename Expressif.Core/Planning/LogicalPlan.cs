@@ -1,16 +1,29 @@
 using System.Text.Json;
+using Expressif.Bindings;
 using Expressif.Discovery;
 using Expressif.Syntax;
+using Expressif.Collections;
 
 namespace Expressif.Planning;
+
+#pragma warning disable SA1313 // Preserve record-compatible public constructor parameter names.
 
 /// <summary>
 /// A portable logical representation of an Expressif expression.
 /// </summary>
-public sealed record LogicalPlan(LogicalPipeline Pipeline)
+public sealed record LogicalPlan
 {
-    public IReadOnlyList<LogicalNamedExpressionDefinition> Definitions { get; init; } = [];
+    private IReadOnlyList<LogicalNamedExpressionDefinition> definitions = PlanningCollections.Empty<LogicalNamedExpressionDefinition>();
+
+    public LogicalPlan(LogicalPipeline Pipeline) => this.Pipeline = Pipeline;
+    public LogicalPipeline Pipeline { get; init; }
+    public IReadOnlyList<LogicalNamedExpressionDefinition> Definitions
+    {
+        get => definitions;
+        init => definitions = PlanningCollections.Freeze(value);
+    }
     public bool HasEntry => Pipeline.Items.Count > 0;
+    public void Deconstruct(out LogicalPipeline pipeline) => pipeline = Pipeline;
 }
 
 /// <summary>
@@ -29,14 +42,34 @@ public abstract record LogicalValue
 /// <summary>
 /// A reusable expression declared in a logical document.
 /// </summary>
-public sealed record LogicalNamedExpressionDefinition(
-    string Name,
-    LogicalPipeline Body,
-    IReadOnlyList<LogicalNamedExpressionParameter>? Parameters = null,
-    IReadOnlyList<LogicalNamedExpressionReceiver>? Receivers = null,
-    LogicalTypeContract? InputContract = null,
-    LogicalTypeContract? OutputContract = null)
+public sealed record LogicalNamedExpressionDefinition
 {
+    private IReadOnlyList<LogicalNamedExpressionParameter>? parameters;
+    private IReadOnlyList<LogicalNamedExpressionReceiver>? receivers;
+    public LogicalNamedExpressionDefinition(
+        string Name,
+        LogicalPipeline Body,
+        IReadOnlyList<LogicalNamedExpressionParameter>? Parameters = null,
+        IReadOnlyList<LogicalNamedExpressionReceiver>? Receivers = null,
+        LogicalTypeContract? InputContract = null,
+        LogicalTypeContract? OutputContract = null)
+        => (this.Name, this.Body, this.Parameters, this.Receivers, this.InputContract, this.OutputContract) =
+            (Name, Body, PlanningCollections.FreezeNullable(Parameters), PlanningCollections.FreezeNullable(Receivers), InputContract, OutputContract);
+
+    public string Name { get; init; }
+    public LogicalPipeline Body { get; init; }
+    public IReadOnlyList<LogicalNamedExpressionParameter>? Parameters
+    {
+        get => parameters;
+        init => parameters = PlanningCollections.FreezeNullable(value);
+    }
+    public IReadOnlyList<LogicalNamedExpressionReceiver>? Receivers
+    {
+        get => receivers;
+        init => receivers = PlanningCollections.FreezeNullable(value);
+    }
+    public LogicalTypeContract? InputContract { get; init; }
+    public LogicalTypeContract? OutputContract { get; init; }
     public IReadOnlyList<LogicalNamedExpressionParameter> EffectiveParameters => Parameters ?? [];
     public IReadOnlyList<LogicalNamedExpressionReceiver> EffectiveReceivers => Receivers ?? [];
 }
@@ -62,18 +95,33 @@ public sealed record LogicalTypeContract(string Type, bool Strict = false);
 /// <summary>
 /// Invokes a definition in the containing logical document.
 /// </summary>
-public sealed record LogicalNamedExpressionInvocation(
-    string Name,
-    IReadOnlyList<LogicalValue> Arguments) : LogicalValue
+public sealed record LogicalNamedExpressionInvocation : LogicalValue
 {
+    private IReadOnlyList<LogicalValue> arguments = PlanningCollections.Empty<LogicalValue>();
+    public LogicalNamedExpressionInvocation(string Name, IReadOnlyList<LogicalValue> Arguments)
+        => (this.Name, this.Arguments) = (Name, PlanningCollections.Freeze(Arguments));
+    public string Name { get; init; }
+    public IReadOnlyList<LogicalValue> Arguments
+    {
+        get => arguments;
+        init => arguments = PlanningCollections.Freeze(value);
+    }
     internal override bool IsKnownVariant => true;
 }
 
 /// <summary>
 /// A sequence whose output flows from one item to the next.
 /// </summary>
-public sealed record LogicalPipeline(IReadOnlyList<LogicalValue> Items) : LogicalValue
+public sealed record LogicalPipeline : LogicalValue
 {
+    private IReadOnlyList<LogicalValue> items = PlanningCollections.Empty<LogicalValue>();
+    public LogicalPipeline(IReadOnlyList<LogicalValue> Items)
+        => this.Items = PlanningCollections.Freeze(Items);
+    public IReadOnlyList<LogicalValue> Items
+    {
+        get => items;
+        init => items = PlanningCollections.Freeze(value);
+    }
     internal override bool IsKnownVariant => true;
     internal bool IsScalarReference { get; init; }
 }
@@ -81,15 +129,23 @@ public sealed record LogicalPipeline(IReadOnlyList<LogicalValue> Items) : Logica
 /// <summary>
 /// A canonical operator invocation.
 /// </summary>
-public sealed record LogicalCall(
-    PlannerFunctionDescriptor Function,
-    IReadOnlyList<LogicalArgument> Arguments,
-    int ContextDepth = 0) : LogicalValue
+public sealed record LogicalCall : LogicalValue
 {
+    private IReadOnlyList<LogicalArgument> arguments = PlanningCollections.Empty<LogicalArgument>();
+    public LogicalCall(PlannerFunctionDescriptor Function, IReadOnlyList<LogicalArgument> Arguments, int ContextDepth = 0)
+        => (this.Function, this.Arguments, this.ContextDepth) = (Function, PlanningCollections.Freeze(Arguments), ContextDepth);
+    public PlannerFunctionDescriptor Function { get; init; }
+    public IReadOnlyList<LogicalArgument> Arguments
+    {
+        get => arguments;
+        init => arguments = PlanningCollections.Freeze(value);
+    }
+    public int ContextDepth { get; init; }
     internal override bool IsKnownVariant => true;
     internal SourceSpan? SourceSpan { get; init; }
     internal bool IsReferenceShorthand { get; init; }
     internal bool IsReferenceContinuation { get; init; }
+    internal SourceNotation SourceNotation { get; init; }
 }
 
 /// <summary>
@@ -151,15 +207,41 @@ public sealed record PlannerFunctionDescriptor(
 /// <summary>
 /// The schema relationship declared by a planned operator.
 /// </summary>
-public sealed record PlannerSchemaDescriptor(
-    string? Input = null,
-    string? Output = null,
-    IReadOnlyDictionary<string, PlannerParameterSchemaDescriptor>? Parameters = null,
-    string? Intrinsic = null,
-    string? Nullability = null,
-    string? Classification = null,
-    string? DynamicReason = null,
-    IReadOnlyList<string>? NullableWhen = null);
+public sealed record PlannerSchemaDescriptor
+{
+    private IReadOnlyDictionary<string, PlannerParameterSchemaDescriptor>? parameters;
+    private IReadOnlyList<string>? nullableWhen;
+    public PlannerSchemaDescriptor(
+        string? Input = null,
+        string? Output = null,
+        IReadOnlyDictionary<string, PlannerParameterSchemaDescriptor>? Parameters = null,
+        string? Intrinsic = null,
+        string? Nullability = null,
+        string? Classification = null,
+        string? DynamicReason = null,
+        IReadOnlyList<string>? NullableWhen = null)
+        => (this.Input, this.Output, this.Parameters, this.Intrinsic, this.Nullability, this.Classification,
+            this.DynamicReason, this.NullableWhen) =
+            (Input, Output, PlanningCollections.FreezeNullable(Parameters), Intrinsic, Nullability, Classification,
+                DynamicReason, PlanningCollections.FreezeNullable(NullableWhen));
+
+    public string? Input { get; init; }
+    public string? Output { get; init; }
+    public IReadOnlyDictionary<string, PlannerParameterSchemaDescriptor>? Parameters
+    {
+        get => parameters;
+        init => parameters = PlanningCollections.FreezeNullable(value);
+    }
+    public string? Intrinsic { get; init; }
+    public string? Nullability { get; init; }
+    public string? Classification { get; init; }
+    public string? DynamicReason { get; init; }
+    public IReadOnlyList<string>? NullableWhen
+    {
+        get => nullableWhen;
+        init => nullableWhen = PlanningCollections.FreezeNullable(value);
+    }
+}
 
 /// <summary>
 /// The input and output schema relationship of an operator argument.
@@ -197,3 +279,22 @@ public sealed record PlannerEvaluationDescriptor(
     string Frequency,
     string? Source = null,
     string? Context = null);
+
+internal static class PlanningCollections
+{
+    public static IReadOnlyList<T> Empty<T>() => StructuralReadOnlyList<T>.Create([]);
+    public static IReadOnlyList<T> Freeze<T>(IEnumerable<T> values)
+        => StructuralReadOnlyList<T>.Create(values);
+    public static IReadOnlyList<T>? FreezeNullable<T>(IEnumerable<T>? values)
+        => values is null ? null : Freeze(values);
+    public static IReadOnlyDictionary<TKey, TValue>? FreezeNullable<TKey, TValue>(
+        IEnumerable<KeyValuePair<TKey, TValue>>? values)
+        where TKey : notnull
+        => values is null ? null : StructuralReadOnlyDictionary<TKey, TValue>.Create(values);
+    public static IReadOnlyDictionary<TKey, TValue> Freeze<TKey, TValue>(
+        IEnumerable<KeyValuePair<TKey, TValue>> values)
+        where TKey : notnull
+        => StructuralReadOnlyDictionary<TKey, TValue>.Create(values);
+}
+
+#pragma warning restore SA1313

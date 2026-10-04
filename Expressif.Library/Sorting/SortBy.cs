@@ -27,7 +27,7 @@ public sealed class SortBy : IFunction<IEnumerable, object?[]>
 
     internal static SortTableValue BuildTable(IEnumerable value, IReadOnlyList<SortByCriterion> criteria)
     {
-        var pairs = value.Cast<object?>().Select(item => new Values.Pair(
+        var pairs = value.Cast<object?>().Select(item => new Expressif.Values.PairValue(
             new Values.SortKey(criteria.Select(criterion => new Values.SortTerm(
                 criterion.Evaluate(item), criterion.Comparer, criterion.Ascending, criterion.NullsFirst)).ToArray()),
             item));

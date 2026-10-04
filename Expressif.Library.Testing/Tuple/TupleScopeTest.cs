@@ -3,6 +3,7 @@ using Expressif.Bindings;
 using Expressif.Serialization;
 using Expressif.Syntax;
 using Expressif.Testing.Conformance;
+using Expressif.Values;
 using NUnit.Framework;
 
 namespace Expressif.Testing.Tuple;
@@ -92,7 +93,7 @@ public class TupleScopeTest
         var argument = binder.BindSingleFunction(ExpressifSyntax.Parse($"add(({source}))"));
         Assert.Multiple(() =>
         {
-            Assert.That(stage.Syntax, Is.EqualTo(FunctionSyntax.ScopedTupleProjectionShorthand));
+            Assert.That(stage.Notation, Is.EqualTo(SourceNotation.ScopedTupleProjectionShorthand));
             Assert.That(stage.Parameters.Single(), Is.EqualTo(new ScopedTupleProjectionParameter(1, depth)));
             Assert.That(argument.Parameters.Single(), Is.EqualTo(new ScopedTupleProjectionParameter(1, depth)));
         });

@@ -21,14 +21,14 @@ internal static class BoundTreeFormatter
 
     private static TreeDocument ToDocument(Function function)
         => Node(
-            function.Syntax == FunctionSyntax.Standard
+            function.Notation == SourceNotation.StandardCall
                 ? $"Function: {function.Name}"
-                : $"Function: {function.Name} (from {function.Syntax})",
+                : $"Function: {function.Name} (from {function.Notation})",
             new Dictionary<string, object?>
             {
                 ["Kind"] = "Function",
                 ["Name"] = function.Name,
-                ["Syntax"] = function.Syntax.ToString()
+                ["Syntax"] = function.Notation.ToString()
             },
             function.Parameters.Select((parameter, index) => NamedParameter($"Arg[{index}]", parameter)));
 

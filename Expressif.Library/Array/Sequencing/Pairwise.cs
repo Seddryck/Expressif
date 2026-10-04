@@ -14,7 +14,7 @@ public class Pairwise : BaseArrayFunction
     protected override object? EvaluateArray(IEnumerable enumerable)
         => Enumerate(enumerable);
 
-    private static IEnumerable<Expressif.Values.Tuple> Enumerate(IEnumerable source)
+    private static IEnumerable<Expressif.Values.TupleValue> Enumerate(IEnumerable source)
     {
         var enumerator = source.GetEnumerator();
         try
@@ -26,7 +26,7 @@ public class Pairwise : BaseArrayFunction
             while (enumerator.MoveNext())
             {
                 var current = enumerator.Current;
-                yield return new Expressif.Values.Tuple(previous, current);
+                yield return new Expressif.Values.TupleValue(previous, current);
                 previous = current;
             }
         }

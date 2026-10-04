@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Values;
 
@@ -9,11 +9,11 @@ namespace Expressif.Values;
 /// Represents an immutable, ordered collection of heterogeneous values.
 /// </summary>
 [ExpressifType(Parent = "structured", LiteralSyntax = "T followed by parenthesized comma-separated values", LiteralExamples = ["T(\"Alice\", 42)"])]
-public sealed class Tuple : IReadOnlyList<object?>, IEquatable<Tuple>, IExpressifValueType, IPositionalValue
+public sealed class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>, IExpressifValueType, IPositionalValue
 {
     private readonly object?[] values;
 
-    public Tuple(params object?[] values)
+    public TupleValue(params object?[] values)
     {
         ArgumentNullException.ThrowIfNull(values);
         this.values = [.. values];
@@ -30,7 +30,7 @@ public sealed class Tuple : IReadOnlyList<object?>, IEquatable<Tuple>, IExpressi
     IEnumerator IEnumerable.GetEnumerator()
         => values.GetEnumerator();
 
-    public bool Equals(Tuple? other)
+    public bool Equals(TupleValue? other)
         => other is not null && PositionalValueEquality.Equals(this, other);
 
     public override bool Equals(object? obj)

@@ -5,9 +5,9 @@ namespace Expressif.Values;
 internal static class PositionalResultFactory
 {
     public static IPositionalValue? Create(IPositionalValue source, object?[] values)
-        => source is Vector
+        => source is VectorValue
             ? values.All(value => value is not null && TypeChecker.IsNumericType(value))
-                ? new Vector(values)
+                ? new VectorValue(values)
                 : null
-            : new Tuple(values);
+            : new TupleValue(values);
 }

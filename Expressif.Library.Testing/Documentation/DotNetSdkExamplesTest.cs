@@ -66,11 +66,9 @@ public class DotNetSdkExamplesTest
     {
         var expression = Environment.CreateExpression("suffix(@suffix)");
 
-        var context = new EvaluationContext(
-            new Dictionary<string, object?>
-            {
-                ["suffix"] = " Nikola!",
-            });
+        var context = EvaluationContext.CreateBuilder()
+            .AddValue("suffix", " Nikola!")
+            .Build();
 
         var configuredExpression = expression.WithContext(context);
         var result = configuredExpression.Evaluate("Hello");
@@ -84,11 +82,13 @@ public class DotNetSdkExamplesTest
     {
         var expression = Environment.CreateExpression("suffix(@suffix)");
 
-        var excited = expression.WithContext(new EvaluationContext(
-            new Dictionary<string, object?> { ["suffix"] = "!" }));
+        var excited = expression.WithContext(EvaluationContext.CreateBuilder()
+            .AddValue("suffix", "!")
+            .Build());
 
-        var questioning = expression.WithContext(new EvaluationContext(
-            new Dictionary<string, object?> { ["suffix"] = "?" }));
+        var questioning = expression.WithContext(EvaluationContext.CreateBuilder()
+            .AddValue("suffix", "?")
+            .Build());
 
         var first = excited.Evaluate("Really");
         var second = questioning.Evaluate("Really");
@@ -155,8 +155,8 @@ public class DotNetSdkExamplesTest
     public void ExpressionBuilder_CreatesPipeline()
     {
         var expression = Environment.CreateExpressionBuilder()
-            .Chain<Lower>()
-            .Chain<FirstChars>(5)
+            .Create<Lower>()
+            .Then<FirstChars>(5)
             .Build();
 
         var result = expression.Evaluate("Nikola Tesla");
@@ -169,10 +169,10 @@ public class DotNetSdkExamplesTest
     public void ExpressionBuilder_SerializesBeforeBuild()
     {
         var builder = Environment.CreateExpressionBuilder()
-            .Chain<Lower>()
-            .Chain<Length>();
+            .Create<Lower>()
+            .Then<Length>();
 
-        var source = builder.Serialize();
+        var source = builder.ToSource();
         var expression = builder.Build();
 
         Assert.Multiple(() =>
@@ -186,13 +186,11 @@ public class DotNetSdkExamplesTest
     [Category("documentation")]
     public void PredicationBuilder_ReadsParametersFromContext()
     {
-        var context = new Context();
-        context.Variables.Add<string>("prefix", "Nik");
+        var context = EvaluationContext.CreateBuilder().AddValue("prefix", "Nik").Build();
+        var builder = Environment.CreatePredicationBuilder()
+            .Create<StartsWith>(Argument.From<string>(ctx => ctx.GetVariable<string>("prefix")));
 
-        var builder = Environment.CreatePredicationBuilder(context)
-            .Create<StartsWith>(ctx => ctx.Variables["prefix"]);
-
-        var predicate = builder.Build();
+        var predicate = builder.Build().WithContext(context);
 
         Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
     }

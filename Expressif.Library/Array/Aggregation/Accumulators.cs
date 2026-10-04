@@ -240,7 +240,7 @@ public class ReduceAccumulator : BaseArrayAggregation
                 return;
             }
 
-            var pair = new Expressif.Values.Tuple(value, item);
+            var pair = new Expressif.Values.TupleValue(value, item);
             value = EvaluationRuntime.EvaluateNested(operation, pair);
         }
 

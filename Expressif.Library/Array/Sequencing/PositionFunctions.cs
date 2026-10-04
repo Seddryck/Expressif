@@ -17,11 +17,11 @@ public sealed class WithPosition : BaseArrayFunction
         return Enumerate(enumerable);
     }
 
-    private static IEnumerable<Expressif.Values.Tuple> Enumerate(IEnumerable source)
+    private static IEnumerable<Expressif.Values.TupleValue> Enumerate(IEnumerable source)
     {
         var position = 0;
         foreach (var item in source)
-            yield return new Expressif.Values.Tuple(position++, item);
+            yield return new Expressif.Values.TupleValue(position++, item);
     }
 }
 
