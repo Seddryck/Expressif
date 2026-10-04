@@ -1,6 +1,7 @@
 using Expressif.Bindings;
 using Expressif.Functions;
 using Expressif.Discovery;
+using Expressif.Library.Tuple;
 using Expressif.Predicates;
 using Expressif.Syntax;
 using Expressif.Values;
@@ -54,11 +55,11 @@ public sealed class TupleBindingAnalyzer
         foreach (var member in members)
         {
             VisitParameters(member.Parameters, uses);
-            if (member.Name.Equals("bind", StringComparison.OrdinalIgnoreCase))
+            if (TupleBindingPatternRecognizer.IsBind(member))
             {
                 uses.Add(Inspect(member, input));
             }
-            if (TupleBindingOperations.IsDefaultRotation(member)
+            if (TupleBindingPatternRecognizer.IsDefaultRotation(member)
                 && input is TupleParameter { Elements.Count: > 0 } tuple)
             {
                 input = new TupleParameter(

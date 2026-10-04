@@ -1,3 +1,5 @@
+using Expressif.Library.Tuple;
+
 namespace Expressif.Bindings;
 
 internal static class LegacyTupleBindingRules
@@ -6,7 +8,11 @@ internal static class LegacyTupleBindingRules
     {
         var rule = Semantics.UsageLifecycle.Find(consumer);
         if (rule is null) return false;
-        if (expression.InputBinding is not null || TupleBindingOperations.LeadingLength(expression) > 0) return false;
+        if (expression.InputBinding is not null
+            || TupleBindingPatternRecognizer.TryMatchLeading(expression, out _))
+        {
+            return false;
+        }
         var members = expression.Members.ToArray();
         return members is [{ Parameters.Count: 0 }, ..]
             && (rule.AllowFollowingStages || members.Length == 1);

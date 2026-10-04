@@ -1,5 +1,6 @@
 using Expressif.Bindings;
 using Expressif.Library.Array;
+using Expressif.Library.Tuple;
 using Expressif.Semantics;
 
 namespace Expressif.Library.Composition;
@@ -38,7 +39,7 @@ internal static class DirectionalMapConstruction
         bool mapOver)
     {
         var members = expression.Expression.Members.ToArray();
-        if (TupleBindingOperations.LeadingLength(expression.Expression) > 0)
+        if (TupleBindingPatternRecognizer.TryMatchLeading(expression.Expression, out _))
             return BuildExplicitOperation(expression.Expression, context, constructionContext, mapOver);
         var isBareCallable = LegacyTupleBindingRules.IsCandidate(
             mapOver ? "map-over" : "map-with", expression.Expression);

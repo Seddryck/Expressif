@@ -393,7 +393,6 @@ Expressif.Bindings.TupleBindingFailure.IneligibleTarget = 1 -> Expressif.Binding
 Expressif.Bindings.TupleBindingFailure.InvalidArity = 3 -> Expressif.Bindings.TupleBindingFailure
 Expressif.Bindings.TupleBindingFailure.InvalidInput = 2 -> Expressif.Bindings.TupleBindingFailure
 Expressif.Bindings.TupleBindingFailure.UnknownTarget = 0 -> Expressif.Bindings.TupleBindingFailure
-Expressif.Bindings.TupleBindingOperations
 Expressif.Bindings.TupleCoercionParameter
 Expressif.Bindings.TupleCoercionParameter.Deconstruct(out int Position, out System.Type! TargetType) -> void
 Expressif.Bindings.TupleCoercionParameter.Equals(Expressif.Bindings.TupleCoercionParameter? other) -> bool
@@ -1505,7 +1504,6 @@ static Expressif.Bindings.SinglePredication.operator !=(Expressif.Bindings.Singl
 static Expressif.Bindings.SinglePredication.operator ==(Expressif.Bindings.SinglePredication? left, Expressif.Bindings.SinglePredication? right) -> bool
 static Expressif.Bindings.SortCriterionParameter.operator !=(Expressif.Bindings.SortCriterionParameter? left, Expressif.Bindings.SortCriterionParameter? right) -> bool
 static Expressif.Bindings.SortCriterionParameter.operator ==(Expressif.Bindings.SortCriterionParameter? left, Expressif.Bindings.SortCriterionParameter? right) -> bool
-static Expressif.Bindings.TupleBindingOperations.LeadingLength(Expressif.Bindings.OpenExpression! expression) -> int
 static Expressif.Bindings.TupleCoercionParameter.operator !=(Expressif.Bindings.TupleCoercionParameter? left, Expressif.Bindings.TupleCoercionParameter? right) -> bool
 static Expressif.Bindings.TupleCoercionParameter.operator ==(Expressif.Bindings.TupleCoercionParameter? left, Expressif.Bindings.TupleCoercionParameter? right) -> bool
 static Expressif.Bindings.TupleElementParameter.operator !=(Expressif.Bindings.TupleElementParameter? left, Expressif.Bindings.TupleElementParameter? right) -> bool
