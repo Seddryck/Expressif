@@ -161,11 +161,6 @@ Expressif.Bindings.IncomingValueParameter
 Expressif.Bindings.IncomingValueParameter.<Clone>$() -> Expressif.Bindings.IncomingValueParameter!
 Expressif.Bindings.IncomingValueParameter.Equals(Expressif.Bindings.IncomingValueParameter? other) -> bool
 Expressif.Bindings.IncomingValueParameter.IncomingValueParameter() -> void
-Expressif.Bindings.InputBoundExpression
-Expressif.Bindings.InputBoundExpression.Body.get -> Expressif.Bindings.IRootExpression!
-Expressif.Bindings.InputBoundExpression.InputBoundExpression(string![]! names, bool positional, Expressif.Bindings.IRootExpression! body) -> void
-Expressif.Bindings.InputBoundExpression.IsPositional.get -> bool
-Expressif.Bindings.InputBoundExpression.Names.get -> System.Collections.Generic.IReadOnlyList<string!>!
 Expressif.Bindings.InputExpressionParameter
 Expressif.Bindings.InputExpressionParameter.<Clone>$() -> Expressif.Bindings.InputExpressionParameter!
 Expressif.Bindings.InputExpressionParameter.Deconstruct(out Expressif.Bindings.ClosedExpression! Expression) -> void

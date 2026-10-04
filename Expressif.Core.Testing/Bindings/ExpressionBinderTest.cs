@@ -11,6 +11,7 @@ public class ExpressionBinderTest
         Assert.Multiple(() =>
         {
             Assert.That(typeof(ExpressifBinder).IsNotPublic, Is.True);
+            Assert.That(typeof(InputBoundExpression).IsNotPublic, Is.True);
             Assert.That(typeof(OpenExpression).IsSealed, Is.True);
             Assert.That(typeof(ClosedExpression).IsSealed, Is.True);
             Assert.That(typeof(ClosedExpression).GetProperty(
