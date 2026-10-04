@@ -21,7 +21,10 @@ public sealed record AnalyzedLogicalPlan(LogicalPlan Plan, SchemaAnalysis Analys
 /// <summary>
 /// A value that can appear in a logical plan.
 /// </summary>
-public abstract record LogicalValue;
+public abstract record LogicalValue
+{
+    internal abstract bool IsKnownVariant { get; }
+}
 
 /// <summary>
 /// A reusable expression declared in a logical document.
@@ -61,13 +64,17 @@ public sealed record LogicalTypeContract(string Type, bool Strict = false);
 /// </summary>
 public sealed record LogicalNamedExpressionInvocation(
     string Name,
-    IReadOnlyList<LogicalValue> Arguments) : LogicalValue;
+    IReadOnlyList<LogicalValue> Arguments) : LogicalValue
+{
+    internal override bool IsKnownVariant => true;
+}
 
 /// <summary>
 /// A sequence whose output flows from one item to the next.
 /// </summary>
 public sealed record LogicalPipeline(IReadOnlyList<LogicalValue> Items) : LogicalValue
 {
+    internal override bool IsKnownVariant => true;
     internal bool IsScalarReference { get; init; }
 }
 
@@ -79,6 +86,7 @@ public sealed record LogicalCall(
     IReadOnlyList<LogicalArgument> Arguments,
     int ContextDepth = 0) : LogicalValue
 {
+    internal override bool IsKnownVariant => true;
     internal SourceSpan? SourceSpan { get; init; }
     internal bool IsReferenceShorthand { get; init; }
     internal bool IsReferenceContinuation { get; init; }
@@ -87,7 +95,10 @@ public sealed record LogicalCall(
 /// <summary>
 /// A scalar value identified by its Expressif semantic type.
 /// </summary>
-public sealed record LogicalLiteral(string Type, object? Value) : LogicalValue;
+public sealed record LogicalLiteral(string Type, object? Value) : LogicalValue
+{
+    internal override bool IsKnownVariant => true;
+}
 
 internal sealed record QuotedLiteralRepresentation(string Value);
 

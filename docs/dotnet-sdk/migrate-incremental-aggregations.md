@@ -6,6 +6,8 @@ nav_order: 8
 description: Replace the v2 mutable accumulator lifecycle with reusable aggregation definitions and isolated sessions.
 ---
 
+For application-wide package and composition changes, first read [Migrate from v2 to v3](migrate-v2-to-v3.md). This page covers the additional source changes required by custom incremental aggregations.
+
 In v3, custom incremental aggregation functions implement `IIncrementalAggregation` or inherit from `BaseIncrementalAggregation`. An aggregation definition is reusable. Each call to `CreateSession()` returns fresh mutable state owned by one evaluation.
 
 The v2 `IAccumulator` and `BaseAccumulator` APIs are removed. There is no runtime adapter: an adapter around a shared v2 accumulator could not guarantee state isolation or safe concurrent evaluation. Migrate the implementation by moving its mutable fields and update logic into a session.

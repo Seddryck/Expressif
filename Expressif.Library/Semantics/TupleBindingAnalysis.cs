@@ -1,6 +1,7 @@
 using Expressif.Bindings;
 using Expressif.Functions;
 using Expressif.Discovery;
+using Expressif.Library.Tuple;
 using Expressif.Predicates;
 using Expressif.Syntax;
 using Expressif.Values;
@@ -54,15 +55,25 @@ public sealed class TupleBindingAnalyzer
         foreach (var member in members)
         {
             VisitParameters(member.Parameters, uses);
-            if (member.Name.Equals("bind", StringComparison.OrdinalIgnoreCase))
+            if (TupleBindingPatternRecognizer.IsBind(member))
+            {
                 uses.Add(Inspect(member, input));
-            if (TupleBindingOperations.IsDefaultRotation(member)
-                && input is TupleParameter { Elements.Length: > 0 } tuple)
-                input = new TupleParameter([tuple.Elements[^1], .. tuple.Elements[..^1]]);
+            }
+            if (TupleBindingPatternRecognizer.IsDefaultRotation(member)
+                && input is TupleParameter { Elements.Count: > 0 } tuple)
+            {
+                input = new TupleParameter(
+                    new[] { tuple.Elements[^1] }.Concat(tuple.Elements.Take(tuple.Elements.Count - 1)));
+            }
             else if (member.Name.Equals("tuple", StringComparison.OrdinalIgnoreCase)
                 && member.Arguments.All(argument => argument.Name is null && !argument.IsSpread))
+            {
                 input = new TupleParameter(member.Parameters);
-            else input = null;
+            }
+            else
+            {
+                input = null;
+            }
         }
     }
 
@@ -108,7 +119,7 @@ public sealed class TupleBindingAnalyzer
     {
         if (input is TupleParameter tuple && tuple.Elements.All(element => !element.IsSpread))
         {
-            if (tuple.Elements.Length == 0) throw new TupleBindingException(TupleBindingFailure.InvalidInput, "bind requires a tuple input position.");
+            if (tuple.Elements.Count == 0) throw new TupleBindingException(TupleBindingFailure.InvalidInput, "bind requires a tuple input position.");
             var binding = TupleBindingCapabilities.Resolve(type, tuple.Values.Skip(1).Select(value => new FunctionArgument(null, value)).ToArray());
             var signature = signatures.Single(candidate => candidate.Constructor == binding.Constructor);
             if (!signature.Variadic)

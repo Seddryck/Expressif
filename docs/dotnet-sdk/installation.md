@@ -34,16 +34,17 @@ You can also open **Manage NuGet Packages**, search for `Expressif`, and install
 
 ## Use the namespace
 
-Add the namespace in a C# file:
+Add the hosting namespace in a C# file:
 
 ```csharp
-using Expressif;
+using Expressif.Hosting;
 ```
 
 Then evaluate a small expression:
 
 ```csharp
-var expression = Expression.Create("lower");
+var environment = ExpressifEnvironment.Default;
+var expression = environment.CreateExpression("lower");
 var result = expression.Evaluate("Nikola Tesla");
 ```
 
@@ -74,4 +75,4 @@ dotnet add package Expressif.Core
 
 The three packages are built, versioned, and released together. Their major, minor, patch, and prerelease versions must match; mixing versions is unsupported. The umbrella and Library packages declare dependencies from the same build version so normal NuGet resolution selects a compatible set.
 
-Continue with [Evaluate an expression](../evaluate-expression/) to create an expression, supply input values, and configure runtime variables.
+Continue with [Evaluate an expression](evaluate-expression.md) to create an expression, supply input values, and configure runtime variables. Applications upgrading from v2 should start with [Migrate from v2 to v3](migrate-v2-to-v3.md).

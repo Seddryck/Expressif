@@ -164,7 +164,7 @@ public sealed class SemanticAnalyzer
             if (!predicates.TryResolve(function.Name, out _))
                 return;
             // Multi-argument combinators have additional deferred Boolean scopes.
-            if (function.Parameters.Length > 1 && function.Parameters.Any(parameter => parameter is OpenExpressionParameter))
+            if (function.Parameters.Count > 1 && function.Parameters.Any(parameter => parameter is OpenExpressionParameter))
                 return;
             foreach (var parameter in function.Parameters)
             {

@@ -78,7 +78,7 @@ internal sealed class PredicationFactory : BaseExpressionFactory, IPredicationFa
         Func<Func<int>, IEnumerable<Func<bool>>, IPredicate> factory)
     {
         EnsureOnlyPositionalArguments(function);
-        if (function.Parameters.Length == 0)
+        if (function.Parameters.Count == 0)
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, 0);
 
         var count = (Func<int>)CreateParameter(function.Parameters[0], typeof(int), context);

@@ -15,11 +15,13 @@ flowchart LR
     B --> D[Parse in another process]
 ```
 
+The examples use `var environment = ExpressifEnvironment.Default;` as their composition root.
+
 ## Serialize an expression builder
 
 <!-- START INCLUDE "ExpressionBuilderTest.cs/Serialize_WithParameters_CorrectlySerialized" -->
 ```csharp
-var builder = new ExpressionBuilder()
+var builder = environment.CreateExpressionBuilder()
     .Chain<Lower>()
     .Chain<FirstChars>(5)
     .Chain<PadRight>(7, '*');
@@ -35,7 +37,7 @@ Assert.That(source, Is.EqualTo(
 
 <!-- START INCLUDE "PredicationBuilderTest.cs/Serialize_Negate_CorrectlySerialized" -->
 ```csharp
-var builder = new PredicationBuilder()
+var builder = environment.CreatePredicationBuilder()
     .Create<StartsWith>("ola")
     .OrNot<EndsWith>("sla");
 
@@ -53,7 +55,7 @@ The serializer includes the grouping required to preserve the builder's Boolean 
 `ExpressionBuilder.Build()` consumes its queued pipeline. When both source and an executable expression are required, serialize first:
 
 ```csharp
-var builder = new ExpressionBuilder()
+var builder = environment.CreateExpressionBuilder()
     .Chain<Lower>()
     .Chain<Length>();
 

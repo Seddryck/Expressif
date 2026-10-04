@@ -9,17 +9,17 @@ namespace Expressif.Library.Record;
 [Scope("record")]
 public sealed class Expand : IFunction<ValueRecord, ValueRecord?>
 {
-    private RecordExpansionSelector Selector { get; }
+    private ExpansionSelector Selector { get; }
     private Func<object?, string>? Label { get; }
     private string? ConsumedField { get; }
 
     /// <param name="selector">An expression selecting the nested record to expand.</param>
-    public Expand(RecordExpansionSelector selector)
+    public Expand(ExpansionSelector selector)
         : this(selector, null) { }
 
     /// <param name="selector">An expression selecting the nested record to expand.</param>
     /// <param name="label">An optional qualifier for every expanded field. Omission derives the qualifier from a direct field selector and qualifies only conflicts.</param>
-    public Expand(RecordExpansionSelector selector, Func<object?, string>? label)
+    public Expand(ExpansionSelector selector, Func<object?, string>? label)
         => (Selector, Label, ConsumedField) = (selector, label, selector.Field);
 
     public ValueRecord? Evaluate(ValueRecord value) => EvaluateCore(value);

@@ -23,19 +23,22 @@ flowchart LR
 
 | API | Use it to |
 |:--|:--|
-| `Expression` | Parse an open expression and evaluate it with an incoming value. |
-| `Predication` | Parse a predicate or predicate combination and evaluate it as a Boolean rule. |
-| `ExpressionBuilder` | Compose a function pipeline with C# types. |
-| `PredicationBuilder` | Compose predicates, negation, and Boolean operators with C# types. |
+| `ExpressifEnvironment` | Select the immutable library set and create expressions, predications, factories, and builders. |
+| `IExpression` | Evaluate a parsed expression with an incoming value. |
+| `Predication` | Evaluate a parsed predicate or predicate combination as a Boolean rule. |
+| `ExpressionBuilder` | Compose a function pipeline with C# types; create it from an environment. |
+| `PredicationBuilder` | Compose predicates, negation, and Boolean operators with C# types; create it from an environment. |
 | `SemanticAnalyzer` | Locate field-reference input and enclosing scopes without evaluation. |
-| `Context` | Supply variables and a current object used by an expression or builder. |
+| `Context` | Supply values while binding or building an executable object. |
+| `EvaluationContext` | Supply immutable variables to a reusable expression or predication at evaluation time. |
 
 ## A first evaluation
 
 ```csharp
-using Expressif;
+using Expressif.Hosting;
 
-var expression = Expression.Create("trim | upper");
+var environment = ExpressifEnvironment.Default;
+var expression = environment.CreateExpression("trim | upper");
 var result = expression.Evaluate("  Alice  ");
 ```
 
@@ -58,4 +61,5 @@ flowchart LR
 6. [Serialize a builder](serialization.md).
 7. [Load runtime libraries](runtime-libraries.md).
 8. [Analyze field scopes](semantic-analysis.md).
-9. [Migrate incremental aggregations to v3](migrate-incremental-aggregations.md).
+9. [Migrate an application from v2 to v3](migrate-v2-to-v3.md).
+10. [Migrate incremental aggregations to v3](migrate-incremental-aggregations.md).

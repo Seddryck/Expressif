@@ -13,10 +13,10 @@ internal sealed class AdjacentFunctionConstructor : IFunctionConstructor<Express
                 function.Name,
                 ParameterArgumentBinder.Bind(typeof(Expressif.Library.Array.Sequencing.Adjacent), function.Arguments).Parameters);
         }
-        if (function.Parameters.Length != 1
+        if (function.Parameters.Count != 1
             || !FunctionConstructorSupport.TryGetOpenExpression(function.Parameters[0], out var open))
         {
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
         }
 
         var members = open.Expression.Members.ToArray();

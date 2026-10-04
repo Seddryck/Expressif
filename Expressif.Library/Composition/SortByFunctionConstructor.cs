@@ -15,7 +15,7 @@ internal sealed class SortByFunctionConstructor :
 
     public IFunction Construct(Bindings.Function function, IContext context, IFunctionConstructionContext constructionContext)
     {
-        if (function.Parameters.Length == 0
+        if (function.Parameters.Count == 0
             || function.Parameters.Any(parameter => parameter is not SortCriterionParameter))
         {
             throw new BindingException("Function 'sort-by' requires one or more typed criteria.");

@@ -38,7 +38,7 @@ internal static class ParameterArgumentBinder
         }
     }
 
-    internal static ArgumentLayoutBinding BindLayout(Type type, FunctionArgument[] arguments)
+    internal static ArgumentLayoutBinding BindLayout(Type type, IReadOnlyList<FunctionArgument> arguments)
     {
         ValidateLayoutMetadata(type);
         var layout = type.GetConstructors().Select(constructor => constructor.GetCustomAttribute<ArgumentLayoutAttribute>())
@@ -48,20 +48,20 @@ internal static class ParameterArgumentBinder
         if (arguments.Any(argument => argument.IsSpread))
         {
             if (layout.Kind == ArgumentLayoutKind.Positional)
-                throw new MissingOrUnexpectedParametersFunctionException(function, arguments.Length);
+                throw new MissingOrUnexpectedParametersFunctionException(function, arguments.Count);
             throw new SpreadArgumentException($"Spread arguments are not supported by {function}.");
         }
-        if (arguments.Length < layout.MinimumCardinality || arguments.Length > layout.MaximumCardinality)
+        if (arguments.Count < layout.MinimumCardinality || arguments.Count > layout.MaximumCardinality)
         {
             if (layout.Kind == ArgumentLayoutKind.Positional)
-                throw new MissingOrUnexpectedParametersFunctionException(function, arguments.Length);
+                throw new MissingOrUnexpectedParametersFunctionException(function, arguments.Count);
             throw new BindingException(
                 $"Function '{function}' expects {layout.MinimumCardinality} to {layout.MaximumCardinality} arguments.");
         }
 
         var prefix = layout.Kind switch
         {
-            ArgumentLayoutKind.Positional => arguments.Length,
+            ArgumentLayoutKind.Positional => arguments.Count,
             ArgumentLayoutKind.Named => 0,
             ArgumentLayoutKind.PositionalThenNamed => layout.PositionalPrefix,
             _ => throw InvalidLayout(type, "unknown layout kind"),
@@ -70,7 +70,7 @@ internal static class ParameterArgumentBinder
             || arguments.Skip(prefix).Any(argument => argument.Name is null))
         {
             if (layout.Kind == ArgumentLayoutKind.Positional)
-                throw new MissingOrUnexpectedParametersFunctionException(function, arguments.Length);
+                throw new MissingOrUnexpectedParametersFunctionException(function, arguments.Count);
             var expectation = layout.Kind switch
             {
                 ArgumentLayoutKind.Positional => "positional arguments",
@@ -96,12 +96,15 @@ internal static class ParameterArgumentBinder
     private static InvalidOperationException InvalidLayout(Type type, string reason)
         => new($"Invalid argument layout metadata on '{type.FullName}': {reason}.");
 
-    public static ParameterArgumentBinding Bind(Type type, FunctionArgument[] arguments)
+    public static ParameterArgumentBinding Bind(Type type, IReadOnlyList<FunctionArgument> arguments)
     {
         return Bind(type, arguments, type.GetConstructors());
     }
 
-    internal static ParameterArgumentBinding Bind(Type type, FunctionArgument[] arguments, ConstructorInfo[] constructors)
+    internal static ParameterArgumentBinding Bind(
+        Type type,
+        IReadOnlyList<FunctionArgument> arguments,
+        ConstructorInfo[] constructors)
     {
         var positionalCount = arguments.TakeWhile(x => x.Name is null).Count();
         var named = arguments.Skip(positionalCount).ToArray();
@@ -131,7 +134,7 @@ internal static class ParameterArgumentBinder
             return matches[0];
         if (matches.Length > 1)
         {
-            var exact = matches.Where(match => match.Constructor.GetParameters().Length == arguments.Length).ToArray();
+            var exact = matches.Where(match => match.Constructor.GetParameters().Length == arguments.Count).ToArray();
             if (exact.Length == 1)
                 return exact[0];
             throw new AmbiguousParameterBindingException(functionName);
@@ -146,7 +149,10 @@ internal static class ParameterArgumentBinder
         throw new AmbiguousParameterBindingException(functionName);
     }
 
-    private static ParameterArgumentBinding? TryBind(ConstructorInfo constructor, FunctionArgument[] arguments, int positionalCount)
+    private static ParameterArgumentBinding? TryBind(
+        ConstructorInfo constructor,
+        IReadOnlyList<FunctionArgument> arguments,
+        int positionalCount)
     {
         var metadata = constructor.GetParameters();
         if (positionalCount > metadata.Length)

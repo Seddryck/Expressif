@@ -13,7 +13,7 @@ internal sealed class PivotFunctionConstructor : IFunctionConstructor<Expressif.
         var dimensions = bound[0] is TupleParameter tuple
             ? tuple.Elements.All(element => !element.IsSpread) ? tuple.Values : []
             : [bound[0]];
-        if (dimensions.Length == 0)
+        if (dimensions.Count == 0)
         {
             throw new BindingException(
                 "The pivot row must contain at least one direct field selector; spread and unnamed dimensions are not supported.");

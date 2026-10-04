@@ -84,7 +84,7 @@ public class ExpressionBuilder
         {
             var member = Pile.Dequeue() switch
             {
-                Bindings.Function f => Factory.Instantiate(f.Name, f.Parameters, Context),
+                Bindings.Function f => Factory.Instantiate(f.Name, f.Parameters.ToArray(), Context),
                 ExpressionBuilder b => b.Build(),
                 IFunction f => f,
                 _ => throw new NotSupportedException()

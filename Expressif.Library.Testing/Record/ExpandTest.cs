@@ -88,7 +88,7 @@ public class ExpandTest
         nested.Set("name", 1);
         var input = new RecordValue();
         input.Set("customer", nested);
-        var function = new Expand(new RecordExpansionSelector("customer", value =>
+        var function = new Expand(new ExpansionSelector("customer", value =>
         {
             Assert.That(value, Is.SameAs(input));
             calls.Add("selector");
@@ -108,7 +108,7 @@ public class ExpandTest
     {
         var nested = new RecordValue();
         nested.Set("name", "Alice");
-        IFunction<RecordValue, RecordValue?> function = new Expand(new RecordExpansionSelector(null, _ => nested), _ => "buyer");
+        IFunction<RecordValue, RecordValue?> function = new Expand(new ExpansionSelector(null, _ => nested), _ => "buyer");
         Assert.That(function.Evaluate(new RecordValue())?.Keys, Is.EqualTo(new[] { "buyer.name" }));
     }
 

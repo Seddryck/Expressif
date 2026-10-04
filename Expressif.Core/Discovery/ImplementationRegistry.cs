@@ -52,7 +52,7 @@ public class ImplementationRegistry : IImplementationRegistry
     public bool TryResolve(OperatorIdentity identity, out Type implementationType)
         => implementations.TryGetValue(identity, out implementationType!);
 
-    public static string NormalizeName(string name)
+    internal static string NormalizeName(string name)
         => name.ToKebabCase().Replace("date-time", "dateTime", StringComparison.Ordinal);
 
     private static (IReadOnlyDictionary<OperatorIdentity, Type> Qualified, IReadOnlyDictionary<string, Type> Unqualified) Build(

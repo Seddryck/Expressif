@@ -38,9 +38,9 @@ internal sealed class ReduceFunctionConstructor :
         if (members is [var first, ..]
             && first.Arguments is [
                 { Name: null, Value: TupleProjectionParameter { Index: 0, FromEnd: false } },
-                .. var remaining])
+                ..])
         {
-            members[0] = Bindings.Function.FromArguments(first.Name, remaining);
+            members[0] = Bindings.Function.FromArguments(first.Name, first.Arguments.Skip(1));
             members = [
                 new Bindings.Function("tuple-at", [new LiteralParameter("0")]),
                 .. members,

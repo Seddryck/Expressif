@@ -82,7 +82,7 @@ internal sealed class FunctionSerializer
     private void SerializeCall(Function function, StringBuilder output)
     {
         output.Append(function.Name.ToKebabCase());
-        if (function.Parameters.Length == 0)
+        if (function.Parameters.Count == 0)
             return;
         output.Append('(');
         foreach (var argument in function.Arguments)

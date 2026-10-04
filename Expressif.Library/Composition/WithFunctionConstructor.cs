@@ -12,7 +12,7 @@ internal sealed class WithFunctionConstructor : IFunctionConstructor<With>
         IFunctionConstructionContext constructionContext)
     {
         if (function.Parameters is not [WithDefinitionParameter definition])
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
 
         var projections = definition.Projections
             .Select(projection => RecordEntryEvaluator.Named(

@@ -31,7 +31,7 @@ internal sealed class ParameterSerializer
             ArrayParameter a => $"{{{string.Join(", ", a.Elements.Select(SerializeArrayElement))}}}",
             TupleParameter t => $"T({string.Join(", ", t.Elements.Select(SerializeTupleElement))})",
             VectorParameter v => $"V({string.Join(", ", v.Elements.Select(SerializeTupleElement))})",
-            RecordLiteralParameter r when r.Fields.Length == 0 => "{:}",
+            RecordLiteralParameter r when r.Fields.Count == 0 => "{:}",
             RecordLiteralParameter r => $"{{{string.Join(", ", r.Fields.Select(x => $"{SerializeFieldName(x.Name)} := {Serialize(x.Value)}"))}}}",
             LetDefinitionParameter definition => string.Join(", ", definition.Bindings.Select(binding => $"{binding.Name} := {Serialize(binding.Value)}")),
             RecordDefinitionParameter definition => string.Join(", ", definition.Entries.Select(SerializeRecordEntry)),

@@ -6,8 +6,8 @@ internal sealed class ApplyFunctionConstructor : IFunctionConstructor<Expressif.
 {
     public IFunction Construct(Bindings.Function function, IContext context, IFunctionConstructionContext constructionContext)
     {
-        if (function.Parameters.Length != 1)
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+        if (function.Parameters.Count != 1)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
 
         var operation = FunctionConstructorSupport.TryGetOpenExpression(function.Parameters[0], out var open)
             ? constructionContext.CreateOpenExpression(open.Expression, context)

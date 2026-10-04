@@ -1,7 +1,12 @@
 using System.Reflection;
+using Expressif.Bindings;
 using Expressif.Discovery;
 using Expressif.Functions;
 using Expressif.Library.Catalog;
+using Expressif.Library.Composition;
+using Expressif.Observability;
+using Expressif.Predicates;
+using Expressif.Syntax;
 using Expressif.Types;
 using Expressif.Values.Types;
 
@@ -69,6 +74,59 @@ public sealed class ExpressifEnvironment
     public QuotedLiteralRegistry QuotedLiterals { get; }
     public FunctionCatalog Catalog { get; }
     internal ITypeSource Source { get; }
+
+    /// <summary>Creates a runtime function factory for this environment's registered libraries.</summary>
+    public FunctionFactory CreateFunctionFactory()
+        => new(Source);
+
+    /// <summary>Creates a syntax binder for this environment's registered libraries.</summary>
+    public ExpressionBinder CreateExpressionBinder(IContext? context = null)
+        => context is null ? new(this) : new(context, this);
+
+    /// <summary>Creates a textual expression factory for this environment.</summary>
+    public ExpressionFactory CreateExpressionFactory(
+        IContext? context = null,
+        IExpressionParser? parser = null,
+        IExpressionObserver? observer = null)
+        => new(CreateExpressionBinder(context), parser, observer);
+
+    /// <summary>Creates a typed expression builder for this environment.</summary>
+    public ExpressionBuilder CreateExpressionBuilder(IContext? context = null)
+        => new(CreateFunctionFactory(), context);
+
+    /// <summary>Creates a typed predication builder for this environment.</summary>
+    public PredicationBuilder CreatePredicationBuilder(IContext? context = null)
+        => new(CreateFunctionFactory(), context);
+
+    /// <summary>Creates an expression from source text using this environment.</summary>
+    public IExpression CreateExpression(
+        string text,
+        IContext? context = null,
+        IExpressionParser? parser = null,
+        IExpressionObserver? observer = null)
+        => CreateExpressionFactory(context, parser, observer).Create(text);
+
+    /// <summary>Creates an input-independent expression from source text using this environment.</summary>
+    public IExpression CreateClosedExpression(
+        string text,
+        IContext? context = null,
+        IExpressionParser? parser = null,
+        IExpressionObserver? observer = null)
+        => CreateExpressionFactory(context, parser, observer).CreateClosed(text);
+
+    /// <summary>Creates a Boolean predication from source text using this environment.</summary>
+    public Predication CreatePredication(
+        string text,
+        IContext? context = null,
+        IExpressionParser? parser = null)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        var syntax = (parser ?? new ExpressionParser()).Parse(text);
+        var plan = LogicalPlannerFactory.Create(this).Build(syntax);
+        var bound = new LogicalPlanBinder(Source, Types, QuotedLiterals).Bind(plan);
+        var function = CreateFunctionFactory().Instantiate(bound, context ?? new Context());
+        return new Predication(new BooleanFunctionPredicate(function));
+    }
 
     /// <summary>Validates and atomically adds a library assembly, returning a new environment.</summary>
     public ExpressifEnvironment RegisterLibrary(Assembly assembly)

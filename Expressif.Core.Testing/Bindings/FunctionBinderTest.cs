@@ -19,7 +19,7 @@ public class FunctionBinderTest
         Assert.Multiple(() =>
         {
             Assert.That(function.Name, Is.EqualTo("text-to-func"));
-            Assert.That(function.Parameters, Has.Length.EqualTo(2));
+            Assert.That(function.Parameters, Has.Count.EqualTo(2));
             Assert.That(function.Parameters[0], Is.TypeOf<QuotedLiteralParameter>());
             Assert.That(function.Parameters[1], Is.TypeOf<VariableParameter>());
         });

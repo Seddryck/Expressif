@@ -22,7 +22,7 @@ internal sealed class ExpandFunctionConstructor : IFunctionConstructor<Expressif
             ? constructionContext.CreateValueEvaluator(bound[1], context)
             : null;
         return new Expressif.Library.Record.Expand(
-            new RecordExpansionSelector(
+            new Expressif.Library.Record.ExpansionSelector(
                 field,
                 value => FunctionConstructorSupport.EvaluateNested(selector, value)),
             label is null

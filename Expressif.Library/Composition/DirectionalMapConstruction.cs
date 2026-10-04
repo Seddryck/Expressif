@@ -1,5 +1,6 @@
 using Expressif.Bindings;
 using Expressif.Library.Array;
+using Expressif.Library.Tuple;
 using Expressif.Semantics;
 
 namespace Expressif.Library.Composition;
@@ -15,7 +16,7 @@ internal static class DirectionalMapConstruction
         var type = mapOver ? typeof(Expressif.Library.Array.MapOver) : typeof(Expressif.Library.Array.MapWith);
         var binding = ParameterArgumentBinder.Bind(type, function.Arguments);
         if (binding.Parameters is not [OpenExpressionParameter expression, var values])
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
 
         var valuesEvaluator = constructionContext.CreateValueEvaluator(values, context);
         Func<System.Collections.IEnumerable?> valuesProvider = () =>
@@ -38,7 +39,7 @@ internal static class DirectionalMapConstruction
         bool mapOver)
     {
         var members = expression.Expression.Members.ToArray();
-        if (TupleBindingOperations.LeadingLength(expression.Expression) > 0)
+        if (TupleBindingPatternRecognizer.TryMatchLeading(expression.Expression, out _))
             return BuildExplicitOperation(expression.Expression, context, constructionContext, mapOver);
         var isBareCallable = LegacyTupleBindingRules.IsCandidate(
             mapOver ? "map-over" : "map-with", expression.Expression);

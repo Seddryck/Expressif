@@ -51,7 +51,7 @@ internal abstract class BaseExpressionFactory
         return (T)ctor.Invoke(typedFunctionParameters.ToArray());
     }
 
-    protected T Instantiate<T>(Type type, FunctionArgument[] arguments, IContext context)
+    protected T Instantiate<T>(Type type, IReadOnlyList<FunctionArgument> arguments, IContext context)
     {
         var binding = ParameterArgumentBinder.Bind(type, arguments);
         return Instantiate<T>(binding.Constructor, binding.Parameters, context);
@@ -301,7 +301,7 @@ internal abstract class BaseExpressionFactory
     {
         var functions = new List<IFunction>();
         foreach (var member in input.Expression.Members)
-            functions.Add(Instantiate<IFunction>(member.Name, member.Parameters, context));
+            functions.Add(Instantiate<IFunction>(member.Name, member.Parameters.ToArray(), context));
         var expression = new ChainFunction(functions);
 
         var arg = CreateParameter(input.Expression.Parameter, typeof(object), context);

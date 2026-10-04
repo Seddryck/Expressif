@@ -27,7 +27,7 @@ internal sealed class SinglePredicationSerializer
     private void Serialize(Function predicate, ref StringBuilder stringBuilder)
     {
         stringBuilder.Append(predicate.Name.ToKebabCase());
-        if (predicate.Parameters.Length != 0)
+        if (predicate.Parameters.Count != 0)
         {
             stringBuilder.Append('(');
             foreach (var argument in predicate.Arguments)

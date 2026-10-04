@@ -7,6 +7,7 @@ using Expressif.Library.Array.Sequencing;
 using Expressif.Library.Array.Set;
 using Expressif.Bindings;
 using Expressif.Functions;
+using Expressif.Library.Tuple;
 using Expressif.Semantics;
 using Expressif.Values;
 
@@ -68,12 +69,69 @@ public class TupleBindingIntegrationTest
         => Assert.That(TestExpression.Create(explicitSource).Evaluate(null), Is.EqualTo(TestExpression.Create(legacy).Evaluate(null)));
 
     [Test]
-    public void Boundaries_DoNotPrepareLaterBindingsOrUnrelatedRotations()
+    public void LeadingPatterns_DescribePreparedInputPosition()
     {
-        Assert.That(TupleBindingOperations.LeadingLength(new OpenExpression([
-            new Expressif.Bindings.Function("rotate", [new LiteralParameter("-1")]),
-            new Expressif.Bindings.Function("bind", [new QuotedLiteralParameter("subtract")])])), Is.Zero);
+        var directBinding = new Expressif.Bindings.Function(
+            "bind", [new QuotedLiteralParameter("subtract")]);
+        var rotatedBinding = new Expressif.Bindings.Function(
+            "bind", [new QuotedLiteralParameter("subtract")]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(TupleBindingPatternRecognizer.TryMatchLeading(
+                new OpenExpression([directBinding]), out var direct), Is.True);
+            Assert.That(direct.Binding, Is.SameAs(directBinding));
+            Assert.That(direct.InputPosition, Is.EqualTo(TupleBindingInputPosition.First));
+            Assert.That(direct.ConsumedStages, Is.EqualTo(1));
+
+            Assert.That(TupleBindingPatternRecognizer.TryMatchLeading(new OpenExpression([
+                new Expressif.Bindings.Function("rotate", []),
+                rotatedBinding]), out var rotated), Is.True);
+            Assert.That(rotated.Binding, Is.SameAs(rotatedBinding));
+            Assert.That(rotated.InputPosition, Is.EqualTo(TupleBindingInputPosition.Last));
+            Assert.That(rotated.ConsumedStages, Is.EqualTo(2));
+
+            Assert.That(TupleBindingPatternRecognizer.TryMatchLeading(new OpenExpression([
+                new Expressif.Bindings.Function("tuple::rotate", []),
+                new Expressif.Bindings.Function("tuple::bind", [new QuotedLiteralParameter("subtract")])]),
+                out var resolved), Is.True);
+            Assert.That(resolved.InputPosition, Is.EqualTo(TupleBindingInputPosition.Last));
+        });
     }
+
+    [Test]
+    public void BoundShorthand_UsesCanonicalGlobalOperators()
+    {
+        var root = ExpressifBinderFactory.Create().Bind(
+            Expressif.Syntax.ExpressionParser.Parse("5 | map-with(~subtract, {10})"));
+        var map = ((ClosedRootExpression)root).Expression.Members.Single();
+        var expression = (OpenExpressionParameter)map.Parameters[0];
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(expression.Expression.InputBinding, Is.Null);
+            Assert.That(expression.Expression.Members.Select(member => member.Identity.CanonicalName),
+                Is.EqualTo(new[] { "global::rotate", "global::bind" }));
+            Assert.That(TupleBindingPatternRecognizer.TryMatchLeading(expression.Expression, out _), Is.True);
+        });
+    }
+
+    [Test]
+    public void Boundaries_DoNotRecognizeUnrelatedOrNamespacedOperators()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(TupleBindingPatternRecognizer.TryMatchLeading(new OpenExpression([
+                new Expressif.Bindings.Function("rotate", [new LiteralParameter("-1")]),
+                new Expressif.Bindings.Function("bind", [new QuotedLiteralParameter("subtract")])]), out _), Is.False);
+            Assert.That(TupleBindingPatternRecognizer.TryMatchLeading(new OpenExpression([
+                new Expressif.Bindings.Function("acme::bind", [new QuotedLiteralParameter("subtract")])]), out _), Is.False);
+            Assert.That(TupleBindingPatternRecognizer.TryMatchLeading(new OpenExpression([
+                new Expressif.Bindings.Function("acme::rotate", []),
+                new Expressif.Bindings.Function("bind", [new QuotedLiteralParameter("subtract")])]), out _), Is.False);
+        });
+    }
+
     [TestCase("{1, 2, 5} | adjacent(subtract)", "adjacent", "~subtract")]
     [TestCase("5 | map-over(subtract, {10, 11})", "map-over", "subtract~")]
     [TestCase("5 | map-with(subtract, {10, 11})", "map-with", "~subtract")]
