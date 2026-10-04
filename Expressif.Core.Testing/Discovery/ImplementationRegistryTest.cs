@@ -3,6 +3,10 @@ namespace Expressif.Testing.Discovery;
 public sealed class ImplementationRegistryTest
 {
     [Test]
+    public void NameNormalizationIsNotPublic()
+        => Assert.That(typeof(ImplementationRegistry).GetMethod("NormalizeName"), Is.Null);
+
+    [Test]
     public void ResolveNormalizesNamesAndReturnsRegisteredImplementation()
     {
         var registry = new ImplementationRegistry([

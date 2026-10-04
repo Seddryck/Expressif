@@ -1548,7 +1548,6 @@ static Expressif.Bindings.WithProjection.operator !=(Expressif.Bindings.WithProj
 static Expressif.Bindings.WithProjection.operator ==(Expressif.Bindings.WithProjection? left, Expressif.Bindings.WithProjection? right) -> bool
 static Expressif.Discovery.ImplementationRegistration.operator !=(Expressif.Discovery.ImplementationRegistration? left, Expressif.Discovery.ImplementationRegistration? right) -> bool
 static Expressif.Discovery.ImplementationRegistration.operator ==(Expressif.Discovery.ImplementationRegistration? left, Expressif.Discovery.ImplementationRegistration? right) -> bool
-static Expressif.Discovery.ImplementationRegistry.NormalizeName(string! name) -> string!
 static Expressif.EvaluationContext.Empty.get -> Expressif.EvaluationContext!
 static Expressif.Expression.Create(string! text, Expressif.Bindings.IExpressionBinder! binder) -> Expressif.IExpression!
 static Expressif.Expression.CreateClosed(string! text, Expressif.Bindings.IExpressionBinder! binder) -> Expressif.IExpression!
