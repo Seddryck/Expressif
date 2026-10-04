@@ -1,96 +1,142 @@
 ---
 layout: docs
-title: Migrate from v2 to v3
+title: Migrate C# integrations from v2 to v3
 parent: .NET SDK
 nav_order: 90
-description: Move a .NET application from the v2 static factories and constructors to the v3 environment composition model.
+permalink: /dotnet-sdk/migrate-v2-to-v3/
+description: Update package references, expression creation, predications, builders, contexts, and extension discovery for Expressif v3.
 ---
 
-Version 3 makes `ExpressifEnvironment` the composition root for the .NET SDK. An environment is an immutable snapshot of the operator libraries, types, catalogs, and literal parsers available to an application. Create textual expressions, textual predications, and typed builders from the same environment so they resolve the same vocabulary.
+Expressif v3 separates the portable Core runtime from the official function Library. C# applications now start from an `ExpressifEnvironment`, an immutable snapshot of the libraries available to that host. This keeps operator discovery deterministic and lets independent hosts use different registered libraries without process-wide mutable configuration.
 
-## Select packages
+## Migration summary
 
-Most applications should reference the `Expressif` umbrella package. It supplies both `Expressif.Core` and the official `Expressif.Library` vocabulary:
+| v2 integration | v3 replacement |
+|:--|:--|
+| Install the monolithic `Expressif` package. | Continue installing the `Expressif` umbrella package for the standard language. It references matching `Expressif.Core` and `Expressif.Library` packages. |
+| `Expression.Create(source)` | `ExpressifEnvironment.Default.CreateExpression(source)` |
+| `Expression.CreateClosed(source)` | `ExpressifEnvironment.Default.CreateClosedExpression(source)` |
+| `Predication.Create(source)` | `ExpressifEnvironment.Default.CreatePredication(source)` |
+| `new ExpressionBuilder()` | `ExpressifEnvironment.Default.CreateExpressionBuilder()` |
+| `new PredicationBuilder()` | `ExpressifEnvironment.Default.CreatePredicationBuilder()` |
+| Mutable context values used as runtime variables | Attach an immutable `EvaluationContext` with `WithContext(...)`. |
+| Implicit extension discovery | Register the library assembly with `ExpressifEnvironment.RegisterLibrary(...)`. |
+
+## Select the package
+
+Most applications should keep one package reference:
 
 ```bash
 dotnet add package Expressif
 ```
 
-Reference `Expressif.Core` alone only when building a host that deliberately supplies a different vocabulary. A normal application should not construct type sources, registries, binders, or function factories itself.
+The umbrella package contains no competing runtime implementation. It references `Expressif.Core` and the official `Expressif.Library` at the same version. Install only `Expressif.Core` when building a host that intentionally supplies its own vocabulary. Do not mix Core, Library, and umbrella package versions.
 
-## Replace static creation
+## Create expressions from an environment
 
-Create or retain an environment, then use it for every composition path:
+In v2, the static convenience selected the built-in vocabulary implicitly:
+
+```csharp
+var expression = Expression.Create("trim | upper");
+```
+
+In v3, select the environment explicitly:
 
 ```csharp
 using Expressif.Hosting;
 
 var environment = ExpressifEnvironment.Default;
 var expression = environment.CreateExpression("trim | upper");
-var predication = environment.CreatePredication("lower-case");
-
 var result = expression.Evaluate("  Alice  "); // "ALICE"
-var valid = predication.Evaluate("alice");     // true
 ```
 
-The common replacements are:
-
-| v2 pattern | v3 pattern |
-|:--|:--|
-| `Expression.Create(source)` | `environment.CreateExpression(source)` |
-| `Predication.Create(source)` | `environment.CreatePredication(source)` |
-| direct `ExpressionBuilder` construction | `environment.CreateExpressionBuilder()` |
-| direct `PredicationBuilder` construction | `environment.CreatePredicationBuilder()` |
-| manual `ExpressionBinder`, `FunctionFactory`, or type-source wiring | `environment.CreateExpressionFactory()` or another environment helper |
-
-The old convenience APIs and parameterless builder construction are not the v3 composition contract. Moving creation to the environment also prevents a textual expression and a typed builder from silently using different library sets.
-
-## Migrate typed builders
-
-Create builders from the same environment as textual expressions:
+Use `CreateClosedExpression(...)` when the source must not depend on pipeline input. If an application creates many expressions from the same environment, reuse its expression factory:
 
 ```csharp
-var expression = environment.CreateExpressionBuilder()
+var expressions = ExpressifEnvironment.Default.CreateExpressionFactory();
+var normalizeName = expressions.Create("trim | upper");
+var normalizeCode = expressions.Create("trim | lower");
+```
+
+Advanced hosts can still create binders and factories explicitly through `CreateExpressionBinder()` and `CreateFunctionFactory()`. Prefer the higher-level environment methods unless the host is replacing a parser or attaching an observer.
+
+## Create strongly typed predications
+
+Replace the v2 static factory:
+
+```csharp
+var predication = Predication.Create("lower-case");
+```
+
+with the environment-owned factory:
+
+```csharp
+var predication = ExpressifEnvironment.Default.CreatePredication("lower-case");
+
+bool first = predication.Evaluate("Nikola Tesla"); // false
+bool second = predication.Evaluate("nikola tesla"); // true
+```
+
+`CreatePredication(...)` guarantees a `bool` result to C# callers. Evaluation throws `InvalidCastException` if the supplied Expressif source produces a non-Boolean value.
+
+## Create builders
+
+Core builders no longer choose the official function library implicitly. Create them from the same environment used for textual expressions:
+
+```csharp
+using Expressif.Library.Text.Casing;
+using Expressif.Library.Text.Selection;
+
+var expression = ExpressifEnvironment.Default.CreateExpressionBuilder()
     .Chain<Lower>()
     .Chain<FirstChars>(5)
     .Build();
+```
 
-var predicate = environment.CreatePredicationBuilder()
+The equivalent predication builder is also environment-owned:
+
+```csharp
+using Expressif.Library.Text;
+
+var predication = ExpressifEnvironment.Default.CreatePredicationBuilder()
     .Create<StartsWith>("Nik")
     .Build();
 ```
 
-Builders remain single-purpose composition objects. Reuse the built expression or predicate; create a new builder when composing another pipeline.
+Builder lifecycle rules are unchanged: serialize an `ExpressionBuilder` before calling `Build()`, because building consumes its queued pipeline.
 
-## Distinguish the two contexts
+## Separate binding context from runtime context
 
-`Context` belongs to composition. Pass one to an environment helper when builder parameter delegates or binding need host values:
+V3 distinguishes two context roles.
+
+`EvaluationContext` contains immutable runtime variables referenced by textual expressions with `@name`. Attach it to an executable expression or predication:
+
+```csharp
+var expression = ExpressifEnvironment.Default
+    .CreateExpression("suffix(@suffix)")
+    .WithContext(new EvaluationContext(
+        new Dictionary<string, object?> { ["suffix"] = "!" }));
+
+var result = expression.Evaluate("Hello"); // "Hello!"
+```
+
+`Context` remains the mutable input to C# builder parameter delegates. Pass it when creating the builder:
 
 ```csharp
 var context = new Context();
-context.Variables.Add<string>("suffix", "!");
+context.Variables.Add<string>("prefix", "Nik");
 
-var function = environment.CreateExpressionBuilder(context)
-    .Chain<Append>(ctx => ctx.Variables["suffix"])
+var predication = ExpressifEnvironment.Default
+    .CreatePredicationBuilder(context)
+    .Create<StartsWith>(value => value.Variables["prefix"])
     .Build();
 ```
 
-`EvaluationContext` belongs to an executable expression or predication. `WithContext(...)` returns a new wrapper and leaves the reusable original unchanged:
-
-```csharp
-var expression = environment.CreateExpression("append(@suffix)");
-
-var excited = expression.WithContext(new EvaluationContext(
-    new Dictionary<string, object?> { ["suffix"] = "!" }));
-var questioning = expression.WithContext(new EvaluationContext(
-    new Dictionary<string, object?> { ["suffix"] = "?" }));
-```
-
-Use `Context` while composing and `EvaluationContext` while configuring repeated evaluations. Do not mutate shared composition context as a substitute for per-evaluation state.
+Do not use a mutable `Context` as shared runtime-variable storage for otherwise reusable expressions. Use separate immutable `EvaluationContext` instances and `WithContext(...)` instead.
 
 ## Register extension libraries
 
-Install the extension package, register its marker type, and keep using the returned environment:
+V2 integrations that depended on loaded-assembly scanning must register each independently released library. Registration returns a new environment; it does not modify the source environment:
 
 ```csharp
 using Expressif.Library.SemVer;
@@ -102,10 +148,16 @@ var expression = environment.CreateClosedExpression(
     "#\"1.2.3\":semver | bump-patch");
 ```
 
-`RegisterLibrary(...)` does not mutate `ExpressifEnvironment.Default`. It validates the supplied assembly and returns a new snapshot. Existing environments and expressions retain their original capabilities, and Expressif does not scan ambient assemblies for extensions.
+Expressions, predications, function factories, and builders created from this environment all see the registered SemVer capabilities. Objects previously created from `ExpressifEnvironment.Default` keep the original built-in-only snapshot.
 
-## Reuse the environment and executable objects
+## Validate the migration
 
-An environment is safe to retain as an application-level dependency. Creating an expression parses and binds its source once; retain that executable object for repeated evaluation when its rule is stable. Derive another environment only when a host needs a different registered library set.
+After updating the integration:
 
-If an application previously exposed Core implementation details such as concrete type sources or binder internals, replace that wiring with the environment methods before removing the obsolete references. See [Load runtime libraries](runtime-libraries.md) for the extension contract and [Evaluate an expression](evaluate-expression.md) for runtime context examples.
+1. Confirm that all Expressif packages use the same version.
+2. Replace every unsupported static or parameterless creation pattern listed above.
+3. Register every extension library before creating factories or executable rules.
+4. Verify whether each existing `Context` value belongs to binding-time builder configuration or runtime evaluation.
+5. Build and run the application against each target framework it supports.
+
+See [Load runtime libraries](runtime-libraries.md) for library manifests and compatibility checks, and [Evaluate an expression](evaluate-expression.md) for expression reuse and runtime contexts.
