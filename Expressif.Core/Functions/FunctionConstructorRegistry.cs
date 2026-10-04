@@ -93,7 +93,7 @@ internal sealed class FunctionConstructorRegistry
                         throw InvalidShapeMetadata(type, parameter, "unknown expression shape");
                     var expectedType = attribute.Shape switch
                     {
-                        AcceptedExpressionShape.DirectFieldSelector => typeof(Expressif.Bindings.NamedFieldSelector),
+                        AcceptedExpressionShape.DirectFieldSelector => typeof(NamedFieldSelector),
                         AcceptedExpressionShape.OpenExpression => typeof(Func<IFunction>),
                         AcceptedExpressionShape.CallableReference => parameter.ParameterType,
                         _ => throw InvalidShapeMetadata(type, parameter, "unknown expression shape"),

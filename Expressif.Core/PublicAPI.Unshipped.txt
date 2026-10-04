@@ -235,15 +235,15 @@ Expressif.Bindings.LiteralParameter.Value.get -> object?
 Expressif.Bindings.LiteralParameter.Value.init -> void
 Expressif.Bindings.MissingRequiredParameterException
 Expressif.Bindings.MissingRequiredParameterException.MissingRequiredParameterException(string! parameterName) -> void
-Expressif.Bindings.NamedFieldSelector
-Expressif.Bindings.NamedFieldSelector.<Clone>$() -> Expressif.Bindings.NamedFieldSelector!
-Expressif.Bindings.NamedFieldSelector.Deconstruct(out string! Name, out System.Func<object?, object?>! Evaluate) -> void
-Expressif.Bindings.NamedFieldSelector.Equals(Expressif.Bindings.NamedFieldSelector? other) -> bool
-Expressif.Bindings.NamedFieldSelector.Evaluate.get -> System.Func<object?, object?>!
-Expressif.Bindings.NamedFieldSelector.Evaluate.init -> void
-Expressif.Bindings.NamedFieldSelector.Name.get -> string!
-Expressif.Bindings.NamedFieldSelector.Name.init -> void
-Expressif.Bindings.NamedFieldSelector.NamedFieldSelector(string! Name, System.Func<object?, object?>! Evaluate) -> void
+Expressif.Functions.NamedFieldSelector
+Expressif.Functions.NamedFieldSelector.<Clone>$() -> Expressif.Functions.NamedFieldSelector!
+Expressif.Functions.NamedFieldSelector.Deconstruct(out string! Name, out System.Func<object?, object?>! Evaluate) -> void
+Expressif.Functions.NamedFieldSelector.Equals(Expressif.Functions.NamedFieldSelector? other) -> bool
+Expressif.Functions.NamedFieldSelector.Evaluate.get -> System.Func<object?, object?>!
+Expressif.Functions.NamedFieldSelector.Evaluate.init -> void
+Expressif.Functions.NamedFieldSelector.Name.get -> string!
+Expressif.Functions.NamedFieldSelector.Name.init -> void
+Expressif.Functions.NamedFieldSelector.NamedFieldSelector(string! Name, System.Func<object?, object?>! Evaluate) -> void
 Expressif.Bindings.ObjectIndexParameter
 Expressif.Bindings.ObjectIndexParameter.<Clone>$() -> Expressif.Bindings.ObjectIndexParameter!
 Expressif.Bindings.ObjectIndexParameter.Deconstruct(out int Index) -> void
@@ -321,15 +321,6 @@ Expressif.Bindings.RecordDefinitionParameter.Deconstruct(out System.Collections.
 Expressif.Bindings.RecordDefinitionParameter.Entries.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.IRecordDefinitionEntry!>!
 Expressif.Bindings.RecordDefinitionParameter.Equals(Expressif.Bindings.RecordDefinitionParameter? other) -> bool
 Expressif.Bindings.RecordDefinitionParameter.RecordDefinitionParameter(System.Collections.Generic.IEnumerable<Expressif.Bindings.IRecordDefinitionEntry!>! entries) -> void
-Expressif.Bindings.RecordExpansionSelector
-Expressif.Bindings.RecordExpansionSelector.<Clone>$() -> Expressif.Bindings.RecordExpansionSelector!
-Expressif.Bindings.RecordExpansionSelector.Deconstruct(out string? Field, out System.Func<object?, object?>! Evaluate) -> void
-Expressif.Bindings.RecordExpansionSelector.Equals(Expressif.Bindings.RecordExpansionSelector? other) -> bool
-Expressif.Bindings.RecordExpansionSelector.Evaluate.get -> System.Func<object?, object?>!
-Expressif.Bindings.RecordExpansionSelector.Evaluate.init -> void
-Expressif.Bindings.RecordExpansionSelector.Field.get -> string?
-Expressif.Bindings.RecordExpansionSelector.Field.init -> void
-Expressif.Bindings.RecordExpansionSelector.RecordExpansionSelector(string? Field, System.Func<object?, object?>! Evaluate) -> void
 Expressif.Bindings.RecordLiteralField
 Expressif.Bindings.RecordLiteralField.<Clone>$() -> Expressif.Bindings.RecordLiteralField!
 Expressif.Bindings.RecordLiteralField.Deconstruct(out string! Name, out Expressif.Bindings.IParameter! Value) -> void
@@ -1256,9 +1247,9 @@ override Expressif.Bindings.LetDefinitionParameter.ToString() -> string!
 override Expressif.Bindings.LiteralParameter.Equals(object? obj) -> bool
 override Expressif.Bindings.LiteralParameter.GetHashCode() -> int
 override Expressif.Bindings.LiteralParameter.ToString() -> string!
-override Expressif.Bindings.NamedFieldSelector.Equals(object? obj) -> bool
-override Expressif.Bindings.NamedFieldSelector.GetHashCode() -> int
-override Expressif.Bindings.NamedFieldSelector.ToString() -> string!
+override Expressif.Functions.NamedFieldSelector.Equals(object? obj) -> bool
+override Expressif.Functions.NamedFieldSelector.GetHashCode() -> int
+override Expressif.Functions.NamedFieldSelector.ToString() -> string!
 override Expressif.Bindings.ObjectIndexParameter.Equals(object? obj) -> bool
 override Expressif.Bindings.ObjectIndexParameter.GetHashCode() -> int
 override Expressif.Bindings.ObjectIndexParameter.ToString() -> string!
@@ -1290,9 +1281,6 @@ override Expressif.Bindings.QuotedLiteralParameter.ToString() -> string!
 override Expressif.Bindings.RecordDefinitionParameter.Equals(object? obj) -> bool
 override Expressif.Bindings.RecordDefinitionParameter.GetHashCode() -> int
 override Expressif.Bindings.RecordDefinitionParameter.ToString() -> string!
-override Expressif.Bindings.RecordExpansionSelector.Equals(object? obj) -> bool
-override Expressif.Bindings.RecordExpansionSelector.GetHashCode() -> int
-override Expressif.Bindings.RecordExpansionSelector.ToString() -> string!
 override Expressif.Bindings.RecordLiteralField.Equals(object? obj) -> bool
 override Expressif.Bindings.RecordLiteralField.GetHashCode() -> int
 override Expressif.Bindings.RecordLiteralField.ToString() -> string!
@@ -1481,8 +1469,8 @@ static Expressif.Bindings.LetDefinitionParameter.operator !=(Expressif.Bindings.
 static Expressif.Bindings.LetDefinitionParameter.operator ==(Expressif.Bindings.LetDefinitionParameter? left, Expressif.Bindings.LetDefinitionParameter? right) -> bool
 static Expressif.Bindings.LiteralParameter.operator !=(Expressif.Bindings.LiteralParameter? left, Expressif.Bindings.LiteralParameter? right) -> bool
 static Expressif.Bindings.LiteralParameter.operator ==(Expressif.Bindings.LiteralParameter? left, Expressif.Bindings.LiteralParameter? right) -> bool
-static Expressif.Bindings.NamedFieldSelector.operator !=(Expressif.Bindings.NamedFieldSelector? left, Expressif.Bindings.NamedFieldSelector? right) -> bool
-static Expressif.Bindings.NamedFieldSelector.operator ==(Expressif.Bindings.NamedFieldSelector? left, Expressif.Bindings.NamedFieldSelector? right) -> bool
+static Expressif.Functions.NamedFieldSelector.operator !=(Expressif.Functions.NamedFieldSelector? left, Expressif.Functions.NamedFieldSelector? right) -> bool
+static Expressif.Functions.NamedFieldSelector.operator ==(Expressif.Functions.NamedFieldSelector? left, Expressif.Functions.NamedFieldSelector? right) -> bool
 static Expressif.Bindings.ObjectIndexParameter.operator !=(Expressif.Bindings.ObjectIndexParameter? left, Expressif.Bindings.ObjectIndexParameter? right) -> bool
 static Expressif.Bindings.ObjectIndexParameter.operator ==(Expressif.Bindings.ObjectIndexParameter? left, Expressif.Bindings.ObjectIndexParameter? right) -> bool
 static Expressif.Bindings.ObjectPropertyParameter.operator !=(Expressif.Bindings.ObjectPropertyParameter? left, Expressif.Bindings.ObjectPropertyParameter? right) -> bool
@@ -1503,8 +1491,6 @@ static Expressif.Bindings.QuotedLiteralParameter.operator !=(Expressif.Bindings.
 static Expressif.Bindings.QuotedLiteralParameter.operator ==(Expressif.Bindings.QuotedLiteralParameter? left, Expressif.Bindings.QuotedLiteralParameter? right) -> bool
 static Expressif.Bindings.RecordDefinitionParameter.operator !=(Expressif.Bindings.RecordDefinitionParameter? left, Expressif.Bindings.RecordDefinitionParameter? right) -> bool
 static Expressif.Bindings.RecordDefinitionParameter.operator ==(Expressif.Bindings.RecordDefinitionParameter? left, Expressif.Bindings.RecordDefinitionParameter? right) -> bool
-static Expressif.Bindings.RecordExpansionSelector.operator !=(Expressif.Bindings.RecordExpansionSelector? left, Expressif.Bindings.RecordExpansionSelector? right) -> bool
-static Expressif.Bindings.RecordExpansionSelector.operator ==(Expressif.Bindings.RecordExpansionSelector? left, Expressif.Bindings.RecordExpansionSelector? right) -> bool
 static Expressif.Bindings.RecordLiteralField.operator !=(Expressif.Bindings.RecordLiteralField? left, Expressif.Bindings.RecordLiteralField? right) -> bool
 static Expressif.Bindings.RecordLiteralField.operator ==(Expressif.Bindings.RecordLiteralField? left, Expressif.Bindings.RecordLiteralField? right) -> bool
 static Expressif.Bindings.RecordLiteralParameter.operator !=(Expressif.Bindings.RecordLiteralParameter? left, Expressif.Bindings.RecordLiteralParameter? right) -> bool
