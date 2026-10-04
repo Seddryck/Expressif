@@ -58,11 +58,11 @@ var context = EvaluationContext.CreateBuilder()
 var predicate = rule.Build().WithContext(context);
 ```
 
-The argument scope is read-only and is created for each argument invocation. It exposes the current value, expression root, enclosing root, and variable lookup without mutating shared state.
+The argument scope is read-only and is created for each argument invocation. It exposes the current value, expression root, enclosing root, and variable lookup without mutating shared state. An `Argument.From<T>(...)` provider is executable host code and cannot be represented as Expressif source, so `ToSource()` throws `NotSupportedException` for a rule containing one.
 
 ## Reuse and render a rule
 
-Rules are immutable. Combining or negating a rule leaves the earlier value unchanged. `Build()` is non-consuming and may be called repeatedly; `ToSource()` is available before or after building:
+Rules are immutable. Combining or negating a rule leaves the earlier value unchanged. `Build()` is non-consuming and may be called repeatedly. For rules whose arguments can be represented as Expressif source, `ToSource()` is available before or after building:
 
 ```csharp
 var source = rule.ToSource();

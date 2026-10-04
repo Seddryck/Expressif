@@ -86,11 +86,11 @@ var context = EvaluationContext.CreateBuilder()
 var result = pipeline.Build().WithContext(context).Evaluate("Hello"); // "Hello!"
 ```
 
-The scope exposes `Current`, `Root`, `EnclosingRoot`, and read-only variable lookup. The operator's argument-evaluation contract determines how often the provider runs.
+The scope exposes `Current`, `Root`, `EnclosingRoot`, and read-only variable lookup. The operator's argument-evaluation contract determines how often the provider runs. An `Argument.From<T>(...)` provider is executable host code and cannot be represented as Expressif source, so `ToSource()` throws `NotSupportedException` for a pipeline containing one.
 
 ## Reuse and render a pipeline
 
-`Build()` is non-consuming. Repeated calls return independent executable expressions, and `ToSource()` works before or after any build:
+`Build()` is non-consuming. Repeated calls return independent executable expressions. For pipelines whose arguments can be represented as Expressif source, `ToSource()` works before or after any build:
 
 ```csharp
 var pipeline = environment.CreateExpressionBuilder()

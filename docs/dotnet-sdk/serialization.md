@@ -18,7 +18,7 @@ var pipeline = environment.CreateExpressionBuilder()
     .Then<PadRight>(7, '*');
 
 var source = pipeline.ToSource();
-// lower | first-chars(5) | pad-right(7, *)
+// lower | first-chars(5) | pad-right(7, "*")
 ```
 
 ## Render a predication rule
@@ -45,4 +45,4 @@ var second = pipeline.Build();
 var sourceAfter = pipeline.ToSource();
 ```
 
-The source represents the Expressif rule, not its `EvaluationContext`. Host values and providers must be stored separately when another process needs them.
+The source represents the Expressif rule, not its `EvaluationContext`. Host values and providers must be stored separately when another process needs them. Arguments created with `Argument.From<T>(...)` contain executable host code and are not serializable; `ToSource()` throws `NotSupportedException` when a pipeline or rule contains one.

@@ -117,7 +117,7 @@ var predication = ExpressifEnvironment.Default.CreatePredicationBuilder()
     .Build();
 ```
 
-The starter cannot build an empty pipeline or rule. `Create(...)` returns the valid nested state. Pipelines and rules are immutable: composition returns a new value, `Build()` is non-consuming, and `ToSource()` works before or after repeated builds.
+The starter cannot build an empty pipeline or rule. `Create(...)` returns the valid nested state. Pipelines and rules are immutable: composition returns a new value, `Build()` is non-consuming, and `ToSource()` works before or after repeated builds when every argument can be represented as Expressif source.
 
 ## Separate evaluation values from argument scope
 
@@ -133,7 +133,7 @@ var expression = ExpressifEnvironment.Default
 var result = expression.Evaluate("Hello"); // "Hello!"
 ```
 
-Register dynamic host data with `AddProvider(...)`. Each provider runs exactly once at the start of a top-level evaluation, receives its top-level input, and is materialized for nested and deferred work:
+Register dynamic host data with `AddProvider(...)`. Providers run in registration order. Each provider runs exactly once at the start of a top-level evaluation, receives its top-level input, and is materialized for nested and deferred work. A context can be reused concurrently, so provider delegates must be thread-safe:
 
 ```csharp
 var context = EvaluationContext.CreateBuilder()
@@ -152,7 +152,7 @@ var predication = builder
     .Build();
 ```
 
-`ArgumentEvaluationContext` exposes `Current`, `Root`, `EnclosingRoot`, and read-only variable lookup. Its provider follows the operator's documented argument-evaluation frequency. The mutable `Context`, `IContext`, `ContextVariables`, `ContextObject`, and `ContextParameter` hierarchy is no longer public.
+`ArgumentEvaluationContext` exposes `Current`, `Root`, `EnclosingRoot`, and read-only variable lookup. Its provider follows the operator's documented argument-evaluation frequency. Because that provider is executable host code, a pipeline or rule containing it cannot be rendered by `ToSource()`. The mutable `Context`, `IContext`, `ContextVariables`, `ContextObject`, and `ContextParameter` hierarchy is no longer public.
 
 ## Update public model and type names
 
