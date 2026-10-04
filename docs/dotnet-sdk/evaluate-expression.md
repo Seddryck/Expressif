@@ -39,12 +39,9 @@ Variables hold values that are not part of the input itself, such as a user pref
 ```csharp
 var expression = environment.CreateExpression("append(@suffix)");
 
-var context = new EvaluationContext(
-    new Dictionary<string, object?>
-    {
-        ["suffix"] = " Nikola!"
-    }
-);
+var context = EvaluationContext.CreateBuilder()
+    .AddValue("suffix", " Nikola!")
+    .Build();
 
 var configuredExpression = expression.WithContext(context);
 var result = configuredExpression.Evaluate("Hello");
@@ -57,21 +54,32 @@ var result = configuredExpression.Evaluate("Hello");
 ```csharp
 var expression = environment.CreateExpression("append(@suffix)");
 
-var excited = expression.WithContext(new EvaluationContext(
-    new Dictionary<string, object?> { ["suffix"] = "!" }
-));
+var excited = expression.WithContext(EvaluationContext.CreateBuilder()
+    .AddValue("suffix", "!")
+    .Build());
 
-var questioning = expression.WithContext(new EvaluationContext(
-    new Dictionary<string, object?> { ["suffix"] = "?" }
-));
+var questioning = expression.WithContext(EvaluationContext.CreateBuilder()
+    .AddValue("suffix", "?")
+    .Build());
 
 var first = excited.Evaluate("Really");       // "Really!"
 var second = questioning.Evaluate("Really"); // "Really?"
 ```
 
-`EvaluationContext` copies the supplied variables and exposes them as a read-only dictionary. An expression configured this way can be evaluated concurrently.
+`Build()` snapshots the registrations into an immutable `EvaluationContext`. An expression configured this way can be evaluated concurrently.
 
-`Context` has a different lifetime. Pass it to `CreateExpression(...)`, `CreateExpressionBuilder(...)`, or `CreatePredicationBuilder(...)` when binding or builder parameter delegates need host-supplied values. Use `EvaluationContext` with `WithContext(...)` for immutable variables attached to an already-created executable object. Keeping those roles separate lets one environment create many independently configured expressions.
+Use `AddProvider(...)` for a value that must be resolved once at the start of each top-level evaluation:
+
+```csharp
+var context = EvaluationContext.CreateBuilder()
+    .AddProvider("current-date", start => clock.Today)
+    .AddProvider("input-type", start => start.Input?.GetType().Name)
+    .Build();
+```
+
+All providers are materialized once per `Evaluate(...)` call. Repeated references during that evaluation observe the same value. A later evaluation materializes them again. Providers receive the top-level input through `EvaluationStartContext.Input`; exceptions propagate directly, and deferred results retain the materialized values while they are enumerated.
+
+For typed builder arguments that must inspect the current invocation scope, use `Argument.From<T>(...)` with `ArgumentEvaluationContext`. Host values, once-per-evaluation providers, and per-argument providers deliberately have different lifetimes.
 
 ## Evaluate structured .NET values
 
