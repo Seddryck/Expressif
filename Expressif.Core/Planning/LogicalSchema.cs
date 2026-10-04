@@ -3,22 +3,34 @@ namespace Expressif.Planning;
 /// <summary>
 /// Static schema information discovered from a logical plan.
 /// </summary>
-public abstract record LogicalSchema;
+public abstract record LogicalSchema
+{
+    internal abstract bool IsKnownVariant { get; }
+}
 
 /// <summary>
 /// Indicates that a plan does not require an externally supplied input value.
 /// </summary>
-public sealed record NoInputLogicalSchema : LogicalSchema;
+public sealed record NoInputLogicalSchema : LogicalSchema
+{
+    internal override bool IsKnownVariant => true;
+}
 
 /// <summary>
 /// A value for which no more precise static schema is known.
 /// </summary>
-public sealed record AnyLogicalSchema(bool IsNullable = false) : LogicalSchema;
+public sealed record AnyLogicalSchema(bool IsNullable = false) : LogicalSchema
+{
+    internal override bool IsKnownVariant => true;
+}
 
 /// <summary>
 /// A scalar Expressif semantic type.
 /// </summary>
-public sealed record ScalarLogicalSchema(string Type, bool IsNullable = false) : LogicalSchema;
+public sealed record ScalarLogicalSchema(string Type, bool IsNullable = false) : LogicalSchema
+{
+    internal override bool IsKnownVariant => true;
+}
 
 /// <summary>
 /// A field in a record schema.
@@ -31,12 +43,18 @@ public sealed record LogicalSchemaField(LogicalSchema Schema, bool Optional = fa
 public sealed record RecordLogicalSchema(
     IReadOnlyDictionary<string, LogicalSchemaField> Fields,
     bool AllowsAdditionalFields = true,
-    bool IsNullable = false) : LogicalSchema;
+    bool IsNullable = false) : LogicalSchema
+{
+    internal override bool IsKnownVariant => true;
+}
 
 /// <summary>
 /// An array whose elements share a schema.
 /// </summary>
-public sealed record ArrayLogicalSchema(LogicalSchema Items, bool IsNullable = false) : LogicalSchema;
+public sealed record ArrayLogicalSchema(LogicalSchema Items, bool IsNullable = false) : LogicalSchema
+{
+    internal override bool IsKnownVariant => true;
+}
 
 /// <summary>
 /// A fixed-size tuple with a schema for each position.
@@ -45,7 +63,10 @@ public sealed record TupleLogicalSchema(
     IReadOnlyList<LogicalSchema> Items,
     bool IsNullable = false,
     LogicalSchema? AdditionalItems = null)
-    : LogicalSchema;
+    : LogicalSchema
+{
+    internal override bool IsKnownVariant => true;
+}
 
 /// <summary>
 /// A key/value pair with independently inferred component schemas.
@@ -53,7 +74,10 @@ public sealed record TupleLogicalSchema(
 public sealed record PairLogicalSchema(
     LogicalSchema Key,
     LogicalSchema Value,
-    bool IsNullable = false) : LogicalSchema;
+    bool IsNullable = false) : LogicalSchema
+{
+    internal override bool IsKnownVariant => true;
+}
 
 /// <summary>
 /// A dictionary with independently inferred key and value schemas.
@@ -61,7 +85,10 @@ public sealed record PairLogicalSchema(
 public sealed record DictionaryLogicalSchema(
     LogicalSchema Keys,
     LogicalSchema Values,
-    bool IsNullable = false) : LogicalSchema;
+    bool IsNullable = false) : LogicalSchema
+{
+    internal override bool IsKnownVariant => true;
+}
 
 /// <summary>
 /// A grouping whose keys identify arrays of values with a common item schema.
@@ -69,21 +96,30 @@ public sealed record DictionaryLogicalSchema(
 public sealed record GroupingLogicalSchema(
     LogicalSchema Keys,
     LogicalSchema Items,
-    bool IsNullable = false) : LogicalSchema;
+    bool IsNullable = false) : LogicalSchema
+{
+    internal override bool IsKnownVariant => true;
+}
 
 /// <summary>
 /// A normalized sort table retaining the schema of each original row value.
 /// </summary>
 public sealed record SortTableLogicalSchema(
     LogicalSchema Items,
-    bool IsNullable = false) : LogicalSchema;
+    bool IsNullable = false) : LogicalSchema
+{
+    internal override bool IsKnownVariant => true;
+}
 
 /// <summary>
 /// A value matching one of several alternative schemas.
 /// </summary>
 public sealed record UnionLogicalSchema(
     IReadOnlyList<LogicalSchema> Alternatives,
-    bool IsNullable = false) : LogicalSchema;
+    bool IsNullable = false) : LogicalSchema
+{
+    internal override bool IsKnownVariant => true;
+}
 
 /// <summary>
 /// Mutually incompatible schema constraints.
@@ -91,7 +127,10 @@ public sealed record UnionLogicalSchema(
 public sealed record ConflictingLogicalSchema(
     LogicalSchema Left,
     LogicalSchema Right,
-    bool IsNullable = false) : LogicalSchema;
+    bool IsNullable = false) : LogicalSchema
+{
+    internal override bool IsKnownVariant => true;
+}
 
 public enum SchemaAnalysisCompleteness
 {

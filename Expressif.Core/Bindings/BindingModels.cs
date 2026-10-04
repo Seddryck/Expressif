@@ -115,10 +115,22 @@ public sealed record LiteralParameter(
     bool IsLiteralTypeExplicit = false) : IParameter;
 public sealed record CallableReferenceParameter(string Name) : IParameter;
 public sealed record SortCriterionParameter(IParameter Selector, TypeDescriptor Type, bool Ascending, bool NullsFirst) : IParameter;
-public abstract record CoercionSpecificationParameter(Type TargetType) : IParameter;
-public sealed record PositionalCoercionParameter(Type TargetType) : CoercionSpecificationParameter(TargetType);
-public sealed record FieldCoercionParameter(string Field, Type TargetType) : CoercionSpecificationParameter(TargetType);
-public sealed record TupleCoercionParameter(int Position, Type TargetType) : CoercionSpecificationParameter(TargetType);
+public abstract record CoercionSpecificationParameter(Type TargetType) : IParameter
+{
+    internal abstract bool IsKnownVariant { get; }
+}
+public sealed record PositionalCoercionParameter(Type TargetType) : CoercionSpecificationParameter(TargetType)
+{
+    internal override bool IsKnownVariant => true;
+}
+public sealed record FieldCoercionParameter(string Field, Type TargetType) : CoercionSpecificationParameter(TargetType)
+{
+    internal override bool IsKnownVariant => true;
+}
+public sealed record TupleCoercionParameter(int Position, Type TargetType) : CoercionSpecificationParameter(TargetType)
+{
+    internal override bool IsKnownVariant => true;
+}
 public sealed record IntervalParameter(IntervalBinding Value) : IParameter;
 public sealed record VariableParameter(string Name) : IParameter;
 public sealed record ObjectPropertyParameter(string Name) : IParameter;
