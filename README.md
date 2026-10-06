@@ -14,7 +14,7 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/Seddryck/Expressif)
 
 **Continuous integration builds:**
-[![CI](https://github.com/Seddryck/Expressif/actions/workflows/ci.yml/badge.svg?branch=next-major)](https://github.com/Seddryck/Expressif/actions/workflows/ci.yml?query=branch%3Anext-major)
+[![CI](https://github.com/Seddryck/Expressif/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Seddryck/Expressif/actions/workflows/ci.yml?query=branch%3Amain)
 [![CodeFactor](https://www.codefactor.io/repository/github/seddryck/expressif/badge)](https://www.codefactor.io/repository/github/seddryck/expressif)
 [![codecov](https://codecov.io/github/Seddryck/Expressif/branch/main/graph/badge.svg?token=9ZSJ6N0X9E)](https://codecov.io/github/Seddryck/Expressif)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FSeddryck%2FExpressif.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FSeddryck%2FExpressif?ref=badge_shield)
