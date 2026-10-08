@@ -3,7 +3,7 @@ layout: docs
 title: "value-to-value"
 parent: "Special functions"
 grand_parent: "Functions library"
-nav_order: 130
+nav_order: 140
 has_toc: false
 permalink: /functions/special/value-to-value/
 tags:
@@ -19,16 +19,13 @@ value-to-value() → text
 
 Returns `value` except if the argument value is `null` then it returns `null`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #null | value-to-value → "(null)"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `special`  

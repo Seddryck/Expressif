@@ -3,7 +3,7 @@ layout: docs
 title: "text-to-datetime"
 parent: "Conversion functions"
 grand_parent: "Text functions"
-nav_order: 10
+nav_order: 30
 has_toc: false
 permalink: /functions/text/conversion/text-to-datetime/
 tags:
@@ -16,11 +16,13 @@ generated: true
 text →
 text-to-datetime(
     format: text,
-    culture?: text
+    culture: text = ""
 ) → date-time
 ```
 
 Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.
+
+
 
 ## Parameters
 
@@ -29,12 +31,9 @@ Returns a dateTime value matching the argument value parsed by the long format i
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `format` | `text` | Yes | A string representing the required format. |
-| `culture` | `text` | No | A string representing a pre-defined culture. |
+| `culture` | `text` | No | A string representing a pre-defined culture. Defaults to `""`. |
 
-## Argument evaluation
 
-- **`format`:** Evaluated once in the enclosing context.
-- **`culture`:** Evaluated once in the enclosing context.
 
 ## Examples
 
@@ -45,6 +44,10 @@ Returns a dateTime value matching the argument value parsed by the long format i
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`format`:** Evaluated once in the enclosing context.
+- **`culture`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/conversion`  

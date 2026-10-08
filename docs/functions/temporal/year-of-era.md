@@ -3,7 +3,7 @@ layout: docs
 title: "year-of-era"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 540
+nav_order: 480
 has_toc: false
 permalink: /functions/temporal/year-of-era/
 tags:
@@ -19,16 +19,13 @@ year-of-era() → integer
 
 returns a numeric value representing the year of the date passed as the argument
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | year-of-era → 2024
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

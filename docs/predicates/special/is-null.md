@@ -25,12 +25,6 @@ Returns `true` if the argument is effectively `null` else return `false`.
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +32,6 @@ This predicate has no parameters.
 #null | is-null → #true
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `special`  

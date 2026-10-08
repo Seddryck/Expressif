@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-any →
+T →
 apply(
     expression: expression
-) → any
+) → U
 ```
 
 Evaluates an expression with the input value as its current context.
@@ -33,17 +33,6 @@ Evaluates an expression with the input value as its current context.
 
 
 
-## Argument evaluation
-
-- **`expression`:** Evaluated once against the value entering this call.
-
-
-## Behavior
-
-`apply` establishes an evaluation boundary that makes its input value current while evaluating its expression. Use it when the child expression contains contextual references or deferred arguments that must resolve against that value. Positional references address tuple elements, field references address record fields, and deferred array expressions consume the current array.
-
-
-
 ## Examples
 
 {% raw %}
@@ -55,6 +44,25 @@ T(2, 3) | apply(5 | power($0) | add(2) | nth-root($1)) → 3
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `T`
+- Returns: `U`
+- `expression`: Receives `T` and returns `U`.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+
+
+## Argument evaluation
+
+- **`expression`:** Evaluated once against the value entering this call.
+
+
+## Behavior
+
+`apply` establishes an evaluation boundary that makes its input value current while evaluating its expression. Use it when the child expression contains contextual references or deferred arguments that must resolve against that value. Positional references address tuple elements, field references address record fields, and deferred array expressions consume the current array.
 
 **Kind:** Function  
 **Scope:** `flow`  

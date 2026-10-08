@@ -21,6 +21,8 @@ null-to-date(
 
 Returns the dateTime argument except if the value is `null` then it returns the parameter value.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,7 @@ Returns the dateTime argument except if the value is `null` then it returns the 
 |:-----|:-----|:---------|:------------|
 | `default` | `date-time` | Yes | The dateTime to be returned if the argument is `null`. |
 
-## Argument evaluation
 
-- **`default`:** Evaluated once in the enclosing context only when the fallback value is needed.
 
 ## Examples
 
@@ -41,6 +41,9 @@ Returns the dateTime argument except if the value is `null` then it returns the 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`default`:** Evaluated once in the enclosing context only when the fallback value is needed.
 
 **Kind:** Function  
 **Scope:** `temporal/conversion`  

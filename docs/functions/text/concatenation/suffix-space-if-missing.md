@@ -27,11 +27,6 @@ Suffixes the argument with a space character unless it already ends with one. Pr
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -40,7 +35,6 @@ This function has no parameters.
 "Hello World " | suffix-space-if-missing → "Hello World "
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/concatenation`  

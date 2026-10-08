@@ -19,16 +19,13 @@ directory() → text
 
 Returns the directory information of a file path provided as argument. The value is always ending by `/` character. Returns `empty` if path does not contain root directory information or is `null`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 "docs/_data/function.json" | directory → "docs\\_data\\"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `io`  

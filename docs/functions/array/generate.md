@@ -23,6 +23,8 @@ generate(
 
 Generates an array by repeatedly transforming a seed while a condition is satisfied.
 
+
+
 ## Parameters
 
 
@@ -31,19 +33,9 @@ Generates an array by repeatedly transforming a seed while a condition is satisf
 |:-----|:-----|:---------|:------------|
 | `while` | `predicate` | Yes | Specifies the predicate that determines whether the current seed is included. |
 | `next` | `expression` | Yes | Specifies the expression that produces the next seed. |
-| `result` | `expression` | No | Specifies the expression that produces the value appended for the current seed. |
+| `result` | `expression` | No | Specifies the expression that produces the value appended for the current seed. When omitted, the current seed is appended unchanged. |
 
-## Argument evaluation
 
-Starts with the incoming seed and repeatedly evaluates the condition and next-seed expression. The seed changes after each iteration.
-
-- **`while`:** Evaluated against the current seed before each iteration. A false result ends generation.
-- **`next`:** Evaluated against the current seed after an accepted iteration to produce the next seed.
-- **`result`:** Evaluated against each accepted seed to produce its output value.
-
-## Behavior
-
-`generate` is type-agnostic. Its input seed, successive values produced by `next`, and optional projected values may use any supported type; evaluation stops when `while` returns `false`.
 
 
 
@@ -58,6 +50,18 @@ Starts with the incoming seed and repeatedly evaluates the condition and next-se
 ```
 {% endraw %}
 
+## Argument evaluation
+
+Starts with the incoming seed and repeatedly evaluates the condition and next-seed expression. The seed changes after each iteration.
+
+- **`while`:** Evaluated against the current seed before each iteration. A false result ends generation.
+- **`next`:** Evaluated against the current seed after an accepted iteration to produce the next seed.
+- **`result`:** Evaluated against each accepted seed to produce its output value.
+
+
+## Behavior
+
+`generate` is type-agnostic. Its input seed, successive values produced by `next`, and optional projected values may use any supported type; evaluation stops when `while` returns `false`.
 
 **Kind:** Function  
 **Scope:** `array`  

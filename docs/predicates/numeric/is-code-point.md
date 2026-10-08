@@ -3,7 +3,7 @@ layout: docs
 title: "is-code-point"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 5
+nav_order: 10
 has_toc: false
 permalink: /predicates/numeric/is-code-point/
 tags:
@@ -19,17 +19,13 @@ is-code-point() → boolean
 
 Returns `true` when the input is an integer Unicode scalar value. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,8 +34,7 @@ This predicate has no parameters.
 ```
 {% endraw %}
 
-
 **Kind:** Predicate  
 **Scope:** `numeric`  
-**Aliases:** `code-point`
+**Aliases:** None
 {: .member-reference }

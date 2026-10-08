@@ -29,16 +29,7 @@ Returns a tuple containing selected positions in the requested order.
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `positions` | `integer` | Variadic (one or more) | One or more zero-based tuple positions. |
-
-
-
-## Argument evaluation
-
-- **`positions`:** Evaluated once in the enclosing context.
-
-
-
+| `positions` | `integer` | Variadic (one or more); no spread | One or more zero-based tuple positions. |
 ## Examples
 
 {% raw %}
@@ -47,6 +38,9 @@ T("John", "Smith", 42) | pick(1, 0) → T("Smith", "John")
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`positions`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `tuple`  

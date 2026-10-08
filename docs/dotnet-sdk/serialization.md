@@ -3,64 +3,46 @@ layout: docs
 title: Serialize a builder
 parent: .NET SDK
 nav_order: 60
-description: Convert an ExpressionBuilder or PredicationBuilder into Expressif source text.
+description: Render an ExpressionBuilder pipeline or PredicationBuilder rule as Expressif source text.
 ---
 
-`Serialize()` converts a programmatically composed builder into Expressif source. This is useful for displaying, logging, storing, or exchanging the rule in the language's portable text form.
+`ToSource()` renders a programmatically composed pipeline or rule as portable Expressif source. It does not consume the builder state.
 
-```mermaid
-flowchart LR
-    A[C# builder] -->|Serialize| B[Expressif source]
-    B --> C[Store or inspect]
-    B --> D[Parse in another process]
+## Render an expression pipeline
+
+```csharp
+var environment = ExpressifEnvironment.Default;
+var pipeline = environment.CreateExpressionBuilder()
+    .Create<Lower>()
+    .Then<FirstChars>(5)
+    .Then<PadRight>(7, '*');
+
+var source = pipeline.ToSource();
+// lower | first-chars(5) | pad-right(7, "*")
 ```
 
-## Serialize an expression builder
+## Render a predication rule
 
-<!-- START INCLUDE "ExpressionBuilderTest.cs/Serialize_WithParameters_CorrectlySerialized" -->
 ```csharp
-var builder = new ExpressionBuilder()
-    .Chain<Lower>()
-    .Chain<FirstChars>(5)
-    .Chain<PadRight>(7, '*');
-
-var source = builder.Serialize();
-Assert.That(source, Is.EqualTo(
-    "lower | first-chars(5) | pad-right(7, *)"
-));
-```
-<!-- END INCLUDE -->
-
-## Serialize a predication builder
-
-<!-- START INCLUDE "PredicationBuilderTest.cs/Serialize_Negate_CorrectlySerialized" -->
-```csharp
-var builder = new PredicationBuilder()
+var builder = environment.CreatePredicationBuilder();
+var rule = builder
     .Create<StartsWith>("ola")
-    .OrNot<EndsWith>("sla");
+    .Or(builder.Create<EndsWith>("sla").Not());
 
-var source = builder.Serialize();
-Assert.That(source, Is.EqualTo(
-    "{starts-with(ola) |OR !{ends-with(sla)}}"
-));
+var source = rule.ToSource();
 ```
-<!-- END INCLUDE -->
 
-The serializer includes the grouping required to preserve the builder's Boolean structure.
+The renderer includes the grouping required to preserve the Boolean structure.
 
-## Serialize before building
+## Build and render in any order
 
-`ExpressionBuilder.Build()` consumes its queued pipeline. When both source and an executable expression are required, serialize first:
+Both staged models are reusable. `Build()` and `ToSource()` may be called repeatedly and in either order:
 
 ```csharp
-var builder = new ExpressionBuilder()
-    .Chain<Lower>()
-    .Chain<Length>();
-
-var source = builder.Serialize();
-var expression = builder.Build();
+var sourceBefore = pipeline.ToSource();
+var first = pipeline.Build();
+var second = pipeline.Build();
+var sourceAfter = pipeline.ToSource();
 ```
 
-An empty builder cannot be serialized or built. `PredicationBuilder` does not consume its rule when built, but serializing first is still a clear and consistent lifecycle.
-
-Serialization preserves the Expressif rule, not the surrounding runtime state. Values supplied by `Context`, delegates, services, or application configuration must be persisted separately if another process needs them.
+The source represents the Expressif rule, not its `EvaluationContext`. Host values and providers must be stored separately when another process needs them. Arguments created with `Argument.From<T>(...)` contain executable host code and are not serializable; `ToSource()` throws `NotSupportedException` when a pipeline or rule contains one.

@@ -7,6 +7,11 @@
     "Input": "any",
     "Output": "boolean",
     "Summary": "Returns whether the input value has a matching key in the supplied array or grouping.",
+    "Semantics": {
+      "Cardinality": "collapsed",
+      "Dependency": "whole-input",
+      "Ordering": "not-applicable"
+    },
     "Parameters": [
       {
         "Name": "right",
@@ -34,6 +39,9 @@
         "Name": "right-key",
         "Type": "expression",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Summary": "Selects each right array value’s key; when omitted, the left-key expression is reused. It is skipped for a grouping.",
         "Evaluation": {
           "Frequency": "custom",
@@ -51,7 +59,10 @@
     "Examples": [
       "{{id := 1}, {id := 2}} | filter(exists({{customer-id := 1}}, .id, .customer-id)) → {{id := 1}}",
       "1 | exists(#{(1 => {})}, @_) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-single",
@@ -61,6 +72,11 @@
     "Input": "array",
     "Output": "boolean",
     "Summary": "Returns whether the input array contains exactly one element. Returns false when the input cannot be evaluated as an array.",
+    "Semantics": {
+      "Cardinality": "collapsed",
+      "Dependency": "whole-input",
+      "Ordering": "not-applicable"
+    },
     "Parameters": [],
     "Behavior": "Cardinality is independent of element values: a sole null, array, or record counts as one element. Uses the same array conversion as single, including text containing an Expressif array literal. When is-single returns true, single returns the sole element.",
     "Examples": [
@@ -68,7 +84,10 @@
       "{} | is-single → #false",
       "{1, 2} | is-single → #false",
       "{#null} | is-single → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-tuple",
@@ -83,7 +102,10 @@
       "T(1, \"foo\") | is-tuple → #true"
     ],
     "Input": "any",
-    "Output": "boolean"
+    "Output": "boolean",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "has-arity",
@@ -112,15 +134,18 @@
       "T(1, 2) | has-arity(2) → #true"
     ],
     "Input": "tuple",
-    "Output": "boolean"
+    "Output": "boolean",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "and",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "boolean",
-    "Input": null,
-    "Output": null,
+    "Input": "boolean",
+    "Output": "boolean",
     "Summary": "Returns the logical conjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `true`.",
     "Parameters": [
       {
@@ -137,7 +162,10 @@
     ],
     "Examples": [
       "#true | and(#true) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-present",
@@ -162,7 +190,10 @@
     ],
     "Examples": [
       "{name := \"Alice\", age := #null} | is-present(age) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-absent",
@@ -187,7 +218,10 @@
     ],
     "Examples": [
       "{name := \"Alice\"} | is-absent(age) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-false",
@@ -197,13 +231,16 @@
       "boolean-is-false"
     ],
     "Scope": "boolean",
-    "Input": null,
-    "Output": null,
+    "Input": "boolean",
+    "Output": "boolean",
     "Summary": "Returns `true` if the argument is effectively `false` else return `false`.",
     "Parameters": [],
     "Examples": [
       "#true | is-false → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-false-or-null",
@@ -213,13 +250,16 @@
       "boolean-is-false-or-null"
     ],
     "Scope": "boolean",
-    "Input": null,
-    "Output": null,
+    "Input": "boolean",
+    "Output": "boolean",
     "Summary": "Returns `true` if the argument is effectively `false` or `null` else return `false`.",
     "Parameters": [],
     "Examples": [
       "#true | is-false-or-null → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-identical-to",
@@ -229,8 +269,8 @@
       "boolean-is-identical-to"
     ],
     "Scope": "boolean",
-    "Input": null,
-    "Output": null,
+    "Input": "boolean",
+    "Output": "boolean",
     "Summary": "Returns `true` if the boolean passed as argument has the same value than the boolean passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -247,7 +287,10 @@
     ],
     "Examples": [
       "#true | is-identical-to(#true) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-true",
@@ -257,13 +300,16 @@
       "boolean-is-true"
     ],
     "Scope": "boolean",
-    "Input": null,
-    "Output": null,
+    "Input": "boolean",
+    "Output": "boolean",
     "Summary": "Returns `true` if the argument is effectively `true` else return `false`.",
     "Parameters": [],
     "Examples": [
       "#true | is-true → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-true-or-null",
@@ -273,26 +319,32 @@
       "boolean-is-true-or-null"
     ],
     "Scope": "boolean",
-    "Input": null,
-    "Output": null,
+    "Input": "boolean",
+    "Output": "boolean",
     "Summary": "Returns `true` if the argument is effectively `true` or `null` else return `false`.",
     "Parameters": [],
     "Examples": [
       "#true | is-true-or-null → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "not",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "boolean",
-    "Input": null,
-    "Output": null,
+    "Input": "boolean",
+    "Output": "boolean",
     "Summary": "Returns the logical negation of the Boolean-converted input. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`.",
     "Parameters": [],
     "Examples": [
       "#true | not → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "implies",
@@ -317,7 +369,10 @@
     ],
     "Examples": [
       "#true | implies(#false) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "majority",
@@ -333,6 +388,7 @@
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 0,
         "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order.",
         "Evaluation": {
@@ -344,7 +400,10 @@
     ],
     "Examples": [
       "4 | majority(is-positive, is-even, is-less-than(10)) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "satisfies-exactly",
@@ -371,6 +430,7 @@
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 0,
         "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order.",
         "Evaluation": {
@@ -382,7 +442,10 @@
     ],
     "Examples": [
       "4 | satisfies-exactly(2, is-positive, is-even, is-greater-than(10)) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "satisfies-at-least",
@@ -409,6 +472,7 @@
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 0,
         "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order.",
         "Evaluation": {
@@ -420,7 +484,10 @@
     ],
     "Examples": [
       "4 | satisfies-at-least(2, is-positive, is-even, is-greater-than(10)) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "satisfies-at-most",
@@ -447,6 +514,7 @@
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 0,
         "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order.",
         "Evaluation": {
@@ -458,7 +526,10 @@
     ],
     "Examples": [
       "4 | satisfies-at-most(2, is-positive, is-even, is-greater-than(10)) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "nand",
@@ -483,15 +554,18 @@
     ],
     "Examples": [
       "#true | nand(#true) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "or",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "boolean",
-    "Input": null,
-    "Output": null,
+    "Input": "boolean",
+    "Output": "boolean",
     "Summary": "Returns the logical disjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `false`.",
     "Parameters": [
       {
@@ -508,7 +582,10 @@
     ],
     "Examples": [
       "#true | or(add(1)) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "nor",
@@ -533,15 +610,18 @@
     ],
     "Examples": [
       "#false | nor(#false) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "xor",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "boolean",
-    "Input": null,
-    "Output": null,
+    "Input": "boolean",
+    "Output": "boolean",
     "Summary": "Returns `true` when exactly one of the Boolean-converted input and a secondary predicate expression evaluates to `true`. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Always evaluates the secondary expression.",
     "Parameters": [
       {
@@ -558,7 +638,10 @@
     ],
     "Examples": [
       "#true | xor(#true) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "xnor",
@@ -583,14 +666,15 @@
     ],
     "Examples": [
       "#true | xnor(#true) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-code-point",
     "IsPublic": true,
-    "Aliases": [
-      "code-point"
-    ],
+    "Aliases": [],
     "Scope": "numeric",
     "Input": "numeric",
     "Output": "boolean",
@@ -598,7 +682,10 @@
     "Parameters": [],
     "Examples": [
       "128512 | is-code-point → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-equal-to",
@@ -608,8 +695,8 @@
       "numeric-is-equal-to"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric value passed as argument is equal to the numeric value passed as parameter.",
     "Parameters": [
       {
@@ -626,7 +713,10 @@
     ],
     "Examples": [
       "10 | is-equal-to(5) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-greater-than",
@@ -636,8 +726,8 @@
       "numeric-is-greater-than"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric value passed as argument is greater than the numeric value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -654,7 +744,10 @@
     ],
     "Examples": [
       "10 | is-greater-than(5) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-greater-than-or-equal",
@@ -664,8 +757,8 @@
       "numeric-is-greater-than-or-equal"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric value passed as argument is greater than or equal to the numeric value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -682,14 +775,16 @@
     ],
     "Examples": [
       "10 | is-greater-than-or-equal(5) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-whole-number",
     "IsPublic": true,
     "Aliases": [
       "is-integer",
-      "integer",
       "numeric-is-integer",
       "whole-number",
       "numeric-is-whole-number"
@@ -700,8 +795,11 @@
     "Examples": [
       "10 | is-whole-number → #true"
     ],
-    "Input": null,
-    "Output": null
+    "Input": "numeric",
+    "Output": "boolean",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-less-than",
@@ -711,8 +809,8 @@
       "numeric-is-less-than"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric value passed as argument is less than the numeric value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -729,7 +827,10 @@
     ],
     "Examples": [
       "10 | is-less-than(5) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-less-than-or-equal",
@@ -739,8 +840,8 @@
       "numeric-is-less-than-or-equal"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric value passed as argument is less than or equal to the numeric value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -757,7 +858,10 @@
     ],
     "Examples": [
       "10 | is-less-than-or-equal(5) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-negative",
@@ -767,13 +871,16 @@
       "numeric-is-negative"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric argument is less than 0.",
     "Parameters": [],
     "Examples": [
       "10 | is-negative → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-negative-or-zero",
@@ -783,13 +890,16 @@
       "numeric-is-negative-or-zero"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric argument is less or equal to 0.",
     "Parameters": [],
     "Examples": [
       "10 | is-negative-or-zero → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-one",
@@ -799,13 +909,16 @@
       "numeric-is-one"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric argument is equal to 1.",
     "Parameters": [],
     "Examples": [
       "10 | is-one → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-opposite",
@@ -815,8 +928,8 @@
       "numeric-is-opposite"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric value passed as argument additive inverse of the numeric value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -833,7 +946,10 @@
     ],
     "Examples": [
       "10 | is-opposite(5) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-positive",
@@ -843,13 +959,16 @@
       "numeric-is-positive"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric argument is greater than 0.",
     "Parameters": [],
     "Examples": [
       "10 | is-positive → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-positive-or-zero",
@@ -859,13 +978,16 @@
       "numeric-is-positive-or-zero"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric argument is greater or equal to 0.",
     "Parameters": [],
     "Examples": [
       "10 | is-positive-or-zero → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-interval",
@@ -875,8 +997,8 @@
       "numeric-is-within-interval"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -893,7 +1015,10 @@
     ],
     "Examples": [
       "#null | is-within-interval(#null) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-zero",
@@ -903,13 +1028,16 @@
       "numeric-is-zero"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric argument is equal to 0.",
     "Parameters": [],
     "Examples": [
       "10 | is-zero → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-zero-or-null",
@@ -919,13 +1047,16 @@
       "numeric-is-zero-or-null"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric value passed as argument is equal to `0` or `null`. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "10 | is-zero-or-null → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "has-remainder",
@@ -935,8 +1066,8 @@
       "numeric-is-modulo"
     ],
     "Scope": "numeric/arithmetic",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the required remainder. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -964,7 +1095,10 @@
     ],
     "Examples": [
       "10 | has-remainder(3, 1) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-divisible-by",
@@ -974,8 +1108,8 @@
       "numeric-is-divisible-by"
     ],
     "Scope": "numeric/arithmetic",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns `true` if the numeric value passed as argument is evenly divisible by the divisor provided as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -992,7 +1126,10 @@
     ],
     "Examples": [
       "10 | is-divisible-by(3) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-even",
@@ -1002,13 +1139,16 @@
       "numeric-is-even"
     ],
     "Scope": "numeric/arithmetic",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns `true` if the numeric value passed as argument is even. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "10 | is-even → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-odd",
@@ -1018,13 +1158,16 @@
       "numeric-is-odd"
     ],
     "Scope": "numeric/arithmetic",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns `true` if the numeric value passed as argument is odd. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "10 | is-odd → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-null",
@@ -1033,13 +1176,16 @@
       "null"
     ],
     "Scope": "special",
-    "Input": null,
-    "Output": null,
+    "Input": "any",
+    "Output": "boolean",
     "Summary": "Returns `true` if the argument is effectively `null` else return `false`.",
     "Parameters": [],
     "Examples": [
       "#null | is-null → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-type",
@@ -1067,7 +1213,10 @@
       "\"42\" | is-type(:numeric) → #false"
     ],
     "Input": "any",
-    "Output": "boolean"
+    "Output": "boolean",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-after",
@@ -1077,8 +1226,8 @@
       "dateTime-is-after"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -1095,7 +1244,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-after(#\"2024-01-14 12:30:00\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-after-or-same-instant",
@@ -1105,8 +1257,8 @@
       "dateTime-is-after-or-same-instant"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.",
     "Parameters": [
       {
@@ -1123,7 +1275,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-after-or-same-instant(#\"2024-01-14 12:30:00\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-before",
@@ -1133,8 +1288,8 @@
       "dateTime-is-before"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -1151,7 +1306,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-before(#\"2024-01-14 12:30:00\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-before-or-same-instant",
@@ -1161,8 +1319,8 @@
       "dateTime-is-before-or-same-instant"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.",
     "Parameters": [
       {
@@ -1179,7 +1337,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-before-or-same-instant(#\"2024-01-14 12:30:00\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-business-day",
@@ -1189,13 +1350,16 @@
       "dateTime-is-business-day"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns `true` if the date passed as the argument doesn't correspond to a Saturday or a Sunday. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-business-day → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-contained-in",
@@ -1205,8 +1369,8 @@
       "dateTime-is-contained-in"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the temporal value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -1223,7 +1387,10 @@
     ],
     "Examples": [
       "#null | is-contained-in(#null) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-in-the-future",
@@ -1233,13 +1400,16 @@
       "dateTime-is-in-the-future"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is after today. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-in-the-future → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-in-the-future-or-now",
@@ -1249,13 +1419,16 @@
       "dateTime-is-in-the-future-or-now"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the dateTime passed as argument is after now. If a Date is passed as argument, it returns true if the date is today or after. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-in-the-future-or-now → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-in-the-future-or-today",
@@ -1265,13 +1438,16 @@
       "dateTime-is-in-the-future-or-today"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is today or a date after. If a DateTime is passed as argument, it must be today or after. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-in-the-future-or-today → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-in-the-past",
@@ -1281,13 +1457,16 @@
       "dateTime-is-in-the-past"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is before today. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-in-the-past → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-in-the-past-or-now",
@@ -1297,13 +1476,16 @@
       "dateTime-is-in-the-past-or-now"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the dateTime passed as argument is before now. If a Date is passed as argument, it returns true if the date is today or before. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-in-the-past-or-now → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-in-the-past-or-today",
@@ -1313,13 +1495,16 @@
       "dateTime-is-in-the-past-or-today"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is today or a date before. If a DateTime is passed as argument, it returns true if the date of this datetime is today or any other date before today. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-in-the-past-or-today → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-leap-year",
@@ -1329,13 +1514,16 @@
       "dateTime-is-leap-year"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the year of the dateTime value passed as the argument is a leap year. If the argument is not a dateTime but a numeric, returns true if the integer part of this value corresponds to a year that is a leap year. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-leap-year → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-on-the-day",
@@ -1345,13 +1533,16 @@
       "dateTime-is-on-the-day"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns `true` if the argument is of type `DateOnly` or of type `DateTime` but the Time part is set at exactly midnight. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-on-the-day → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-on-the-hour",
@@ -1361,13 +1552,16 @@
       "dateTime-is-on-the-hour"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns `true` if the argument is of type `DateTime` and the minutes, seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-on-the-hour → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-on-the-minute",
@@ -1377,13 +1571,16 @@
       "dateTime-is-on-the-minute"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns `true` if the argument is of type `DateTime` and the seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-on-the-minute → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-same-instant",
@@ -1393,8 +1590,8 @@
       "dateTime-is-same-instant"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the temporal value passed as argument is equal to the temporal value passed as parameter.",
     "Parameters": [
       {
@@ -1411,7 +1608,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-same-instant(#\"2024-01-14 12:30:00\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-today",
@@ -1421,13 +1621,16 @@
       "dateTime-is-today"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is representing the current date. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-today → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-tomorrow",
@@ -1437,13 +1640,16 @@
       "dateTime-is-tomorrow"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is representing the next date compared to the current date. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-tomorrow → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-weekday",
@@ -1453,8 +1659,8 @@
       "dateTime-is-weekday"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns `true` if the date passed as the argument corresponds to the weekday passed as the parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -1471,7 +1677,10 @@
     ],
     "Examples": [
       "#\"2024-01-15\" | is-weekday(\"Monday\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-weekend",
@@ -1481,13 +1690,16 @@
       "dateTime-is-weekend"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns `true` if the date passed as the argument corresponds to a Saturday or a Sunday. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-weekend → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-current-month",
@@ -1497,13 +1709,16 @@
       "dateTime-is-within-current-month"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is part of the same month than the current date. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-current-month → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-current-week",
@@ -1513,13 +1728,16 @@
       "dateTime-is-within-current-week"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is part of the same week than the current date. A week is starting on Monday and ending on Sunday. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-current-week → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-current-year",
@@ -1529,13 +1747,16 @@
       "dateTime-is-within-current-year"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is part of the same year than the current date. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-current-year → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-last-month",
@@ -1545,13 +1766,16 @@
       "dateTime-is-within-last-month"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is part of the month preceding than the current month. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-last-month → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-last-week",
@@ -1561,13 +1785,16 @@
       "dateTime-is-within-last-week"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is part of the week preceding the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-last-week → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-last-year",
@@ -1577,13 +1804,16 @@
       "dateTime-is-within-last-year"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is part of the year preceding the current year. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-last-year → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-next-days",
@@ -1593,8 +1823,8 @@
       "dateTime-is-within-next-days"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is between tomorrow and the count of days after the current date. Returns false otherwise.",
     "Parameters": [
       {
@@ -1611,7 +1841,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-next-days(2) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-previous-days",
@@ -1621,8 +1854,8 @@
       "dateTime-is-within-previous-days"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is between the count of days before the current date and yesterday (both included). Returns false otherwise.",
     "Parameters": [
       {
@@ -1639,7 +1872,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-previous-days(2) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-upcoming-month",
@@ -1649,13 +1885,16 @@
       "dateTime-is-within-upcoming-month"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is part of the month following than the current month. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-upcoming-month → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-upcoming-week",
@@ -1665,13 +1904,16 @@
       "dateTime-is-within-upcoming-week"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is part of the week following the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-upcoming-week → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-upcoming-year",
@@ -1681,13 +1923,16 @@
       "dateTime-is-within-upcoming-year"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is part of the year following the current year. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-upcoming-year → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-yesterday",
@@ -1697,13 +1942,16 @@
       "dateTime-is-yesterday"
     ],
     "Scope": "temporal",
-    "Input": null,
-    "Output": null,
+    "Input": "temporal",
+    "Output": "boolean",
     "Summary": "Returns true if the date passed as argument is representing the previous date compared to the current date. Returns false otherwise.",
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-yesterday → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "contains",
@@ -1712,8 +1960,8 @@
       "text-contains"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if the value passed as argument contains, anywhere in the string, the text value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -1731,7 +1979,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1742,7 +1993,10 @@
     "Examples": [
       "\"Hello World\" | contains(\"Hello\") → #true",
       "\"Hello World\" | contains(\"Hello\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "ends-with",
@@ -1751,8 +2005,8 @@
       "text-ends-with"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if the value passed as argument ends with the text value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -1770,7 +2024,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1781,7 +2038,10 @@
     "Examples": [
       "\"Hello World\" | ends-with(\"Hello\") → #false",
       "\"Hello World\" | ends-with(\"Hello\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-any-of",
@@ -1791,8 +2051,8 @@
       "text-is-any-of"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if the list of text values passed as parameter contains the text value passed as argument. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -1810,7 +2070,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1821,7 +2084,10 @@
     "Examples": [
       "#null | is-any-of(#null) → #false",
       "#null | is-any-of(#null) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-empty",
@@ -1831,13 +2097,16 @@
       "text-is-empty"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if argument value has a length of `0`. Return `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | is-empty → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-empty-or-null",
@@ -1847,13 +2116,16 @@
       "text-is-empty-or-null"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if argument value has a length of `0` or is `null`. Return `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | is-empty-or-null → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-equivalent-to",
@@ -1863,8 +2135,8 @@
       "text-is-equivalent-to"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Compare the text value passed as argument and the text value passed as parameter and returns `true` if they are equal. By default the comparison is agnostic of the culture and case-insensitive.",
     "Parameters": [
       {
@@ -1882,7 +2154,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)..",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1893,7 +2168,10 @@
     "Examples": [
       "\"Hello World\" | is-equivalent-to(\"Hello\") → #false",
       "\"Hello World\" | is-equivalent-to(\"Hello\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-lower-case",
@@ -1903,13 +2181,16 @@
       "text-is-lower-case"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if all characters of the text value passed as argument are lower-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | is-lower-case → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-sorted-after",
@@ -1919,8 +2200,8 @@
       "text-is-sorted-after"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted after the parameter value. By default the comparison is agnostic of the culture and case-insensitive.",
     "Parameters": [
       {
@@ -1938,7 +2219,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1949,7 +2233,10 @@
     "Examples": [
       "\"Hello World\" | is-sorted-after(\"Hello\") → #true",
       "\"Hello World\" | is-sorted-after(\"Hello\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-sorted-after-or-equivalent-to",
@@ -1959,8 +2246,8 @@
       "text-is-sorted-after-or-equivalent-to"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted after the parameter value or if the two values are equal. By default the comparison is agnostic of the culture and case-insensitive.",
     "Parameters": [
       {
@@ -1978,7 +2265,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1989,7 +2279,10 @@
     "Examples": [
       "\"Hello World\" | is-sorted-after-or-equivalent-to(\"Hello\") → #true",
       "\"Hello World\" | is-sorted-after-or-equivalent-to(\"Hello\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-sorted-before",
@@ -1999,8 +2292,8 @@
       "text-is-sorted-before"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted before the parameter value. By default the comparison is agnostic of the culture and case-insensitive.",
     "Parameters": [
       {
@@ -2018,7 +2311,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -2029,7 +2325,10 @@
     "Examples": [
       "\"Hello World\" | is-sorted-before(\"Hello\") → #false",
       "\"Hello World\" | is-sorted-before(\"Hello\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-sorted-before-or-equivalent-to",
@@ -2039,8 +2338,8 @@
       "text-is-sorted-before-or-equivalent-to"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted before the parameter value or if the two values are equal. By default the comparison is agnostic of the culture and case-insensitive.",
     "Parameters": [
       {
@@ -2058,7 +2357,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -2069,7 +2371,10 @@
     "Examples": [
       "\"Hello World\" | is-sorted-before-or-equivalent-to(\"Hello\") → #false",
       "\"Hello World\" | is-sorted-before-or-equivalent-to(\"Hello\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-upper-case",
@@ -2079,13 +2384,16 @@
       "text-is-upper-case"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if all characters of the text value passed as argument are upper-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | is-upper-case → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "matches-date",
@@ -2094,13 +2402,16 @@
       "text-matches-date"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if the text value passed as argument is a valid representation of a date in the culture specified as parameter. If the value is of type `DateTime` and the time part is set to midnight then it returns `true`. If the value is of type `Date`. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | matches-date → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "matches-datetime",
@@ -2109,13 +2420,16 @@
       "text-matches-datetime"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if the text value passed as argument is a valid representation of a dateTime in the culture specified as parameter. The expected format is the concatenation of the ShortDatePattern, a space and the LongTimePattern. If the value is of type `DateTime`, it returns `true`. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | matches-datetime → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "matches-numeric",
@@ -2124,13 +2438,16 @@
       "text-matches-numeric"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if the text value passed as argument is a valid representation of a numeric in the culture specified as parameter. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | matches-numeric → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "matches-regex",
@@ -2139,8 +2456,8 @@
       "text-matches-regex"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if the value passed as argument validate the regex passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -2158,7 +2475,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -2169,7 +2489,10 @@
     "Examples": [
       "\"Hello World\" | matches-regex(\"^Hello\") → #true",
       "\"Hello World\" | matches-regex(\"^Hello\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "matches-time",
@@ -2178,13 +2501,16 @@
       "text-matches-time"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if the text value passed as argument is a valid representation of a time in the culture specified as parameter. The expected format is the LongTimePattern. If the value is of type `TimeOnly`, it returns `true`. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | matches-time → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "starts-with",
@@ -2193,8 +2519,8 @@
       "text-starts-with"
     ],
     "Scope": "text",
-    "Input": null,
-    "Output": null,
+    "Input": "text",
+    "Output": "boolean",
     "Summary": "Returns `true` if the value passed as argument starts with the text value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -2212,7 +2538,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -2223,7 +2552,10 @@
     "Examples": [
       "\"Hello World\" | starts-with(\"Hello\") → #true",
       "\"Hello World\" | starts-with(\"Hello\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-kebab-case",
@@ -2237,7 +2569,10 @@
     "Examples": [
       "\"first-name\" | is-kebab-case → #true",
       "\"first--name\" | is-kebab-case → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-snake-case",
@@ -2251,7 +2586,10 @@
     "Examples": [
       "\"first_name\" | is-snake-case → #true",
       "\"first--name\" | is-snake-case → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-camel-case",
@@ -2265,7 +2603,10 @@
     "Examples": [
       "\"firstName\" | is-camel-case → #true",
       "\"first--name\" | is-camel-case → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-pascal-case",
@@ -2279,7 +2620,10 @@
     "Examples": [
       "\"FirstName\" | is-pascal-case → #true",
       "\"first--name\" | is-pascal-case → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-not-null",
@@ -2295,7 +2639,10 @@
     "Examples": [
       "#null | is-not-null → #false",
       "10 | is-not-null → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-currency-symbol",
@@ -2310,7 +2657,10 @@
     "Examples": [
       "\"$\" | is-currency-symbol → #true",
       "\"USD\" | is-currency-symbol → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "matches-currency",
@@ -2326,6 +2676,9 @@
       "\"$1,000.01\" | matches-currency → #true",
       "\"100.01 €\" | matches-currency → #true",
       "\"$5,00\" | matches-currency → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   }
 ]

@@ -3,7 +3,7 @@ layout: docs
 title: "public"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 120
+nav_order: 130
 has_toc: false
 permalink: /functions/record/public/
 tags:
@@ -27,11 +27,6 @@ Returns a new record without fields whose names start with an underscore, preser
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 {foo := 10, _tmp := 20, bar := 30} | public → {foo := 10, bar := 30}
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `record`  

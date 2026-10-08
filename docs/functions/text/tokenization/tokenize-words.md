@@ -27,11 +27,6 @@ Returns word tokens using separators, punctuation, symbols, case transitions, an
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "customer_HTTP-server_id" | tokenize-words → {"customer", "HTTP", "server", "id"}
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

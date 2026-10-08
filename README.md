@@ -64,7 +64,9 @@ See the language guide for [expressions](https://seddryck.github.io/Expressif/la
 
 ### .NET SDK
 
-The `Expressif` NuGet package targets .NET 8, .NET 9, and .NET 10.
+The `Expressif` NuGet package targets .NET 8, .NET 9, and .NET 10. It is the recommended umbrella package and installs both `Expressif.Core` and the official `Expressif.Library` vocabulary.
+
+Portable logical plan types and JSON serialization live in `Expressif.Core`. To plan expressions with the built-in vocabulary, use `Expressif.Library.Composition.LogicalPlannerFactory.Create().Build(syntax)`; a Core-only host can supply its own `ILogicalPlanningContext`.
 
 ```bash
 dotnet add package Expressif
@@ -73,13 +75,20 @@ dotnet add package Expressif
 Create an expression and evaluate an input value:
 
 ```csharp
-using Expressif;
+using Expressif.Hosting;
 
-var expression = Expression.Create("trim | upper");
+var environment = ExpressifEnvironment.Default;
+var expression = environment.CreateExpression("trim | upper");
 var result = expression.Evaluate("  Alice  ");
 ```
 
-The .NET SDK also provides APIs for predications, typed builders, runtime context, and serialization. Continue with the [.NET SDK guide](https://seddryck.github.io/Expressif/dotnet-sdk/).
+`ExpressifEnvironment.Default` is the composition root for textual expressions, textual predications, and typed builders. Register extension libraries on a derived immutable environment and create every executable object from that same snapshot.
+
+Typed builders use staged, reusable values: start an expression with `Create<T>()`, append with `Then<T>()`, and call `Build()` or `ToSource()` repeatedly without consuming the pipeline. Runtime variables are supplied through an immutable `EvaluationContext`; per-argument providers use `ArgumentEvaluationContext`.
+
+The .NET SDK also provides APIs for predications, typed builders, runtime context, and serialization. Continue with the [.NET SDK guide](https://seddryck.github.io/Expressif/dotnet-sdk/), or use the [v2 to v3 migration guide](https://seddryck.github.io/Expressif/dotnet-sdk/migrate-v2-to-v3/) when upgrading an application.
+
+Advanced hosts that supply their own vocabulary can reference `Expressif.Core` without installing the official library. `Expressif`, `Expressif.Core`, and `Expressif.Library` are released in lockstep and should always use the same version. See the [installation guide](https://seddryck.github.io/Expressif/dotnet-sdk/installation/) for the package responsibilities and dependency graph.
 
 ### Command-line interface
 
@@ -106,12 +115,12 @@ The documentation site is the authoritative guide and reference:
 - [Language guide](https://seddryck.github.io/Expressif/language/)
 - [Function reference](https://seddryck.github.io/Expressif/functions/)
 - [Predicate reference](https://seddryck.github.io/Expressif/predicates/)
-- [Accumulator reference](https://seddryck.github.io/Expressif/accumulators/)
+- [Array aggregation functions](https://seddryck.github.io/Expressif/functions/array/aggregation/)
 - [.NET SDK](https://seddryck.github.io/Expressif/dotnet-sdk/)
 - [Command-line interface](https://seddryck.github.io/Expressif/cli/)
 - [Tooling and editor support](https://seddryck.github.io/Expressif/tooling/)
 
-Function, predicate, and accumulator details live in these references rather than being duplicated in this README.
+Function and predicate details live in these references rather than being duplicated in this README. Incremental aggregation operators are documented as functions.
 
 ## Tooling
 

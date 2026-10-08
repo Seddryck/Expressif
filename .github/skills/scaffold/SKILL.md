@@ -1,6 +1,6 @@
 ---
 name: scaffold
-description: "Scaffold documentation metadata and conformance cases for a new post-v2 Expressif function, predicate, or accumulator before implementation. Use when defining a new operator; do not use for implementing an existing scaffold."
+description: "Scaffold documentation metadata, logical-schema discovery contracts, and conformance cases for a new post-v2 Expressif function or predicate before implementation. Use when defining a new operator; do not use for implementing an existing scaffold."
 ---
 
 # /scaffold
@@ -9,7 +9,7 @@ Define the public contract for a new operator and create the catalog record and 
 
 This skill targets the architecture after the `next-major` development line. Do not preserve legacy metadata or parser conventions from `main`.
 
-Supported kinds are function, predicate, and accumulator.
+Supported public kinds are function and predicate. Array aggregation functions that need incremental evaluation are functions with `Incremental: true`.
 
 Follow `AGENTS.md` for issue, branch, worktree, commit, push, and pull-request execution. Scaffolding may propose a commit message, but it does not independently authorize or forbid those Git operations.
 
@@ -20,7 +20,7 @@ Collect enough information to make behavior and typing unambiguous:
 * kind, canonical kebab-case name, aliases, visibility, and semantic scope;
 * concise summary and special-value behavior;
 * semantic input and output contracts;
-* parameters in canonical order, including name, semantic type, summary, optionality, omission/default semantics, and variadic status;
+* parameters in canonical order, including name, semantic type, summary, optionality, a structured omission contract when optional, and variadic status;
 * cardinality, evaluation order, materialization, short-circuit, or stateful behavior when relevant;
 * representative examples and expected results.
 
@@ -49,9 +49,46 @@ Do not replace a known relationship with unexplained `any` metadata.
 
 Predicates are Boolean-returning callable functions. Record their semantic input and Boolean output and follow the repository's canonical question-style naming convention. Compatibility spellings belong in aliases, not in the canonical name.
 
-### Accumulator contract
+### Incremental aggregation contract
 
-Describe the accumulated item type, result type, initial/empty result, null handling, and order sensitivity. Do not force function-style failure or cardinality semantics onto accumulators.
+Describe the aggregated item type, result type, initial/empty result, null handling, and order sensitivity. Mark the function `Incremental: true` when `fold`, `scan`, or `broadcast` must consume it through the internal accumulation lifecycle.
+
+## Schema discovery contract
+
+Treat logical schema discovery as part of the public operator contract, not as an optional implementation follow-up. Every catalog entry must select exactly one `Schema.Classification`:
+
+* `fixed` when the canonical input and output types completely describe the result and no nested structure must be preserved;
+* `contract` when generic schema expressions can describe how input, argument, and output schemas relate;
+* `intrinsic` when inference depends on literal or structural information that the contract grammar cannot express, such as selected field names or tuple positions;
+* `dynamic` only when the relationship is genuinely unavailable statically, with a precise `DynamicReason`.
+
+Before choosing a classification, inspect related operators and answer:
+
+1. Does the operator preserve, select, combine, wrap, or replace part of its input schema?
+2. Does an existing family member already establish that relationship?
+3. Can the relationship be expressed with the existing schema constructors and type variables?
+4. If not, can one reusable, metadata-selected intrinsic represent the structural operation without function-name dispatch?
+5. Which exact relationship remains unknown if the operator must stay dynamic?
+
+For a declarative contract, define all applicable relationships:
+
+* generic `Input` and `Output` expressions, such as `array<T>`, `grouping<K, T>`, or `array<union<T, U>>`;
+* parameter-level `Input` and `Output` expressions that state evaluation context and bind child results;
+* `Combine: union` or `Combine: tuple` for variadic parameter outputs;
+* `NullableWhen` sources, keeping value nullability distinct from optional record-field presence;
+* heterogeneous, empty, and polymorphic-source behavior when these affect the discovered schema.
+
+Every type variable in an output must be bound by the operator input or a parameter output. Do not classify an operator as `fixed` merely because its top-level semantic type is known when doing so would discard item, key, value, field, or tuple-component schemas.
+
+When proposing an intrinsic, state the structural information it consumes and the result it derives. Prefer one parameterized intrinsic shared by a family over separate intrinsic branches or canonical-name checks. Keep `dynamic` only for the portion that cannot be represented by a contract or reusable intrinsic.
+
+Include a small schema-analysis handoff with representative expectations, independently of runtime conformance. Cover at least the primary forward result and any important backward requirement, nullability, heterogeneous union, or polymorphic source. For example:
+
+```text
+array<decimal> | complement(array<text>) -> array<text>
+grouping<text, decimal> | drill-up(lower) -> grouping<text, decimal>
+tuple<text, integer> | tuple-second -> integer
+```
 
 ## Names and collisions
 
@@ -65,15 +102,23 @@ Named arguments bind against canonical metadata names. Preserve parameter order 
 
 ## Parameters
 
-Every parameter record includes the fields required by the current catalog schema, including semantic `Type`, `Optional`, and documentation summary.
+Every parameter record includes the fields required by the current catalog schema, including semantic `Type`, `Optional`, and documentation summary. Every optional parameter MUST have exactly one structured `Omission` contract. A required parameter MUST NOT contain `Omission` metadata.
 
-For an optional parameter, record its default value when the schema represents one. Otherwise document the defined omission behavior; do not invent a CLR default.
+Choose the omission mode from the public language contract:
+
+* `constant`: omitting the argument supplies one fixed semantic value. Include `Value` explicitly and preserve its JSON type; for example, use `1`, `""`, `true`, or `null`, not a string rendering of that value.
+* `empty-variadic`: omitting a variadic parameter supplies an empty argument sequence. Use this only for a variadic parameter that permits zero arguments, and do not include `Value` or `Source`.
+* `absent`: omission remains distinguishable from every explicit argument value so the operator or binder can apply documented operator-specific handling. State that handling in the parameter summary, and do not use this mode as a placeholder for an unknown default.
+* `environment-derived`: omission obtains a value from runtime state rather than a fixed literal. Include a nonempty `Source` that identifies the environment source, and do not include `Value`.
+
+Do not infer omission behavior from a CLR constructor default, overload, nullable backend field, or implementation convenience. Define it from the intended language contract. If that contract is ambiguous, stop and request an explicit language decision instead of selecting a mode or value.
 
 For a variadic parameter:
 
 * mark it with the catalog's variadic field;
 * record its element/expression semantic type;
 * define minimum cardinality and empty invocation behavior;
+* use `empty-variadic` when omission supplies zero arguments, or document why another supported mode applies;
 * state whether spread is accepted and how it preserves argument order;
 * define output inference for homogeneous, heterogeneous, and empty arguments.
 
@@ -90,7 +135,7 @@ Document null, empty, blank, invalid-input, and binding behavior only as semanti
 * predicates have explicit Boolean behavior;
 * functions may preserve, transform, materialize, or reject special values;
 * unsupported calls may fail during binding with a diagnostic;
-* accumulators define their own empty and null lifecycle behavior.
+* incremental aggregation functions define their own empty and null lifecycle behavior.
 
 End prose sentences with punctuation and preserve stable terminology used by adjacent catalog entries.
 
@@ -100,11 +145,11 @@ Map kind to:
 
 * function: `docs/_data/function.json`;
 * predicate: `docs/_data/predicate.json`;
-* accumulator: `docs/_data/accumulator.json`.
+* incremental aggregation function: an entry with `"Incremental": true` in `docs/_data/function.json`.
 
-Emit the complete record required by the current post-v2 schema. For functions this includes at least `Name`, `IsPublic`, `Aliases`, `Scope`, `Input`, `Output`, `Summary`, and typed `Parameters`. Emit contract-dependency, default, or variadic fields when applicable.
+Emit the complete record required by the current post-v2 schema. For functions this includes at least `Name`, `IsPublic`, `Aliases`, `Scope`, `Input`, `Output`, `Summary`, typed `Parameters`, and a complete `Schema` classification. Emit contract relationships, intrinsic selection, dynamic reason, omission, or variadic fields when applicable. Do not append an incomplete record merely because older entries omit newer semantic fields. Preserve existing formatting and ordering without reordering unrelated entries.
 
-Do not append an incomplete record merely because older entries omit newer semantic fields. Preserve existing formatting and ordering without reordering unrelated entries.
+Validate the updated catalog against `docs/_data/catalog.schema.json`. Treat an optional parameter without `Omission`, a required parameter with `Omission`, a constant without `Value`, or a mode with fields it does not support as a scaffolding failure.
 
 ## Conformance output
 
@@ -117,13 +162,15 @@ Use lowercase dot-separated test and case IDs whose segments describe behavior o
 Select cases from semantic partitions rather than a fixed count. Cover applicable behavior such as:
 
 * ordinary representative values and boundaries;
-* each optional/defaulted invocation form;
+* each optional invocation form and its omission behavior;
 * named and positional equivalence when it is part of the operator contract;
 * empty, single, multiple, heterogeneous, nested, and spread forms for variadic operators;
 * every supported typed input contract for coercions;
 * short-circuit or declaration-order behavior;
-* accumulator empty, null, repeated, and order-sensitive behavior;
+* incremental aggregation empty, null, repeated, and order-sensitive behavior;
 * null, empty, and blank only when meaningful for the declared input and semantics.
+
+When omission affects an observable result, include a case that actually omits the argument. For `constant`, cover the omitted form and its fixed semantic value; for `empty-variadic`, cover the zero-argument form; for `absent`, demonstrate the documented operator-specific path; and for `environment-derived`, assert stable observable invariants without hard-coding nondeterministic output. If omission is not observable in the conformance schema, state why and place any required coverage in a focused test.
 
 Use `(null)`, `(empty)`, and `(blank)` for the corresponding Expressif special input values. YAML null is an empty `expected:` value. Quote strings when YAML could reinterpret language syntax, arrays, records, Booleans, or special tokens.
 
@@ -142,7 +189,7 @@ post-v2 page generator:
 ./New-LibraryReferencePages.ps1 -Kind <Kind> -Scope <Scope>
 ```
 
-Map `<Kind>` to `Function`, `Predicate`, or `Accumulator`. Pass the changed
+Map `<Kind>` to `Function` or `Predicate`. Pass the changed
 operator's scope, such as `text` or `text/conversion`, so generation and stale-page
 cleanup stay limited to that scope. Include the generated page for the new operator
 and its affected indexes in the task. Regeneration must succeed before the completed
@@ -168,10 +215,19 @@ Confirm that:
 1. catalog and conformance targets do not already exist unless an update was requested;
 2. names and aliases satisfy canonical naming and collision rules;
 3. semantic input, output, and parameter types are complete;
-4. dynamic relationships, optional defaults, and variadic behavior are explicit where applicable;
-5. summaries and expected results agree;
-6. YAML conforms to the schema and can map to a conformance test method;
-7. the proposed commit message describes the eventual completed change.
+4. every optional parameter has exactly one supported omission mode and every required parameter has none;
+5. every `constant` has an explicitly typed `Value`, every `environment-derived` contract names its `Source`, and modes contain no unsupported fields;
+6. omission behavior was not inferred from CLR defaults, overloads, or backend implementation details;
+7. dynamic relationships and variadic behavior are explicit where applicable;
+8. observable omission semantics have conformance coverage, including zero-argument variadic invocation where applicable;
+9. the updated catalog validates against `docs/_data/catalog.schema.json`;
+10. summaries and expected results agree;
+11. YAML conforms to the schema and can map to a conformance test method;
+12. every callable has exactly one schema classification and every output type variable is bound;
+13. schema relationships preserve nested structure, nullability sources reference real inputs or parameters, and optional field presence is not represented as value nullability;
+14. intrinsics are reusable and metadata-selected without canonical-name dispatch, while dynamic entries explain the precise unsupported relationship;
+15. the schema-analysis handoff covers representative forward and backward inference behavior;
+16. the proposed commit message describes the eventual completed change.
 
 Show a preview when the user requests one or when unresolved choices require confirmation. Otherwise apply the scoped metadata and conformance edits without an unconditional confirmation gate.
 
@@ -182,7 +238,9 @@ Report:
 * operator kind, name, and semantic contract;
 * catalog and conformance files changed;
 * documentation reference pages regenerated;
-* optional, dynamic, or variadic semantics recorded;
+* schema classification, generic relationships, nullability sources, and any intrinsic or dynamic boundary;
+* representative schema-analysis expectations handed to `/implement`;
+* optional omission modes and values or sources, plus dynamic or variadic semantics recorded;
 * validation performed;
 * proposed commit message;
 * whether any Git commit was actually created.

@@ -18,15 +18,20 @@ is-leap-year()
 
 Returns true if the year of the dateTime value passed as the argument is a leap year. If the argument is not a dateTime but a numeric, returns true if the integer part of this value corresponds to a year that is a leap year. Returns false otherwise.
 
+
+
 ## Parameters
 
 
 
 This predicate has no parameters.
+## Examples
 
-
-
-
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-leap-year → #true
+```
+{% endraw %}
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

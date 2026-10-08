@@ -21,6 +21,8 @@ divide(
 
 Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,7 @@ Returns the argument number divided by the parameter value. If the parameter val
 |:-----|:-----|:---------|:------------|
 | `value` | `numeric` | Yes | The value to divide the argument value. |
 
-## Argument evaluation
 
-- **`value`:** Evaluated in the enclosing context to check for zero, then evaluated again for division when the first result is nonzero.
 
 ## Examples
 
@@ -41,6 +41,9 @@ Returns the argument number divided by the parameter value. If the parameter val
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`value`:** Evaluated in the enclosing context to check for zero, then evaluated again for division when the first result is nonzero.
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

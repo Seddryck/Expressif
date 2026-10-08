@@ -1,0 +1,1136 @@
+using Expressif.Bindings;
+using Expressif.Semantics;
+using Expressif.Functions.Accumulation;
+using Expressif.Predicates;
+using Expressif.Values;
+using Expressif.Functions.Coercions;
+using Expressif.Discovery;
+using Expressif.Observability;
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using LinqExpression = System.Linq.Expressions.Expression;
+
+namespace Expressif.Functions;
+
+internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IFunctionConstructionContext
+{
+    private readonly IImplementationRegistry predicateRegistry;
+    private readonly AccumulatorRegistry accumulatorRegistry;
+    private readonly CoercionRegistry coercionRegistry;
+    private readonly FunctionConstructorRegistry constructors;
+    private readonly IPredicationFactory predicationFactory;
+    private readonly ITupleFunctionInvoker tupleBinding;
+    private static long nextObservationId;
+
+    public FunctionFactoryRuntime(ITypeSource source)
+        : this(
+            new FunctionRegistry(source),
+            new PredicateRegistry(source),
+            new AccumulatorRegistry(source),
+            new CoercionRegistry(source),
+            new FunctionConstructorRegistry(source),
+            TypeSourceService.Create<IPredicationFactory>(source),
+            TypeSourceService.Create<ITupleFunctionInvoker>(source),
+            source) { }
+
+    public FunctionFactoryRuntime(IImplementationRegistry registry, ITypeSource source)
+        : this(
+            registry,
+            new PredicateRegistry(source),
+            new AccumulatorRegistry(source),
+            new CoercionRegistry(source),
+            new FunctionConstructorRegistry(source),
+            TypeSourceService.Create<IPredicationFactory>(source),
+            TypeSourceService.Create<ITupleFunctionInvoker>(source),
+            source) { }
+
+    public FunctionFactoryRuntime(
+        IImplementationRegistry registry,
+        IImplementationRegistry predicateRegistry,
+        AccumulatorRegistry accumulatorRegistry,
+        CoercionRegistry coercionRegistry,
+        FunctionConstructorRegistry constructors,
+        IPredicationFactory predicationFactory,
+        ITupleFunctionInvoker tupleBinding,
+        ITypeSource source)
+        : base(registry, source)
+        => (this.predicateRegistry, this.accumulatorRegistry, this.coercionRegistry, this.constructors,
+                this.predicationFactory, this.tupleBinding)
+            = (predicateRegistry, accumulatorRegistry, coercionRegistry, constructors, predicationFactory, tupleBinding);
+
+    Delegate IFunctionConstructionContext.CreateParameter(
+        IParameter parameter,
+        Type targetType,
+        IContext context)
+        => CreateParameter(parameter, targetType, context);
+
+    IFunction IFunctionConstructionContext.CreateOpenExpression(
+        OpenExpression expression,
+        IContext context)
+        => BuildOpenExpression(expression, context);
+
+    Func<object?, object?> IFunctionConstructionContext.CreateOpenExpressionValueEvaluator(
+        OpenExpressionParameter expression,
+        IContext context)
+        => BuildOpenExpressionRecordEvaluator(expression, context);
+
+    Func<object?, object?> IFunctionConstructionContext.CreateValueEvaluator(
+        IParameter parameter,
+        IContext context,
+        bool establishScope)
+        => BuildValueEvaluator(parameter, context, establishScope);
+
+    IFunction IFunctionConstructionContext.CreateFunction(
+        Bindings.Function function,
+        IContext context)
+        => InstantiateOrWrapAggregation(function, context);
+
+    Func<IPredicate> IFunctionConstructionContext.CreatePredicateProvider(
+        IParameter parameter,
+        IContext context,
+        string functionName)
+        => BuildPredicateProvider(parameter, context, functionName);
+
+    Func<IIncrementalAggregation> IFunctionConstructionContext.CreateAccumulatorProvider(
+        IParameter parameter,
+        IContext context)
+        => BuildAccumulatorProvider(parameter, context);
+
+    Func<IFunction> IFunctionConstructionContext.CreateTransformationProvider(
+        OpenExpressionParameter parameter,
+        IContext context)
+        => BuildTransformationProvider(parameter, context);
+
+    bool IFunctionConstructionContext.TryResolveImplementation(
+        string name,
+        out Type implementationType)
+        => Registry.TryResolve(name, out implementationType!)
+            || predicateRegistry.TryResolve(name, out implementationType!);
+
+    bool IFunctionConstructionContext.TryCoerce(object? value, Type targetType, out object? result)
+    {
+        if (value is null)
+        {
+            result = null;
+            return true;
+        }
+        if (targetType.IsInstanceOfType(value))
+        {
+            result = value;
+            return true;
+        }
+        var targetTypes = targetType.IsValueType && Nullable.GetUnderlyingType(targetType) is null
+            ? new[] { targetType, typeof(Nullable<>).MakeGenericType(targetType) }
+            : [targetType];
+        var coercion = targetTypes
+            .Select(candidate => coercionRegistry.TryCreate(value.GetType(), candidate, out var function)
+                ? function
+                : null)
+            .FirstOrDefault(function => function is not null);
+        if (coercion is not null)
+        {
+            result = coercion.Evaluate(value);
+            return true;
+        }
+        result = null;
+        return false;
+    }
+
+    Type IFunctionConstructionContext.ResolveTupleTarget(string name, Syntax.SourceSpan? sourceSpan)
+        => ResolveTupleTarget(name, sourceSpan);
+
+    object? IFunctionConstructionContext.InvokeTuple(
+        string name,
+        IPositionalValue tuple,
+        Syntax.SourceSpan? sourceSpan)
+        => InvokeTuple(name, tuple, sourceSpan);
+
+    internal IPredicate InstantiatePredication(IPredication predication, IContext context)
+        => predicationFactory.Instantiate(predication, context);
+
+    protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
+    {
+        if (parameter is PairParameter or GroupingParameter or DictionaryParameter)
+        {
+            var evaluator = BuildStructuredValueEvaluator(parameter, context)!;
+            return CreateFunctionCast(
+                () => evaluator.Invoke(EvaluationRuntime.Frame is { IsInputBound: true } frame
+                    ? frame.Current : ArgumentScope.Root(EvaluationRuntime.ArgumentInput, EvaluationRuntime.Frame?.Current)),
+                scalarType);
+        }
+
+        if (parameter is OpenExpressionParameter open)
+        {
+            var evaluator = IsExplicitlyRooted(open)
+                ? BuildPipeline(open.Expression, context).Evaluate
+                : BuildOpenExpressionRecordEvaluator(open, context);
+            return CreateFunctionCast(
+                () => evaluator.Invoke(EvaluationRuntime.Frame is { IsInputBound: true } frame
+                    ? frame.Current : ArgumentScope.Root(EvaluationRuntime.ArgumentInput, EvaluationRuntime.Frame?.Current)),
+                scalarType);
+        }
+
+        return base.CreateParameter(parameter, scalarType, context);
+    }
+
+    internal static bool IsExplicitlyRooted(OpenExpressionParameter expression)
+        => expression.Expression.Members.FirstOrDefault()?.Notation
+            is SourceNotation.RootField or SourceNotation.EnclosingRootField;
+
+    internal static bool IsExplicitlyRooted(IParameter parameter)
+        => parameter is ObjectPropertyParameter or EnclosingObjectPropertyParameter
+            || (parameter is InputExpressionParameter expression
+                && IsExplicitlyRooted(expression.Expression.Parameter));
+
+    public IFunction Instantiate(IRootExpression rootExpression, IContext context)
+    {
+        return rootExpression switch
+        {
+            OpenRootExpression open => BuildOpenExpression(open.Expression, context),
+            ClosedRootExpression closed => BuildClosedExpression(closed.Expression, context),
+            _ => throw new BindingException($"Unsupported expression root '{rootExpression.GetType().Name}'.")
+        };
+    }
+
+    public IFunction Instantiate(string name, IParameter[] parameters, IContext context)
+        => Instantiate<IFunction>(name, parameters, context);
+
+    public IFunction Instantiate(Type type, IParameter[] parameters, IContext context)
+        => Instantiate<IFunction>(type, parameters, context);
+
+    public IFunction InstantiateClosed(IRootExpression rootExpression, IContext context)
+    {
+        return rootExpression switch
+        {
+            ClosedRootExpression closed => BuildClosedExpression(closed.Expression, context),
+            OpenRootExpression open => throw new ExpressionRequiresInputException(open.Expression.Members.FirstOrDefault()?.Name),
+            _ => throw new BindingException($"Unsupported expression root '{rootExpression.GetType().Name}'.")
+        };
+    }
+
+    private IFunction BuildOpenExpression(OpenExpression expression, IContext context)
+        => BuildPipeline(expression, context);
+
+    internal IFunction Instantiate(OpenExpression expression, IContext context)
+        => BuildOpenExpression(expression, context);
+
+    private IFunction BuildPipeline(OpenExpression expression, IContext context)
+    {
+        if (expression.InputBinding is { } binding)
+            return BuildInputBoundFunction(binding, context);
+
+        var members = expression.Members.ToArray();
+        var functions = members
+            .Select(member => InstantiateOrWrapAggregation(member, context))
+            .ToList();
+
+        return TryBuildTypedChain(members, functions, out var chain)
+            ? chain
+            : CreateChain(members, functions);
+    }
+
+    private IFunction BuildInputBoundFunction(InputBoundExpression binding, IContext context)
+    {
+        var members = binding.Body switch
+        {
+            OpenRootExpression open => open.Expression.Members,
+            ClosedRootExpression closed => closed.Expression.Members,
+            _ => throw new BindingException("Unsupported input binding body."),
+        };
+        var chain = BuildPipeline(new OpenExpression(members), context);
+        Func<object?, object?> source = binding.Body is ClosedRootExpression closedBody
+            ? BuildSourceEvaluator(closedBody.Expression.Parameter, context)
+            : input => input;
+        return new InputBoundFunction(binding, input => chain.Evaluate(source(input)));
+    }
+
+    internal bool TryBuildTypedChain(
+        IReadOnlyList<Bindings.Function> members,
+        List<IFunction> functions,
+        [NotNullWhen(true)] out IFunction? chain)
+    {
+        chain = null;
+        if (functions.Count == 0 || !TrySelectInitialContract(functions[0], out var initial))
+            return false;
+
+        var contracts = new List<(Type Input, Type Output, Type Contract)> { initial };
+        var outputType = initial.Output;
+        for (var index = 1; index < functions.Count; index++)
+        {
+            if (coercionRegistry.TryResolve(members[index].Name, out var targetType)
+                && coercionRegistry.TryCreate(outputType, targetType, out var coercion))
+            {
+                functions[index] = coercion;
+            }
+
+            if (!TrySelectFollowingContract(functions[index], outputType, out var contract))
+                return false;
+
+            contracts.Add(contract);
+            outputType = contract.Output;
+        }
+
+        var inputType = initial.Input;
+        var parameter = LinqExpression.Parameter(inputType, "value");
+        LinqExpression body = parameter;
+        var observationContexts = CreateObservationContexts(members);
+        for (var index = 0; index < functions.Count; index++)
+        {
+            var contract = contracts[index];
+            var argument = body.Type == contract.Input
+                ? body
+                : LinqExpression.Convert(body, contract.Input);
+            var typedFunction = LinqExpression.Convert(LinqExpression.Constant(functions[index]), contract.Contract);
+            body = LinqExpression.Call(
+                    typeof(FunctionObservationDispatcher).GetMethods()
+                        .Single(method => method.Name == nameof(FunctionObservationDispatcher.Evaluate)
+                            && method.IsGenericMethodDefinition)
+                        .MakeGenericMethod(contract.Input, contract.Output),
+                    typedFunction,
+                    LinqExpression.Constant(observationContexts![index]),
+                    argument);
+        }
+
+        var delegateType = typeof(Func<,>).MakeGenericType(inputType, outputType);
+        var pipeline = LinqExpression.Lambda(delegateType, body, parameter).Compile();
+        var chainType = typeof(ChainFunction<,>).MakeGenericType(inputType, outputType);
+        chain = (IFunction)Activator.CreateInstance(chainType, functions, pipeline, observationContexts)!;
+        return true;
+    }
+
+    private ChainFunction CreateChain(
+        IReadOnlyList<Bindings.Function> members,
+        IEnumerable<IFunction> functions)
+        => new(functions, CreateObservationContexts(members));
+
+    private FunctionObservationContext[] CreateObservationContexts(IReadOnlyList<Bindings.Function> members)
+        => members.Select(member => new FunctionObservationContext(
+            $"function[{Interlocked.Increment(ref nextObservationId) - 1}]",
+            member.Identity)).ToArray();
+
+    private static bool TrySelectInitialContract(
+        IFunction function,
+        out (Type Input, Type Output, Type Contract) contract)
+    {
+        var candidates = GetContracts(function)
+            .Where(candidate => candidate.Input != typeof(object))
+            .ToArray();
+        if (candidates.Length != 1)
+        {
+            contract = default;
+            return false;
+        }
+
+        contract = candidates[0];
+        return true;
+    }
+
+    private static bool TrySelectFollowingContract(
+        IFunction function,
+        Type outputType,
+        out (Type Input, Type Output, Type Contract) contract)
+    {
+        var candidates = GetContracts(function);
+        var exact = candidates.Where(candidate => candidate.Input == outputType).ToArray();
+        var compatible = exact.Length > 0
+            ? exact
+            : candidates.Where(candidate => candidate.Input.IsAssignableFrom(outputType)).ToArray();
+        if (compatible.Length != 1)
+        {
+            contract = default;
+            return false;
+        }
+
+        contract = compatible[0];
+        return true;
+    }
+
+    private static (Type Input, Type Output, Type Contract)[] GetContracts(IFunction function)
+        => function.GetType().GetInterfaces()
+            .Where(candidate => candidate.IsGenericType
+                && candidate.GetGenericTypeDefinition() == typeof(IFunction<,>))
+            .Select(candidate => (
+                candidate.GetGenericArguments()[0],
+                candidate.GetGenericArguments()[1],
+                candidate))
+            .Distinct()
+            .ToArray();
+
+    private IFunction BuildClosedExpression(Bindings.ClosedExpression expression, IContext context)
+    {
+        var sourceEvaluator = BuildSourceEvaluator(expression.Parameter, context);
+        var functions = new List<IFunction>();
+        foreach (var member in expression.Members)
+            functions.Add(InstantiateOrWrapAggregation(member, context));
+
+        var pipeline = CreateChain(expression.Members.ToArray(), functions);
+        return new DelegatedFunction(input =>
+        {
+            var source = sourceEvaluator.Invoke(input);
+            using var scope = EvaluationRuntime.Derive(source);
+            return pipeline.Evaluate(source);
+        });
+    }
+
+    private Func<object?, object?> BuildSourceEvaluator(IParameter parameter, IContext context)
+    {
+        if (parameter is IncomingValueParameter or ArrayParameter or TupleParameter
+            or PairParameter or GroupingParameter or DictionaryParameter
+            or RecordLiteralParameter or InputExpressionParameter)
+            return BuildValueEvaluator(parameter, context);
+
+        var provider = CreateParameter(parameter, typeof(object), context);
+        return _ => provider.DynamicInvoke();
+    }
+
+    private IFunction InstantiateOrWrapAggregation(Bindings.Function function, IContext context)
+    {
+        if (function.Identity == new OperatorIdentity("system", "named-expression-invocation"))
+            return BuildNamedExpressionInvocation(function, context);
+        if (function.Role == BoundFunctionRole.InputBinding
+            && function.Parameters is [OpenExpressionParameter { Expression.InputBinding: { } binding }])
+            return BuildInputBoundFunction(binding, context);
+        var name = function.Name.ToKebabCase();
+
+        if (BuildReferenceFunction(function) is { } reference)
+            return reference;
+
+        var hasRegularFunction = TryResolve(Registry, function, out _);
+        if (TryResolve(accumulatorRegistry, function, out var accumulatorType)
+            && (function.ImplementationKind == FunctionImplementationKind.Accumulator
+                || (function.ImplementationKind == FunctionImplementationKind.Unspecified
+                    && (function.Role == BoundFunctionRole.ImplicitAccumulator || !hasRegularFunction))))
+        {
+            return BuildAccumulatorFunction(function, accumulatorType, context);
+        }
+
+        Type registeredType;
+        var found = function.ImplementationKind switch
+        {
+            FunctionImplementationKind.Function => TryResolve(Registry, function, out registeredType),
+            FunctionImplementationKind.Predicate => TryResolve(predicateRegistry, function, out registeredType),
+            _ => TryResolve(Registry, function, out registeredType)
+                || TryResolve(predicateRegistry, function, out registeredType),
+        };
+        if (found)
+        {
+            if (constructors.TryGet(registeredType, out var constructor))
+                return constructor.Construct(function, context, this);
+            if (constructors.TryGetAnnotated(registeredType, out var annotated))
+                return InstantiateAnnotated(registeredType, annotated, function, context);
+            if (constructors.TryGetRoleAnnotated(registeredType, out var roleAnnotated))
+                return InstantiateRoleAnnotated(registeredType, roleAnnotated, function, context);
+            if (constructors.TryGetShapeAnnotated(registeredType, out var shapeAnnotated))
+                return InstantiateShapeAnnotated(registeredType, shapeAnnotated, function, context);
+            if (constructors.TryGetVariadicPacked(registeredType, out var variadicPacked))
+                return InstantiateVariadicPacked(registeredType, variadicPacked, function, context);
+        }
+
+        if (function.ImplementationKind == FunctionImplementationKind.Predicate)
+            return predicationFactory.Instantiate(new SinglePredication(function), context);
+
+        if (!TryResolve(Registry, function, out var type))
+        {
+            if (TryResolve(predicateRegistry, function, out _))
+            {
+                return predicationFactory.Instantiate(new SinglePredication(function), context);
+            }
+
+            throw new NotImplementedFunctionException(function.Identity.CanonicalName);
+        }
+
+        if (TryInstantiateWithAccumulatorProvider(type, function, context, out var aggregation))
+            return aggregation;
+
+        if (TryInstantiateWithTransformationProvider(type, function, context, out var transformation))
+            return transformation;
+
+        if (TryInstantiateWithPredicateProvider(type, function, context, out var filtering))
+            return filtering;
+
+        return Instantiate<IFunction>(type, function.Arguments, context);
+    }
+
+    private static bool TryResolve(
+        IImplementationRegistry registry,
+        Bindings.Function function,
+        out Type implementationType)
+    {
+        if (registry.TryResolve(function.Identity, out implementationType)
+            || (function.IsUnqualified && registry.TryResolve(function.Name, out implementationType)))
+        {
+            return true;
+        }
+        implementationType = null!;
+        return false;
+    }
+
+    private IFunction BuildNamedExpressionInvocation(Bindings.Function function, IContext context)
+    {
+        if (function.Parameters is not [LiteralParameter { Value: string name }, ..])
+            throw new BindingException("A named-expression invocation must contain a target name.");
+        var arguments = function.Parameters.Skip(1);
+        var providers = arguments.Select(argument => CreateParameter(argument, typeof(object), context)).ToArray();
+        return new DelegatedFunction(input => NamedExpressionRuntime.Invoke(
+            name,
+            input,
+            providers.Select(provider => provider.DynamicInvoke()).ToArray()));
+    }
+
+    private IFunction InstantiateAnnotated(
+        Type type,
+        ConstructorInfo[] targets,
+        Bindings.Function function,
+        IContext context)
+    {
+        var collection = targets.SingleOrDefault(target => target.GetParameters() is
+            [var parameter] && (parameter.ParameterType == typeof(IEnumerable<Func<object?, object?>>)
+                || FunctionConstructorRegistry.TryGetNamedEvaluatorConstructor(parameter.ParameterType, out _)));
+        if (collection is not null)
+        {
+            var parameter = collection.GetParameters()[0];
+            var mode = parameter.GetCustomAttribute<ArgumentEvaluationAttribute>()!.Mode;
+            var layout = ParameterArgumentBinder.BindLayout(type, function.Arguments);
+            object values;
+            if (parameter.ParameterType == typeof(IEnumerable<Func<object?, object?>>))
+            {
+                values = layout.Positional.Select(argument => mode == ArgumentEvaluationMode.Nested
+                    ? BuildNestedValueEvaluator(argument.Value, context)
+                    : BuildValueEvaluator(argument.Value, context)).ToArray();
+            }
+            else
+            {
+                FunctionConstructorRegistry.TryGetNamedEvaluatorConstructor(parameter.ParameterType, out var entry);
+                var entries = System.Array.CreateInstance(entry.DeclaringType!, layout.Named.Length);
+                for (var index = 0; index < layout.Named.Length; index++)
+                {
+                    var argument = layout.Named[index];
+                    var evaluator = mode == ArgumentEvaluationMode.Nested
+                        ? BuildNestedValueEvaluator(argument.Value, context)
+                        : BuildValueEvaluator(argument.Value, context);
+                    entries.SetValue(entry.Invoke([argument.Name!, evaluator]), index);
+                }
+                values = LinqExpression.Lambda(parameter.ParameterType,
+                    LinqExpression.Constant(entries, entries.GetType())).Compile();
+            }
+            return collection.Invoke([values]) as IFunction
+                ?? throw new InvalidOperationException(
+                    $"Annotated constructor for '{type.FullName}' did not create a function.");
+        }
+
+        var binding = ParameterArgumentBinder.Bind(type, function.Arguments, targets);
+        var metadata = binding.Constructor.GetParameters();
+        var callbacks = new object?[metadata.Length];
+        for (var index = 0; index < metadata.Length; index++)
+        {
+            var parameter = metadata[index];
+            var mode = parameter.GetCustomAttribute<ArgumentEvaluationAttribute>()!.Mode;
+            callbacks[index] = metadata[index].IsOptional && !binding.Supplied[index]
+                && binding.Parameters[index] is LiteralParameter { Value: null }
+                    ? null
+                    : mode switch
+                    {
+                        ArgumentEvaluationMode.Incoming => BuildValueEvaluator(binding.Parameters[index], context),
+                        ArgumentEvaluationMode.Nested => BuildNestedValueEvaluator(binding.Parameters[index], context),
+                        ArgumentEvaluationMode.Ambient => BuildAmbientValueProvider(
+                            binding.Parameters[index], parameter.ParameterType, context),
+                        _ => throw new InvalidOperationException($"Unsupported argument evaluation mode '{mode}'."),
+                    };
+        }
+        return binding.Constructor.Invoke(callbacks) as IFunction
+            ?? throw new InvalidOperationException(
+                $"Annotated constructor for '{type.FullName}' did not create a function.");
+    }
+
+    private IFunction InstantiateRoleAnnotated(
+        Type type,
+        ConstructorInfo[] targets,
+        Bindings.Function function,
+        IContext context)
+    {
+        if (function.Arguments.Count == 0 && type.GetConstructor(Type.EmptyTypes) is { } parameterless)
+        {
+            return parameterless.Invoke([]) as IFunction
+                ?? throw new InvalidOperationException(
+                    $"Parameterless constructor for '{type.FullName}' did not create a function.");
+        }
+
+        if (function.Arguments.Any(argument => argument.IsSpread))
+            throw new SpreadArgumentException($"Spread arguments are not supported by {function.Name}.");
+
+        var binding = ParameterArgumentBinder.Bind(type, function.Arguments, targets);
+        var metadata = binding.Constructor.GetParameters();
+        var providers = new object?[metadata.Length];
+        for (var index = 0; index < metadata.Length; index++)
+        {
+            var parameter = binding.Parameters[index];
+            providers[index] = metadata[index].GetCustomAttribute<ArgumentRoleAttribute>()!.Role switch
+            {
+                ArgumentRole.Predicate => ApplyProviderLifetime(
+                    BuildPredicateProvider(parameter, context, function.Name,
+                        metadata[index].GetCustomAttribute<ArgumentRoleAttribute>()!.AllowValueExpression), metadata[index]),
+                ArgumentRole.Accumulator => ApplyProviderLifetime(
+                    BuildAccumulatorProvider(parameter, context), metadata[index]),
+                ArgumentRole.Transformation => TryGetOpenExpression(parameter, out var open)
+                    ? ApplyProviderLifetime(BuildTransformationProvider(open, context), metadata[index])
+                    : throw new BindingException(
+                        $"Function '{function.Name}' parameter '{metadata[index].Name}' must be an open expression."),
+                _ => throw new InvalidOperationException($"Unsupported argument role on '{type.FullName}.{metadata[index].Name}'."),
+            };
+        }
+        return binding.Constructor.Invoke(providers) as IFunction
+            ?? throw new InvalidOperationException($"Role-annotated constructor for '{type.FullName}' did not create a function.");
+    }
+
+    private static Func<T> ApplyProviderLifetime<T>(Func<T> provider, ParameterInfo parameter)
+        where T : class
+    {
+        if (parameter.GetCustomAttribute<ProviderLifetimeAttribute>()?.Lifetime != ProviderLifetime.BoundExpression)
+            return provider;
+        var value = provider();
+        return () => value;
+    }
+
+    private IFunction InstantiateShapeAnnotated(
+        Type type,
+        ConstructorInfo[] targets,
+        Bindings.Function function,
+        IContext context)
+    {
+        var binding = ParameterArgumentBinder.Bind(type, function.Arguments, targets);
+        var metadata = binding.Constructor.GetParameters();
+        var values = new object?[metadata.Length];
+        for (var index = 0; index < metadata.Length; index++)
+        {
+            var parameter = metadata[index];
+            var shape = parameter.GetCustomAttribute<AcceptedExpressionShapeAttribute>()?.Shape
+                ?? throw new InvalidOperationException(
+                    $"Constructor '{type.FullName}' parameter '{parameter.Name}' has no expression shape metadata.");
+            values[index] = shape switch
+            {
+                AcceptedExpressionShape.DirectFieldSelector => CreateDirectFieldSelector(
+                    binding.Parameters[index], function.Name, parameter.Name!, context),
+                AcceptedExpressionShape.OpenExpression => ExpressionShapeNormalizer.TryGetOpenExpression(
+                    binding.Parameters[index], out var open)
+                    ? BuildTransformationProvider(open, context)
+                    : throw new BindingException(
+                        $"Function '{function.Name}' parameter '{parameter.Name}' must be an open expression."),
+                _ => throw new InvalidOperationException($"Unsupported expression shape '{shape}'."),
+            };
+        }
+        return binding.Constructor.Invoke(values) as IFunction
+            ?? throw new InvalidOperationException($"Shape-annotated constructor for '{type.FullName}' did not create a function.");
+    }
+
+    private NamedFieldSelector CreateDirectFieldSelector(
+        IParameter parameter, string function, string parameterName, IContext context)
+    {
+        var name = ExpressionShapeNormalizer.RequireDirectFieldName(parameter, function, parameterName);
+        var evaluator = new DelegatedFunction(BuildValueEvaluator(parameter, context));
+        return new NamedFieldSelector(name, value => EvaluationRuntime.EvaluateNested(evaluator, value, value));
+    }
+
+    private Func<object?, object?> BuildNestedValueEvaluator(IParameter parameter, IContext context)
+    {
+        var evaluator = new DelegatedFunction(BuildValueEvaluator(parameter, context));
+        return value => EvaluationRuntime.EvaluateNested(evaluator, value);
+    }
+
+    private Delegate BuildAmbientValueProvider(IParameter parameter, Type providerType, IContext context)
+    {
+        var evaluator = BuildValueEvaluator(parameter, context);
+        return CreateFunctionCast(
+            () => evaluator.Invoke(EvaluationRuntime.Frame?.Current),
+            providerType.GetGenericArguments()[0]);
+    }
+
+    private IFunction BuildAccumulatorFunction(
+        Bindings.Function function,
+        Type accumulatorType,
+        IContext context)
+    {
+        if (TryBuildAccumulatorConstructor(function, accumulatorType, context, out var create))
+        {
+            _ = create();
+            return new AccumulatorFunction(create);
+        }
+
+        if (function.Parameters.Count != 0)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
+
+        return new AccumulatorFunction(() => Activator.CreateInstance(accumulatorType) as IIncrementalAggregation
+            ?? throw new InvalidOperationException(
+                $"Accumulator '{accumulatorType.FullName}' must have a parameterless constructor."));
+    }
+
+    private bool TryBuildAccumulatorConstructor(
+        Bindings.Function function,
+        Type accumulatorType,
+        IContext context,
+        [NotNullWhen(true)] out Func<IIncrementalAggregation>? create)
+    {
+        create = null;
+        if (constructors.TryGet(accumulatorType, out var constructor))
+        {
+            create = () => constructor.Construct(function, context, this) as IIncrementalAggregation
+                ?? throw new InvalidOperationException(
+                    $"The constructor for accumulator '{function.Name}' did not create an accumulator.");
+        }
+        else if (constructors.TryGetAnnotated(accumulatorType, out var annotated)
+            && (function.Arguments.Count > 0 || accumulatorType.GetConstructor(Type.EmptyTypes) is null))
+        {
+            create = () => InstantiateAnnotated(accumulatorType, annotated, function, context) as IIncrementalAggregation
+                ?? throw new InvalidOperationException(
+                    $"The annotated constructor for accumulator '{function.Name}' did not create an accumulator.");
+        }
+        else if (constructors.TryGetRoleAnnotated(accumulatorType, out var roleAnnotated))
+        {
+            create = () => InstantiateRoleAnnotated(accumulatorType, roleAnnotated, function, context) as IIncrementalAggregation
+                ?? throw new InvalidOperationException(
+                    $"The role-annotated constructor for accumulator '{function.Name}' did not create an accumulator.");
+        }
+        return create is not null;
+    }
+
+    private static IFunction? BuildReferenceFunction(Bindings.Function function)
+    {
+        if (function.Identity == new OperatorIdentity("system", "identity"))
+        {
+            if (function.Parameters.Count != 0)
+                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
+            return new DelegatedFunction(value => value);
+        }
+        if (function.Notation == SourceNotation.ScopedTupleProjectionShorthand
+            && function.Parameters is [ScopedTupleProjectionParameter scoped])
+            return new DelegatedFunction(_ => ResolveScopedTupleProjection(scoped));
+        if (function.Notation == SourceNotation.InputTupleProjectionShorthand
+            && function.Parameters is [TupleProjectionParameter projection])
+        {
+            return new DelegatedFunction(input => ResolveTupleProjection(
+                EvaluationRuntime.Frame is { IsInputBound: true } frame ? frame.Ambient : input, projection));
+        }
+        if (function.Notation == SourceNotation.InputFieldShorthand
+            && TryGetFieldName(function.Parameters, out var inputField))
+        {
+            return new DelegatedFunction(input => NamedValueAccessor.Get(
+                EvaluationRuntime.Frame is { IsInputBound: true } frame ? frame.Ambient : input, inputField));
+        }
+
+        if (function.Notation == SourceNotation.RootField)
+            return BuildRootFieldFunction(function);
+
+        if (function.Notation == SourceNotation.EnclosingRootField)
+            return BuildEnclosingRootFieldFunction(function);
+
+        return null;
+    }
+
+    private static IFunction BuildRootFieldFunction(Bindings.Function function)
+    {
+        if (!TryGetFieldName(function.Parameters, out var fieldName))
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
+
+        return new DelegatedFunction(_ => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.ExpressionRoot, null, null), fieldName));
+    }
+
+    private static IFunction BuildEnclosingRootFieldFunction(Bindings.Function function)
+    {
+        if (!TryGetFieldName(function.Parameters, out var fieldName))
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
+
+        return new DelegatedFunction(_ => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.EnclosingExpressionRoot, null, null), fieldName));
+    }
+
+    private static object? EvaluateNested(IFunction expression, object? input)
+        => EvaluateNested(expression, input, input);
+
+    private static object? EvaluateNested(IFunction expression, object? input, object? currentInput)
+    {
+        return EvaluationRuntime.EvaluateNested(expression, input, currentInput);
+    }
+
+    private IFunction InstantiateVariadicPacked(Type type, ConstructorInfo constructor, Bindings.Function function, IContext context)
+    {
+        var parameter = constructor.GetParameters()[0];
+        var packing = parameter.GetCustomAttribute<ArgumentPackingAttribute>()!;
+        if (!packing.AllowSpread && function.Arguments.Any(argument => argument.IsSpread))
+            throw new SpreadArgumentException($"Spread arguments are not supported by {function.Name}.");
+
+        object provider;
+        if (parameter.ParameterType == typeof(Func<object?, object?[]>))
+        {
+            var values = function.Arguments
+                .Select(argument => new ValueArgumentEvaluator(
+                    BuildValueEvaluator(argument.Value, context), argument.IsSpread))
+                .ToArray();
+            provider = (Func<object?, object?[]>)(input => ValueArguments.Evaluate(values, input).ToArray());
+        }
+        else
+        {
+            if (function.Arguments.FirstOrDefault(argument => argument.Name is not null) is { } named)
+                throw new UnknownParameterNameException(function.Name, named.Name!);
+            var elementType = parameter.ParameterType.GetGenericArguments()[0].GetElementType()!;
+            var evaluations = function.Arguments.Select(argument =>
+                LinqExpression.Invoke(LinqExpression.Constant(CreateParameter(argument.Value, elementType, context))));
+            var array = LinqExpression.NewArrayInit(elementType, evaluations);
+            provider = LinqExpression.Lambda(parameter.ParameterType, array).Compile();
+        }
+
+        return constructor.Invoke([provider]) as IFunction
+            ?? throw new InvalidOperationException(
+                $"Variadic constructor for '{type.FullName}' did not create a function.");
+    }
+
+    private Func<object?, object?> BuildValueEvaluator(IParameter parameter, IContext context, bool establishScope = false)
+    {
+        if (parameter is IncomingValueParameter)
+            return input => input;
+
+        if (parameter is OpenExpressionParameter open)
+        {
+            var evaluator = BuildOpenExpressionRecordEvaluator(open, context);
+            return input => InArgumentScope(input, () => evaluator.Invoke(input));
+        }
+
+        if (parameter is InputExpressionParameter inputExpression)
+        {
+            var source = BuildValueEvaluator(inputExpression.Expression.Parameter, context);
+            var members = inputExpression.Expression.Members.ToArray();
+            var chain = CreateChain(members, members
+                .Select(member => InstantiateOrWrapAggregation(member, context))
+                .ToArray());
+            return input => InArgumentScope(
+                input,
+                // Value construction retains its supplying scope; apply invokes a new one.
+                () => establishScope
+                    ? EvaluateNested(chain, source.Invoke(input), input)
+                    : chain.Evaluate(source.Invoke(input)));
+        }
+
+        var structured = BuildStructuredValueEvaluator(parameter, context);
+        if (structured is not null)
+            return structured;
+
+        var provider = (Func<object?>)CreateParameter(parameter, typeof(object), context);
+        return input => InArgumentScope(input, provider);
+    }
+
+    private Func<object?, object?>? BuildStructuredValueEvaluator(IParameter parameter, IContext context)
+    {
+        if (parameter is ArrayParameter array)
+        {
+            var elements = array.Elements
+                .Select(element => new ValueArgumentEvaluator(
+                    BuildValueEvaluator(element.Value, context),
+                    element.IsSpread))
+                .ToArray();
+            return input => ValueArguments.Evaluate(elements, input).ToArray();
+        }
+
+        if (parameter is PairParameter pair)
+        {
+            var key = BuildValueEvaluator(pair.Key, context);
+            var value = BuildValueEvaluator(pair.Value, context);
+            return input => new Expressif.Values.PairValue(key.Invoke(input), value.Invoke(input));
+        }
+
+        if (parameter is GroupingParameter grouping)
+        {
+            var entries = grouping.Entries
+                .Select(entry => new
+                {
+                    Key = BuildValueEvaluator(entry.Key, context),
+                    Value = BuildValueEvaluator(entry.Value, context),
+                })
+                .ToArray();
+            return input => new Values.GroupingValue(entries.Select(entry =>
+                new PairValue(entry.Key.Invoke(input), entry.Value.Invoke(input))));
+        }
+
+        if (parameter is DictionaryParameter dictionary)
+        {
+            var entries = dictionary.Entries
+                .Select(entry => new
+                {
+                    Key = BuildValueEvaluator(entry.Key, context),
+                    Value = BuildValueEvaluator(entry.Value, context),
+                })
+                .ToArray();
+            return input => new Values.DictionaryValue(entries.Select(entry =>
+                new PairValue(entry.Key.Invoke(input), entry.Value.Invoke(input))));
+        }
+
+        if (parameter is RecordLiteralParameter record)
+        {
+            var fields = record.Fields
+                .Select(field => new
+                {
+                    field.Name,
+                    Evaluator = BuildValueEvaluator(field.Value, context),
+                })
+                .ToArray();
+            return input =>
+            {
+                var value = new RecordValue();
+                foreach (var field in fields)
+                    value.Set(field.Name, field.Evaluator.Invoke(input));
+                return value;
+            };
+        }
+
+        return null;
+    }
+
+    private static object? InArgumentScope(object? input, Func<object?> evaluator)
+    {
+        using var scope = EvaluationRuntime.EnterArgument(input);
+        return evaluator.Invoke();
+    }
+
+    private static bool TryGetFieldName(IReadOnlyList<IParameter> parameters, out string fieldName)
+    {
+        fieldName = parameters switch
+        {
+            [LiteralParameter { Value: string value }] => value,
+            [QuotedLiteralParameter quoted] => quoted.Value,
+            _ => string.Empty
+        };
+        return parameters is [LiteralParameter] or [QuotedLiteralParameter];
+    }
+
+    private Func<object?, object?> BuildOpenExpressionRecordEvaluator(OpenExpressionParameter open, IContext context)
+    {
+        if (open.Expression.InputBinding is { } binding)
+            return BuildInputBoundFunction(binding, context).Evaluate;
+
+        if (TryBuildSingleTokenEvaluator(open, out var evaluator))
+            return evaluator;
+
+        try
+        {
+            var members = open.Expression.Members.ToArray();
+            var functions = members.Select(member => InstantiateOrWrapAggregation(member, context)).ToArray();
+            var chain = CreateChain(members, functions);
+            return input => EvaluateNested(chain, input);
+        }
+        catch (NotImplementedFunctionException) when (IsSingleTokenExpression(open))
+        {
+            var literalToken = open.Expression.Members.First().Name;
+            return RecordSyntax.TryParseTypedToken(literalToken, out var literalTyped)
+                ? _ => literalTyped
+                : _ => literalToken;
+        }
+    }
+
+    private static bool TryBuildSingleTokenEvaluator(
+        OpenExpressionParameter open,
+        [NotNullWhen(true)] out Func<object?, object?>? evaluator)
+    {
+        evaluator = null;
+        if (!IsSingleTokenExpression(open))
+            return false;
+
+        var literalToken = open.Expression.Members.First().Name;
+        if (!RecordSyntax.TryParseTypedToken(literalToken, out var literalTyped))
+            return false;
+
+        evaluator = _ => literalTyped;
+        return true;
+    }
+
+    private static bool IsSingleTokenExpression(OpenExpressionParameter open)
+        => open.Expression.Members.Count() == 1 && open.Expression.Members.First().Parameters.Count == 0;
+
+    private bool TryInstantiateWithAccumulatorProvider(
+        Type type,
+        Bindings.Function function,
+        IContext context,
+        [NotNullWhen(true)] out IFunction? aggregation)
+    {
+        aggregation = null;
+
+        var ctor = type.GetConstructors()
+                       .FirstOrDefault(x => x.GetParameters().Length == 1
+                                         && x.GetParameters()[0].ParameterType == typeof(Func<IIncrementalAggregation>));
+        if (ctor is null)
+        {
+            return false;
+        }
+
+        if (function.Parameters.Count != 1)
+        {
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
+        }
+
+        aggregation = (IFunction)ctor.Invoke([BuildAccumulatorProvider(function.Parameters[0], context)]);
+        return true;
+    }
+
+    private Func<IIncrementalAggregation> BuildAccumulatorProvider(IParameter parameter, IContext context)
+    {
+        if (parameter is OpenExpressionParameter open && open.Expression.Members.Count() == 1)
+        {
+            var call = open.Expression.Members.Single();
+            if (accumulatorRegistry.TryResolve(call.Name, out var accumulatorType)
+                && TryBuildAccumulatorConstructor(call, accumulatorType, context, out var create))
+                return create;
+            if (call.Arguments.Count != 0)
+                throw new MissingOrUnexpectedParametersFunctionException(call.Name, call.Parameters.Count);
+        }
+        var nameProvider = BuildAccumulatorNameProvider(parameter, context);
+        return () => accumulatorRegistry.Create(nameProvider.Invoke());
+    }
+
+    private bool TryInstantiateWithTransformationProvider(
+        Type type,
+        Bindings.Function function,
+        IContext context,
+        [NotNullWhen(true)] out IFunction? transformation)
+    {
+        transformation = null;
+
+        var ctor = type.GetConstructors()
+                       .FirstOrDefault(x => x.GetParameters().Length >= 1
+                                         && x.GetParameters()[0].ParameterType == typeof(Func<IFunction>)
+                                         && x.GetParameters().Skip(1).All(parameter => parameter.ParameterType.IsGenericType
+                                             && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<>)));
+        if (ctor is null)
+            return false;
+
+        if (function.Parameters.Count != ctor.GetParameters().Length)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
+
+        var bound = ParameterArgumentBinder.Bind(type, function.Arguments).Parameters;
+
+        if (!TryGetOpenExpression(bound[0], out var openExpression))
+        {
+            throw new ArgumentException(
+                $"The function named '{function.Name}' expects a parameter of type '{nameof(OpenExpressionParameter)}' but received '{bound[0].GetType().Name}'.",
+                nameof(function));
+        }
+
+        var arguments = new List<object> { BuildTransformationProvider(openExpression, context) };
+        foreach (var parameter in ctor.GetParameters().Skip(1))
+        {
+            var scalarType = parameter.ParameterType.GetGenericArguments()[0];
+            arguments.Add(CreateParameter(bound[parameter.Position], scalarType, context));
+        }
+
+        transformation = (IFunction)ctor.Invoke(arguments.ToArray());
+        return true;
+    }
+
+    private Func<IFunction> BuildTransformationProvider(OpenExpressionParameter parameter, IContext context)
+        => () => BuildPipeline(parameter.Expression, context);
+
+    private bool TryInstantiateWithPredicateProvider(
+        Type type,
+        Bindings.Function function,
+        IContext context,
+        [NotNullWhen(true)] out IFunction? filtering)
+    {
+        filtering = null;
+
+        var ctor = type.GetConstructors()
+                       .FirstOrDefault(x => x.GetParameters().Length == 1
+                                         && x.GetParameters()[0].ParameterType == typeof(Func<IPredicate>));
+        if (ctor is null)
+        {
+            return false;
+        }
+
+        if (function.Parameters.Count != 1)
+        {
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
+        }
+
+        if (function.Parameters[0] is not PredicationParameter && !TryGetOpenExpression(function.Parameters[0], out _))
+        {
+            throw new ArgumentException(
+                $"The function named '{function.Name}' expects a parameter of type '{nameof(PredicationParameter)}' or '{nameof(OpenExpressionParameter)}' but received '{function.Parameters[0].GetType().Name}'.",
+                nameof(function));
+        }
+
+        filtering = (IFunction)ctor.Invoke([BuildPredicateProvider(function.Parameters[0], context, function.Name)]);
+        return true;
+    }
+
+    private Func<IPredicate> BuildPredicateProvider(
+        IParameter parameter, IContext context, string functionName, bool allowValueExpression = false)
+    {
+        if (TryGetOpenExpression(parameter, out var openExpression))
+            return () => BuildBooleanPredicate(openExpression.Expression, context);
+
+        return parameter switch
+        {
+            PredicationParameter predication => () => predicationFactory.Instantiate(predication.Predication, context),
+            _ when allowValueExpression => BuildValuePredicateProvider(parameter, context),
+            _ => throw new ArgumentException(
+                $"The function named '{functionName}' expects a parameter of type '{nameof(PredicationParameter)}' or '{nameof(OpenExpressionParameter)}' but received '{parameter.GetType().Name}'.",
+                nameof(parameter)),
+        };
+    }
+
+    private Func<IPredicate> BuildValuePredicateProvider(IParameter parameter, IContext context)
+    {
+        var evaluator = new DelegatedFunction(BuildValueEvaluator(parameter, context));
+        return () => new BooleanFunctionPredicate(evaluator);
+    }
+
+    private IPredicate BuildBooleanPredicate(OpenExpression expression, IContext context)
+    {
+        var function = BuildOpenExpression(expression, context);
+        return new BooleanFunctionPredicate(function, preserveCurrentInput: function is IPredicate);
+    }
+
+    private static bool TryGetOpenExpression(
+        IParameter parameter,
+        [NotNullWhen(true)] out OpenExpressionParameter? expression)
+        => ExpressionShapeNormalizer.TryGetOpenExpression(parameter, out expression);
+
+    protected override Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
+    {
+        var source = BuildValueEvaluator(input.Expression.Parameter, context);
+        var members = input.Expression.Members.ToArray();
+        var chain = CreateChain(members, members
+            .Select(member => InstantiateOrWrapAggregation(member, context))
+            .ToArray());
+        return CreateFunctionCast(() =>
+        {
+            var value = source.Invoke(EvaluationRuntime.Frame?.Current);
+            if (IsExplicitlyRooted(input.Expression.Parameter))
+                return chain.Evaluate(value);
+
+            using var scope = EvaluationRuntime.Derive(value);
+            return chain.Evaluate(value);
+        }, type);
+    }
+
+    private Func<string> BuildAccumulatorNameProvider(IParameter parameter, IContext context)
+    {
+        if (parameter is OpenExpressionParameter open && IsSingleTokenExpression(open))
+        {
+            var accumulator = open.Expression.Members.Single();
+            return () => accumulator.Name;
+        }
+
+        var provider = CreateParameter(parameter, typeof(string), context);
+        return () => provider.DynamicInvoke()?.ToString() ?? string.Empty;
+    }
+
+    private sealed class AccumulatorFunction(Func<IIncrementalAggregation> accumulatorProvider) : IFunction
+    {
+        public object? Evaluate(object? value)
+        {
+            if (value is not IEnumerable enumerable || value is string)
+                return null;
+
+            return accumulatorProvider.Invoke().Evaluate(enumerable);
+        }
+    }
+}

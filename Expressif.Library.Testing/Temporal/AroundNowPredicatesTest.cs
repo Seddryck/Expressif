@@ -1,0 +1,108 @@
+using Expressif.Library.Temporal.Calendar;
+using System.ComponentModel;
+using Expressif.Library.Temporal;
+using Expressif.Testing.Conformance;
+
+namespace Expressif.Testing.Temporal;
+
+[TestFixture]
+public class AroundNowPredicatesTest
+{
+    public AroundNowPredicatesTest()
+    {
+        TypeDescriptor.AddAttributes(
+            typeof(DateOnly)
+            , new TypeConverterAttribute(typeof(Expressif.Values.Converters.DateOnlyConverter))
+        );
+    }
+
+    [Conformance]
+    public void IsInTheFuture_Valid_DateOnly(string text, bool expected)
+        => Assert.That(new InTheFuture(new DateTime(2022, 12, 29, 15, 0, 0))
+                .Evaluate(
+                    TypeDescriptor.GetConverter(typeof(DateOnly))
+                    .ConvertFromInvariantString(text)!
+                )
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void IsInTheFutureOrToday_Valid_DateOnly(string text, bool expected)
+        => Assert.That(new InTheFutureOrToday(new DateTime(2022, 12, 29, 15, 0, 0))
+                .Evaluate(
+                    TypeDescriptor.GetConverter(typeof(DateOnly))
+                    .ConvertFromInvariantString(text)!
+                )
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void IsInTheFutureOrNow_Valid_DateOnly(string text, bool expected)
+        => Assert.That(new InTheFutureOrNow(new DateTime(2022, 12, 29, 15, 0, 0))
+                .Evaluate(
+                    TypeDescriptor.GetConverter(typeof(DateOnly))
+                    .ConvertFromInvariantString(text)!
+                )
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void IsInThePast_Valid_DateOnly(string text, bool expected)
+        => Assert.That(new InThePast(new DateTime(2022, 12, 29, 15, 0, 0))
+                .Evaluate(
+                    TypeDescriptor.GetConverter(typeof(DateOnly))
+                    .ConvertFromInvariantString(text)!
+                )
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void IsInThePastOrToday_Valid_DateOnly(string text, bool expected)
+        => Assert.That(new InThePastOrToday(new DateTime(2022, 12, 29, 15, 0, 0))
+                .Evaluate(
+                    TypeDescriptor.GetConverter(typeof(DateOnly))
+                    .ConvertFromInvariantString(text)!
+                )
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void IsInThePastOrNow_Valid_DateOnly(string text, bool expected)
+        => Assert.That(new InThePastOrNow(new DateTime(2022, 12, 29, 15, 0, 0))
+                .Evaluate(
+                    TypeDescriptor.GetConverter(typeof(DateOnly))
+                    .ConvertFromInvariantString(text)!
+                )
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void IsInTheFuture_Valid_DateTime(DateTime dt, bool expected)
+        => Assert.That(new InTheFuture(new DateTime(2022, 12, 29, 15, 0, 0))
+                .Evaluate(dt)
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void IsInTheFutureOrToday_Valid_DateTime(DateTime dt, bool expected)
+        => Assert.That(new InTheFutureOrToday(new DateTime(2022, 12, 29, 15, 0, 0))
+                .Evaluate(dt)
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void IsInTheFutureOrNow_Valid_DateTime(DateTime dt, bool expected)
+        => Assert.That(new InTheFutureOrNow(new DateTime(2022, 12, 29, 15, 0, 0))
+                .Evaluate(dt)
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void IsInThePast_Valid_DateTime(DateTime dt, bool expected)
+        => Assert.That(new InThePast(new DateTime(2022, 12, 29, 15, 0, 0))
+                .Evaluate(dt)
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void IsInThePastOrToday_Valid_DateTime(DateTime dt, bool expected)
+        => Assert.That(new InThePastOrToday(new DateTime(2022, 12, 29, 15, 0, 0))
+                .Evaluate(dt)
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void IsInThePastOrNow_Valid_DateTime(DateTime dt, bool expected)
+        => Assert.That(new InThePastOrNow(new DateTime(2022, 12, 29, 15, 0, 0))
+                .Evaluate(dt)
+            , Is.EqualTo(expected));
+}

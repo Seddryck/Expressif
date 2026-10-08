@@ -19,16 +19,13 @@ any-to-any() → text
 
 Returns `any`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #null | any-to-any → "(any)"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `special`  

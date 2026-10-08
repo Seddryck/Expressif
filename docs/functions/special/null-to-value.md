@@ -19,16 +19,13 @@ null-to-value() → text
 
 Returns the value passed as argument, except if the value is `null` then it returns `value`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #null | null-to-value → "(value)"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `special`  

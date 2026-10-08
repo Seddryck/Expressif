@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 skip-last-elements(
     count: integer
-) → array
+) → array<T>
 ```
 
 Omits the requested number of elements from the end of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.
@@ -31,14 +31,6 @@ Omits the requested number of elements from the end of the input enumerable and 
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Number of elements to omit from the end of the input. |
 
-## Argument evaluation
-
-- **`count`:** Evaluated once in the enclosing context.
-
-## Behavior
-
-When `count` is greater than the number of elements in the input, `skip-last-elements` omits all available elements and returns an empty array. Additional requested skips have no effect.
-
 
 
 ## Examples
@@ -50,6 +42,32 @@ When `count` is greater than the number of elements in the input, `skip-last-ele
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `array<T>`
+- Returns: `array<T>`
+- Nullability: The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+## Structural semantics
+
+- Cardinality: `non-increasing` <span class="semantics-info" title="The output contains no more elements than the visited input." aria-label="Cardinality definition: The output contains no more elements than the visited input.">i</span>
+- Dependency: `whole-input` <span class="semantics-info" title="An output depends on the complete visited input." aria-label="Dependency definition: An output depends on the complete visited input.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
+
+## Argument evaluation
+
+- **`count`:** Evaluated once in the enclosing context.
+
+
+## Behavior
+
+When `count` is greater than the number of elements in the input, `skip-last-elements` omits all available elements and returns an empty array. Additional requested skips have no effect.
 
 **Kind:** Function  
 **Scope:** `array/selection`  

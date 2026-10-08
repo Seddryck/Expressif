@@ -26,17 +26,6 @@ Returns true when the input contains exactly one Unicode currency symbol. Return
 
 
 This predicate has no parameters.
-
-
-
-
-
-## Behavior
-
-Recognizes the Unicode CurrencySymbol (Sc) category, including symbols outside the Currency Symbols block and supplementary Unicode code points. Whitespace is not trimmed; currency codes such as USD are not symbols.
-
-
-
 ## Examples
 
 {% raw %}
@@ -46,6 +35,9 @@ Recognizes the Unicode CurrencySymbol (Sc) category, including symbols outside t
 ```
 {% endraw %}
 
+## Behavior
+
+Recognizes the Unicode CurrencySymbol (Sc) category, including symbols outside the Currency Symbols block and supplementary Unicode code points. Whitespace is not trimmed; currency codes such as USD are not symbols.
 
 **Kind:** Predicate  
 **Scope:** `text`  

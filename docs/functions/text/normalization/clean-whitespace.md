@@ -19,15 +19,13 @@ clean-whitespace() → text
 
 returns the argument with any whitespace replaced by a space character. `\r\n` is considered as a single character.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
 
 ## Examples
 
@@ -36,7 +34,6 @@ This function has no parameters.
 "Hello World" | clean-whitespace → "Hello World"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/normalization`  

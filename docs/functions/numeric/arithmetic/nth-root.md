@@ -14,16 +14,22 @@ generated: true
 
 ```
 numeric →
-nth-root() → numeric
+nth-root(
+    exponent: numeric
+) → numeric
 ```
 
 Returns the root specified by the parameter value of the numeric argument value.
+
+
 
 ## Parameters
 
 
 
-This function has no parameters.
+| Name | Type | Required | Description |
+|:-----|:-----|:---------|:------------|
+| `exponent` | `numeric` | Yes | The exponent of the root to return. |
 
 
 
@@ -37,6 +43,9 @@ This function has no parameters.
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`exponent`:** Evaluated once in the context surrounding this `nth-root` call.
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

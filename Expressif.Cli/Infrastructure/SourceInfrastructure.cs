@@ -63,6 +63,19 @@ internal sealed class SourceInfrastructure(
         }
     }
 
+    internal object? OpenJsonDocument(string sourcePath)
+    {
+        var source = ReadUtf8File(sourcePath);
+        try
+        {
+            return JsonValueReader.Read(source);
+        }
+        catch (JsonException exception)
+        {
+            throw new FormatException($"Invalid JSON syntax in '{sourcePath}': {exception.Message}", exception);
+        }
+    }
+
     internal IDataReader OpenCsvDataReader(string sourcePath, IReadOnlyList<string> sourceOptions)
     {
         var stream = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read);

@@ -33,9 +33,9 @@
     "Summary": "A calendar date without a time component.",
     "Parent": "temporal",
     "Literal": {
-      "Syntax": "#\"yyyy-MM-dd\"",
+      "Syntax": "#\"yyyy-MM-dd\":date",
       "Examples": [
-        "#\"2025-12-16\""
+        "#\"2025-12-16\":date"
       ]
     },
     "Bindings": {
@@ -47,9 +47,9 @@
     "Summary": "A calendar date and time.",
     "Parent": "temporal",
     "Literal": {
-      "Syntax": "#\"yyyy-MM-ddTHH:mm:ss\"",
+      "Syntax": "#\"yyyy-MM-ddTHH:mm:ss\":datetime",
       "Examples": [
-        "#\"2025-12-16T14:30:00\""
+        "#\"2025-12-16T14:30:00\":datetime"
       ]
     },
     "Bindings": {
@@ -82,7 +82,7 @@
       ]
     },
     "Bindings": {
-      "dotnet": "Expressif.Values.DictionaryValue"
+      "dotnet": "Expressif.Values.DictionaryValueValue"
     }
   },
   {
@@ -100,7 +100,7 @@
     "Parent": "pair",
     "Literal": null,
     "Bindings": {
-      "dotnet": "Expressif.Values.Group"
+      "dotnet": "Expressif.Values.GroupValue"
     }
   },
   {
@@ -114,7 +114,7 @@
       ]
     },
     "Bindings": {
-      "dotnet": "Expressif.Values.Grouping"
+      "dotnet": "Expressif.Values.GroupingValue"
     }
   },
   {
@@ -188,7 +188,7 @@
       ]
     },
     "Bindings": {
-      "dotnet": "Expressif.Values.PairValue"
+      "dotnet": "Expressif.Values.PairValueValue"
     }
   },
   {
@@ -287,9 +287,9 @@
     "Summary": "A time of day without a date component.",
     "Parent": "temporal",
     "Literal": {
-      "Syntax": "#\"HH:mm:ss\"",
+      "Syntax": "#\"HH:mm:ss\":time",
       "Examples": [
-        "#\"14:30:00\""
+        "#\"14:30:00\":time"
       ]
     },
     "Bindings": {
@@ -307,7 +307,7 @@
       ]
     },
     "Bindings": {
-      "dotnet": "Expressif.Values.TupleValue"
+      "dotnet": "Expressif.Values.TupleValueValue"
     }
   },
   {
@@ -321,7 +321,7 @@
       ]
     },
     "Bindings": {
-      "dotnet": "Expressif.Values.VectorValue"
+      "dotnet": "Expressif.Values.VectorValueValue"
     }
   },
   {

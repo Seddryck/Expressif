@@ -1,0 +1,16 @@
+using Expressif.Library.Text;
+using Expressif.Testing.Conformance;
+
+namespace Expressif.Testing.Text;
+
+[TestFixture]
+public class SpecialTest
+{
+    [Conformance]
+    public void IsEmpty_Valid(object? value, bool expected)
+        => Assert.That(new Empty().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void IsEmptyOrNull_Valid(object? value, bool expected)
+        => Assert.That(new EmptyOrNull().Evaluate(value), Is.EqualTo(expected));
+}

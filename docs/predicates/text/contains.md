@@ -21,6 +21,8 @@ contains(
 
 Returns `true` if the value passed as argument contains, anywhere in the string, the text value passed as parameter. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -28,7 +30,15 @@ Returns `true` if the value passed as argument contains, anywhere in the string,
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `reference` | `text` | Yes | A string to be compared to the argument value. |
-| `comparer` | `any` | No | A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity). |
+| `comparer` | `any` | No | Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case. |
+## Examples
+
+{% raw %}
+```expressif
+"Hello World" | contains("Hello") → #true
+"Hello World" | contains("Hello") → #true
+```
+{% endraw %}
 
 ## Argument evaluation
 

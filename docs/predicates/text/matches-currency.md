@@ -26,17 +26,6 @@ Returns true when the trimmed input is an amount with one Unicode currency symbo
 
 
 This predicate has no parameters.
-
-
-
-
-
-## Behavior
-
-Requires exactly one symbol from the Unicode CurrencySymbol (Sc) category. Allows whitespace around the whole value and between the symbol and amount, and an optional leading + or - on the numeric amount. Uses ASCII digits, comma grouping with one to three digits in the first group and exactly three in every following group, and a dot fraction with at least one digit on each side. Ungrouped integers may have any length. Rejects internal numeric whitespace, parentheses, currency codes, exponents, repeated symbols, and misplaced signs. This is fixed-format text validation, independent of culture and numeric range; it does not parse or identify a currency.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +36,9 @@ Requires exactly one symbol from the Unicode CurrencySymbol (Sc) category. Allow
 ```
 {% endraw %}
 
+## Behavior
+
+Requires exactly one symbol from the Unicode CurrencySymbol (Sc) category. Allows whitespace around the whole value and between the symbol and amount, and an optional leading + or - on the numeric amount. Uses ASCII digits, comma grouping with one to three digits in the first group and exactly three in every following group, and a dot fraction with at least one digit on each side. Ungrouped integers may have any length. Rejects internal numeric whitespace, parentheses, currency codes, exponents, repeated symbols, and misplaced signs. This is fixed-format text validation, independent of culture and numeric range; it does not parse or identify a currency.
 
 **Kind:** Predicate  
 **Scope:** `text`  

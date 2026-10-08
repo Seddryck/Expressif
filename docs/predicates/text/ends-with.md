@@ -21,6 +21,8 @@ ends-with(
 
 Returns `true` if the value passed as argument ends with the text value passed as parameter. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -28,7 +30,15 @@ Returns `true` if the value passed as argument ends with the text value passed a
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `reference` | `text` | Yes | A string to be compared to the argument value.. |
-| `comparer` | `any` | No | A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity). |
+| `comparer` | `any` | No | Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case. |
+## Examples
+
+{% raw %}
+```expressif
+"Hello World" | ends-with("Hello") → #false
+"Hello World" | ends-with("Hello") → #false
+```
+{% endraw %}
 
 ## Argument evaluation
 

@@ -29,15 +29,9 @@ Splits text into consecutive nonempty segments of the requested lengths, preserv
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `lengths` | `integer` | Variadic (zero or more) | Zero or more strictly positive character counts, consumed in order. Spread arrays expand lengths in place. |
+| `lengths` | `integer` | Variadic (zero or more); accepts spread | Zero or more strictly positive character counts, consumed in order. Spread arrays expand lengths in place. Omission supplies an empty variadic sequence. |
 
 
-
-
-
-## Behavior
-
-All lengths are validated before splitting, including lengths after the input would be exhausted. Invalid, nonintegral, zero, or negative lengths return `null`. A short final segment consumes the available text; an exact fit has no empty remainder. With no lengths, nonempty input returns one segment. Empty and null input return an empty array when lengths are valid. Blank input represents one space; literal whitespace is preserved. Character counts use UTF-16 code units, like `first-chars` and `skip-first-chars`. Spread arguments preserve declaration order; an array without spread is not an integer length. Unlike delimiter-removing tokenization, concatenating the segments reconstructs the original text.
 
 
 
@@ -53,6 +47,9 @@ All lengths are validated before splitting, including lengths after the input wo
 ```
 {% endraw %}
 
+## Behavior
+
+All lengths are validated before splitting, including lengths after the input would be exhausted. Invalid, nonintegral, zero, or negative lengths return `null`. A short final segment consumes the available text; an exact fit has no empty remainder. With no lengths, nonempty input returns one segment. Empty and null input return an empty array when lengths are valid. Blank input represents one space; literal whitespace is preserved. Character counts use UTF-16 code units, like `first-chars` and `skip-first-chars`. Spread arguments preserve declaration order; an array without spread is not an integer length. Unlike delimiter-removing tokenization, concatenating the segments reconstructs the original text.
 
 **Kind:** Function  
 **Scope:** `text/partitioning`  

@@ -27,11 +27,6 @@ Returns the number of lexical tokens in the argument value, including punctuatio
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello, David!" | token-count-lexical → 4
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

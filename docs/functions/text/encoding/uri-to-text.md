@@ -19,16 +19,13 @@ uri-to-text() → text
 
 Returns text by unescaping one layer of URI percent encoding. Preserves `null`, empty, and blank inputs.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 "caf%C3%A9%20%26%20tea" | uri-to-text → "café & tea"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/encoding`  

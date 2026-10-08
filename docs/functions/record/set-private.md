@@ -3,7 +3,7 @@ layout: docs
 title: "set-private"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 220
+nav_order: 230
 has_toc: false
 permalink: /functions/record/set-private/
 tags:
@@ -33,10 +33,6 @@ Returns a new record by renaming selected public fields by adding a leading unde
 
 
 
-## Argument evaluation
-
-- **`names`:** Evaluated once in the enclosing context.
-
 
 
 ## Examples
@@ -47,6 +43,9 @@ Returns a new record by renaming selected public fields by adding a leading unde
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`names`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `record`  

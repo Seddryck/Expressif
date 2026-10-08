@@ -21,6 +21,8 @@ greatest-common-divisor(
 
 Returns the greatest common divisor (GCD) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,7 @@ Returns the greatest common divisor (GCD) of the argument integer and the parame
 |:-----|:-----|:---------|:------------|
 | `value` | `integer` | Yes | The integer used to compute the greatest common divisor with the argument value. |
 
-## Argument evaluation
 
-- **`value`:** Evaluated once in the enclosing context.
 
 ## Examples
 
@@ -41,6 +41,9 @@ Returns the greatest common divisor (GCD) of the argument integer and the parame
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`value`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

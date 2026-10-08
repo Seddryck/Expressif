@@ -3,7 +3,7 @@ layout: docs
 title: "is-negative-or-zero"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 70
+nav_order: 80
 has_toc: false
 permalink: /predicates/numeric/is-negative-or-zero/
 tags:
@@ -18,17 +18,13 @@ is-negative-or-zero()
 
 Returns true if the numeric argument is less or equal to 0.
 
+
+
 ## Parameters
 
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -36,7 +32,6 @@ This predicate has no parameters.
 10 | is-negative-or-zero → #false
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `numeric`  

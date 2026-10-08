@@ -1,0 +1,14 @@
+suite: semver
+kind: function
+operator: coerce-semver
+tests:
+  - id: coerce-semver.valid.text
+    cases:
+      - id: coerce-semver.valid.text.complete
+        value: '1.25.0+abc'
+        expected: '1.25.0+abc'
+  - id: coerce-semver.invalid.text
+    cases:
+      - id: coerce-semver.invalid.text.missing-patch
+        value: '2.5'
+        expected:

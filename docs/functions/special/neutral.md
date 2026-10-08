@@ -13,20 +13,19 @@ generated: true
 ---
 
 ```
-any →
-neutral() → any
+T →
+neutral() → T
 ```
 
 Returns the argument value.
+
+
 
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
 
 
 
@@ -38,6 +37,12 @@ This function has no parameters.
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `T`
+- Returns: `T`
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 
 **Kind:** Function  
 **Scope:** `special`  

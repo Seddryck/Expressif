@@ -19,6 +19,8 @@ xml-escaped-to-text() → text
 
 Returns text by decoding XML character data without requiring a containing element. Returns `null` for malformed input and preserves `null`, empty, and blank inputs.
 
+
+
 ## Parameters
 
 
@@ -26,12 +28,6 @@ Returns text by decoding XML character data without requiring a containing eleme
 This function has no parameters.
 
 
-
-
-
-## Behavior
-
-Decodes one layer of the five predefined XML entities and valid decimal or hexadecimal numeric character references. Markup, document type declarations, unknown entities, and invalid XML characters are rejected.
 
 
 
@@ -43,6 +39,9 @@ Decodes one layer of the five predefined XML entities and valid decimal or hexad
 ```
 {% endraw %}
 
+## Behavior
+
+Decodes one layer of the five predefined XML entities and valid decimal or hexadecimal numeric character references. Markup, document type declarations, unknown entities, and invalid XML characters are rejected.
 
 **Kind:** Function  
 **Scope:** `text/encoding`  

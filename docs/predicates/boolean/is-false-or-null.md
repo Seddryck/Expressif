@@ -25,12 +25,6 @@ Returns `true` if the argument is effectively `false` or `null` else return `fal
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +32,6 @@ This predicate has no parameters.
 #true | is-false-or-null → #false
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `boolean`  

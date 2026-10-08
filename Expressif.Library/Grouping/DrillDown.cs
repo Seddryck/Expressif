@@ -1,0 +1,36 @@
+using Expressif.Library.Array;
+using Expressif.Values;
+using Expressif.Bindings;
+
+namespace Expressif.Library.Grouping;
+
+using Expressif.Library.Array.Grouping;
+
+/// <summary>Refines each existing group by appending dimensions derived from its values.</summary>
+[Function(prefix: "")]
+[Scope("grouping")]
+public sealed class DrillDown : IFunction<GroupingValue, GroupingValue>
+{
+    private IReadOnlyList<Func<object?, object?>> Expressions { get; }
+
+    /// <param name="expressions">One or more expressions whose results are appended to the existing key.</param>
+    [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 1)]
+    public DrillDown([ArgumentEvaluation(ArgumentEvaluationMode.Nested)]
+        IEnumerable<Func<object?, object?>> expressions)
+        => Expressions = expressions.ToArray();
+
+    public GroupingValue Evaluate(GroupingValue value)
+    {
+        var pairs = new List<PairValue>();
+        foreach (var group in value)
+        {
+            var prefix = group.Key is TupleValue tuple ? tuple.ToArray() : new[] { group.Key };
+            var subgroups = GroupingOperations.Group(group.Values.Select(item =>
+                new PairValue(new Expressif.Values.TupleValue([.. prefix, .. Expressions.Select(expression => expression.Invoke(item))]), item)));
+            pairs.AddRange(subgroups.Select(group => new PairValue(group.Key, group.Values)));
+        }
+        return new GroupingValue(pairs);
+    }
+
+    object? IFunction.Evaluate(object? value) => value is GroupingValue grouping ? Evaluate(grouping) : null;
+}

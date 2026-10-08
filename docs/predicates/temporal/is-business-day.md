@@ -18,15 +18,21 @@ is-business-day()
 
 Returns `true` if the date passed as the argument doesn't correspond to a Saturday or a Sunday. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
 
 This predicate has no parameters.
 
+## Examples
 
-
-
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-business-day → #true
+```
+{% endraw %}
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

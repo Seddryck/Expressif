@@ -20,6 +20,8 @@ is-contained-in(
 
 Returns true if the temporal value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -27,6 +29,16 @@ Returns true if the temporal value passed as argument is between the lower bound
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `interval` | `any` | Yes | A temporal interval to compare to the argument. |
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#null | is-contained-in(#null) → #false
+```
+{% endraw %}
 
 ## Argument evaluation
 

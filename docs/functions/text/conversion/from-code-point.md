@@ -19,16 +19,13 @@ from-code-point() → text
 
 Returns the text corresponding to an integer Unicode scalar value. Returns `null` for any other input.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 128512 | from-code-point → "😀"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/conversion`  

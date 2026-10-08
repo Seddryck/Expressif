@@ -18,17 +18,13 @@ is-odd()
 
 Returns `true` if the numeric value passed as argument is odd. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -36,7 +32,6 @@ This predicate has no parameters.
 10 | is-odd → #false
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `numeric/arithmetic`  

@@ -19,16 +19,13 @@ ceiling-minute() → date-time
 
 Returns the dateTime passed as argument value with the seconds and milliseconds set to zero and a minute added.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | ceiling-minute → #"2024-01-15 12:30:00"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

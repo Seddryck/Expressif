@@ -27,11 +27,6 @@ Returns lexical tokens in source order, preserving punctuation and symbols as se
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello, David!" | tokenize-lexical → {"Hello", ",", "David", "!"}
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

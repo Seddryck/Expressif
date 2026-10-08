@@ -1,7 +1,7 @@
-﻿#requires -PSEdition Core
+#requires -PSEdition Core
 param (
     [Parameter(Mandatory)]
-    [ValidateSet("function", "predicate", "accumulator", "type")]
+    [ValidateSet("function", "predicate", "type")]
     [string] $class,
 
     [Parameter()]
@@ -119,7 +119,7 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $serializedNames, $d
     $elapsed = Measure-Command -Expression {
         $TextInfo = (Get-Culture).TextInfo
         $locatorType = if ($class -eq "type") {
-            "Expressif.Types.TypeIntrospector"
+            "Expressif.Values.Types.TypeIntrospector"
         } else {
             "Expressif.$($TextInfo.ToTitleCase($class))s.Introspection.$($TextInfo.ToTitleCase($class))Introspector"
         }
@@ -132,7 +132,8 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $serializedNames, $d
         } else {
             @($described |
                 Where-Object { $names.Count -eq 0 -or $names -contains $_.Name } |
-                Select-Object -Property Name, IsPublic, Aliases, Scope, Input, Output, Summary, Parameters)
+                Select-Object -Property Name, IsPublic, Aliases, Scope, Input, Output, Summary, Parameters, Kind,
+                    @{ Name = "Incremental"; Expression = { $_.IsIncremental } })
         }
 
         if ($class -eq "function") {
@@ -146,7 +147,7 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $serializedNames, $d
             }
         }
 
-        if ($class -eq "accumulator") {
+        if ($class -eq "function") {
             foreach ($entry in $functions) {
                 $aliases = @($described | Where-Object Name -EQ $entry.Name | ForEach-Object DeprecatedAliases)
                 if ($aliases.Count -gt 0) {

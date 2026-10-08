@@ -19,16 +19,13 @@ iso-year-day() → text
 
 returns a textual value at format YYYY-ddd representing the year, and the day number of the date passed as the argument (both according to ISO 8601)
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | iso-year-day → "2024-015"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

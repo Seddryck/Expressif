@@ -1,4 +1,4 @@
-﻿$classes = @("Function", "Predicate", "Accumulator")
+﻿$classes = @("Function", "Predicate")
 $destinationFile = ".\docs\_docs\library-index.md"
 
 Set-Location -Path $PSScriptRoot

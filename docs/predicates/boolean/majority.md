@@ -29,12 +29,7 @@ Returns `true` when strictly more than half of the supplied predicates are satis
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `predicates` | `predicate` | Variadic (zero or more) | Specifies the predicate expressions evaluated against the same input value, in declaration order. |
-
-## Argument evaluation
-
-- **`predicates`:** Predicates use the same incoming value and are evaluated in declaration order. Evaluation stops as soon as the result is known.
-
+| `predicates` | `predicate` | Variadic (zero or more); no spread | Specifies the predicate expressions evaluated against the same input value, in declaration order. |
 ## Examples
 
 {% raw %}
@@ -43,6 +38,9 @@ Returns `true` when strictly more than half of the supplied predicates are satis
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`predicates`:** Predicates use the same incoming value and are evaluated in declaration order. Evaluation stops as soon as the result is known.
 
 **Kind:** Predicate  
 **Scope:** `boolean`  

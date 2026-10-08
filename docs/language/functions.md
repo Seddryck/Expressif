@@ -178,7 +178,7 @@ flowchart LR
     F --> G[numeric]
 ```
 
-## Functions, predicates, and accumulators
+## Functions and predicates
 
 From a user's perspective, these concepts share the same composition model.
 
@@ -194,13 +194,13 @@ A predicate:
 value → boolean
 ```
 
-An accumulator:
+An aggregation function:
 
 ```text
 array<T> → value
 ```
 
-They differ by purpose and contract, not by requiring completely different expression syntax.
+Aggregation functions such as `sum`, `count`, and `reduce` are ordinary functions in the public language model. The public .NET `IIncrementalAggregation` capability creates an isolated `IAggregationSession` for each evaluation, while catalog metadata exposes `Incremental` as an execution capability instead of a third language-level operator kind. This lets `fold`, `scan`, and `broadcast` share stateful, linear-time evaluation.
 
 See [Predicates](predicates.md) and [Structured values](structured-values.md) for the specialized behavior.
 
@@ -212,6 +212,8 @@ Where namespaces are available, they can also disambiguate or organize related f
 
 The canonical function name should be preferred in documentation and reusable expressions unless an alias communicates the intent more clearly for a specific audience.
 
+In v3.0, the old `/accumulators/<scope>/<name>/` reference URLs move to `/functions/array/aggregation/<name>/`. Bare `first` and `last` name the zero-argument scalar aggregation functions; `first(count)` and `last(count)` remain aliases of `first-elements(count)` and `last-elements(count)`. The shared names are resolved by their non-overlapping argument counts.
+
 ## Array arguments and spread
 
 The `array` function accepts a variable number of arguments:
@@ -222,13 +224,13 @@ For example, an array constructor can conceptually accept:
 array(1, 2, 3, 4)
 ```
 
-It is currently the only function that accepts spread arguments. An array prefixed with `...` contributes its elements to the constructed array:
+Its `values` parameter accepts spread. An array prefixed with `...` contributes its elements to the constructed array:
 
 ```expressif
 array(1, ...@values, 4)
 ```
 
-Array spread and the standalone incoming-value expression `...` are covered in [Advanced expressions](advanced.md#array-spread-arguments).
+Other spread-aware variadic parameters are documented in the function reference; variadic alone does not imply spread support. Array spread and the standalone incoming-value expression `...` are covered in [Advanced expressions](advanced.md#positional-spread-arguments).
 
 ## Read function signatures left to right
 

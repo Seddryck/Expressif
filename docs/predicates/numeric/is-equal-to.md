@@ -3,7 +3,7 @@ layout: docs
 title: "is-equal-to"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 10
+nav_order: 20
 has_toc: false
 permalink: /predicates/numeric/is-equal-to/
 tags:
@@ -20,6 +20,8 @@ is-equal-to(
 
 Returns true if the numeric value passed as argument is equal to the numeric value passed as parameter.
 
+
+
 ## Parameters
 
 
@@ -27,11 +29,6 @@ Returns true if the numeric value passed as argument is equal to the numeric val
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `reference` | `numeric` | Yes | A numeric value to compare to the argument. |
-
-## Argument evaluation
-
-- **`reference`:** Evaluated once in the enclosing context.
-
 ## Examples
 
 {% raw %}
@@ -40,6 +37,9 @@ Returns true if the numeric value passed as argument is equal to the numeric val
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`reference`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `numeric`  

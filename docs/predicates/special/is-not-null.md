@@ -26,12 +26,6 @@ Returns true when the input does not satisfy is-null.
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -40,7 +34,6 @@ This predicate has no parameters.
 10 | is-not-null → #true
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `special`  

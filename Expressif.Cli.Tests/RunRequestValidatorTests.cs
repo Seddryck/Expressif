@@ -43,6 +43,7 @@ public class RunRequestValidatorTests
         => new(
             InlineExpression: "absolute",
             ExpressionFilePath: null,
+            PlanFilePath: null,
             InputRows: [],
             BatchInput: null,
             SourcePath: null,

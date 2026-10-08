@@ -3,7 +3,7 @@ layout: docs
 title: "put-absent-path"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 150
+nav_order: 160
 has_toc: false
 permalink: /functions/record/put-absent-path/
 tags:
@@ -35,11 +35,6 @@ Assigns the field at a dynamic path only when the final segment is absent, creat
 
 
 
-## Argument evaluation
-
-- **`path`:** Evaluated once against the value entering this call.
-- **`value`:** Evaluated against the original incoming record only if the target path is absent.
-
 
 
 ## Examples
@@ -50,6 +45,10 @@ Assigns the field at a dynamic path only when the final segment is absent, creat
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`path`:** Evaluated once against the value entering this call.
+- **`value`:** Evaluated against the original incoming record only if the target path is absent.
 
 **Kind:** Function  
 **Scope:** `record`  

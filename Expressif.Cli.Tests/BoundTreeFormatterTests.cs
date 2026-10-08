@@ -1,5 +1,6 @@
 using Expressif.Bindings;
 using Expressif.Cli.Commands;
+using Expressif.Cli.Expressions;
 
 namespace Expressif.Cli.Tests;
 
@@ -19,30 +20,30 @@ public class BoundTreeFormatterTests
                 new RecordNamedEntry("amount", new LiteralParameter(12.5m)),
                 new UnknownRecordEntry(),
             ]),
-            new OpenExpressionParameter(new OpenExpression([new Function("trim", [])])),
+            new OpenExpressionParameter(new OpenExpression([Function.FromParameters("trim", [])])),
             new InputExpressionParameter(new ClosedExpression(
                 new VariableParameter("input"),
-                [new Function("upper", [])])),
+                [Function.FromParameters("upper", [])])),
             new IntervalParameter(new IntervalBinding(
                 new IntervalBoundBinding(IntervalBoundBindingKind.NegativeInfinity),
                 new IntervalBoundBinding(IntervalBoundBindingKind.Finite, 10),
                 false,
                 true)),
-            new PredicationParameter(new SinglePredication(new Function("even", []))),
+            new PredicationParameter(new SinglePredication(Function.FromParameters("even", []))),
             new PredicationParameter(new UnknownPredication()),
             new LiteralParameter(new[] { 1, 2 }),
             new LiteralParameter(new DisplayValue()),
         };
         var root = new ClosedRootExpression(new ClosedExpression(
             new VariableParameter("source"),
-            [new Function("project", parameters, FunctionSyntax.MapShorthand)]));
+            [Function.FromParameters("project", parameters)]));
 
         var result = BoundTreeFormatter.Format(root, "tree");
 
         Assert.Multiple(() =>
         {
             Assert.That(result, Does.Contain("ClosedExpression"));
-            Assert.That(result, Does.Contain("Function: project (from MapShorthand)"));
+            Assert.That(result, Does.Contain("Function: project"));
             Assert.That(result, Does.Contain("Spread: IncomingValue"));
             Assert.That(result, Does.Contain("UnknownRecordEntry"));
             Assert.That(result, Does.Contain("LowerBound: NegativeInfinity"));
@@ -54,6 +55,13 @@ public class BoundTreeFormatterTests
     }
 
     [Test]
+    public void Format_SourceShorthand_ExposesInternalNotation()
+    {
+        var root = new SyntaxService().Bind(Expressif.Syntax.ExpressionParser.Parse("{1, 2} |> add(1)"));
+        Assert.That(BoundTreeFormatter.Format(root, "tree"), Does.Contain("from MapShorthand"));
+    }
+
+    [Test]
     public void Format_UnknownRoot_RendersItsRuntimeType()
         => Assert.That(
             BoundTreeFormatter.Format(new UnknownRootExpression(), "tree"),
@@ -62,7 +70,7 @@ public class BoundTreeFormatterTests
     [Test]
     public void Format_ControlFlow_ExposesBranchOperands()
     {
-        var root = new ExpressifBinder().Bind(Expressif.Syntax.ExpressionParser.Parse("try(absolute => is-positive, _ => 0)"));
+        var root = new SyntaxService().Bind(Expressif.Syntax.ExpressionParser.Parse("try(absolute => is-positive, _ => 0)"));
         var tree = BoundTreeFormatter.Format(root, "tree");
         Assert.That(tree, Does.Contain("Predicate").And.Contain("Expression").And.Contain("Fallback"));
     }

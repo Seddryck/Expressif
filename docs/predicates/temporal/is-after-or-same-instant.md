@@ -20,6 +20,8 @@ is-after-or-same-instant(
 
 Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -27,6 +29,16 @@ Returns true if the temporal value passed as argument is chronologically after t
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `reference` | `date-time` | Yes | A temporal value to compare to the argument. |
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-after-or-same-instant(#"2024-01-14 12:30:00") → #true
+```
+{% endraw %}
 
 ## Argument evaluation
 

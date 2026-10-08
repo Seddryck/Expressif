@@ -33,10 +33,6 @@ Returns the value of the named field from the input record or object. Returns `n
 
 
 
-## Argument evaluation
-
-- **`name`:** Evaluated once in the enclosing context.
-
 
 
 ## Examples
@@ -47,6 +43,9 @@ Returns the value of the named field from the input record or object. Returns `n
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`name`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `record`  

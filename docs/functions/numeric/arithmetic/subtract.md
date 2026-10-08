@@ -16,11 +16,13 @@ generated: true
 numeric →
 subtract(
     value: numeric,
-    times: integer
+    times: integer = 1
 ) → numeric
 ```
 
 Returns the difference between the argument number and the parameter value.
+
+
 
 ## Parameters
 
@@ -29,12 +31,13 @@ Returns the difference between the argument number and the parameter value.
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `value` | `numeric` | Yes | The value to be subtracted to the argument value. |
-| `times` | `integer` | Yes | An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction. |
+| `times` | `integer` | No | An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction. Defaults to `1`. |
 
-## Argument evaluation
 
-- **`value`:** Evaluated once in the enclosing context.
-- **`times`:** Evaluated once in the enclosing context.
+
+
+
+
 
 ## Examples
 
@@ -44,6 +47,10 @@ Returns the difference between the argument number and the parameter value.
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`value`:** Evaluated once in the context surrounding this `subtract` call.
+- **`times`:** Evaluated once in the context surrounding this `subtract` call.
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

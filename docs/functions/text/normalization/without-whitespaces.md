@@ -19,15 +19,13 @@ without-whitespaces() → text
 
 Returns the argument string without white-space characters.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
 
 ## Examples
 
@@ -36,7 +34,6 @@ This function has no parameters.
 "Hello World" | without-whitespaces → "HelloWorld"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/normalization`  

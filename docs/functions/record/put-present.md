@@ -3,7 +3,7 @@ layout: docs
 title: "put-present"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 170
+nav_order: 180
 has_toc: false
 permalink: /functions/record/put-present/
 tags:
@@ -29,13 +29,9 @@ Assigns statically named fields only when they are present, including fields who
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `assignments` | `entry` | Variadic (one or more) | One or more named assignments applied only to fields already present. |
+| `assignments` | `entry` | Variadic (one or more); no spread | One or more named assignments applied only to fields already present. |
 
 
-
-## Argument evaluation
-
-- **`assignments`:** Each assignment uses the record entering this call and is evaluated only if its target field is present.
 
 
 
@@ -47,6 +43,9 @@ Assigns statically named fields only when they are present, including fields who
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`assignments`:** Each assignment uses the record entering this call and is evaluated only if its target field is present.
 
 **Kind:** Function  
 **Scope:** `record`  

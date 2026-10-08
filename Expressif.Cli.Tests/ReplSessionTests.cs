@@ -217,7 +217,7 @@ public class ReplSessionTests
     public void Execute_ReusesOneEvaluationContext()
     {
         var expressions = new TrackingExpressionService();
-        var context = new EvaluationContext();
+        var context = EvaluationContext.Empty;
         var session = new ReplSession(expressions, new Context(), context);
 
         _ = session.Execute("1");
@@ -344,6 +344,8 @@ public class ReplSessionTests
 
         public IExpression CompileOpen(string code, Context context) => new TrackingExpression(this);
         public IExpression CompileClosed(string code, Context context) => new TrackingExpression(this);
+        public IExpression CompileOpen(Expressif.Planning.LogicalPlan plan, Context context) => new TrackingExpression(this);
+        public IExpression CompileClosed(Expressif.Planning.LogicalPlan plan, Context context) => new TrackingExpression(this);
         public object? Evaluate(IExpression expression, object? input) => expression.Evaluate(input);
 
         private sealed class TrackingExpression(TrackingExpressionService owner) : IExpression
@@ -365,6 +367,8 @@ public class ReplSessionTests
 
         public IExpression CompileOpen(string code, Context context) => new StubExpression();
         public IExpression CompileClosed(string code, Context context) => new StubExpression();
+        public IExpression CompileOpen(Expressif.Planning.LogicalPlan plan, Context context) => new StubExpression();
+        public IExpression CompileClosed(Expressif.Planning.LogicalPlan plan, Context context) => new StubExpression();
 
         public object? Evaluate(IExpression expression, object? input)
             => Exception is null ? Result : throw Exception;

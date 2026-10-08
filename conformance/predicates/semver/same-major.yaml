@@ -1,0 +1,10 @@
+suite: semver
+kind: predicate
+operator: same-major
+tests:
+  - id: same-major.valid.semver
+    cases:
+      - id: same-major.valid.semver.match
+        value: '2.1.0'
+        parameters: ['2.9.9']
+        expected: true

@@ -1,6 +1,8 @@
 using Expressif.Bindings;
 using Expressif.Cli.Expressions;
 using Expressif.Cli.Inputs;
+using Expressif.Cli.Commands;
+using Expressif.Planning;
 using Expressif.Syntax;
 
 namespace Expressif.Cli.Application;
@@ -24,8 +26,13 @@ internal static class ExpressionFailureClassifier
     public static bool IsValidation(Exception exception)
         => exception is ExpressifSyntaxException
             or BindingException
+            or LogicalPlanBindingException
             or NotImplementedFunctionException
             or MissingOrUnexpectedParametersFunctionException;
+
+    public static ExpressionRequiresInputException? InputRequired(Exception exception)
+        => exception as ExpressionRequiresInputException
+            ?? exception.InnerException as ExpressionRequiresInputException;
 }
 
 internal enum EvaluateInputKind
@@ -36,12 +43,13 @@ internal enum EvaluateInputKind
 }
 
 internal sealed record EvaluateRequest(
-    string Expression,
+    ExpressionCommandSource Source,
     EvaluateInputKind InputKind,
     string? Input,
-    string? SourcePath,
+    IReadOnlyList<string> SourcePaths,
     IReadOnlyList<string> SourceOptions,
-    bool Scalar);
+    bool Scalar,
+    bool Collect);
 
 internal sealed class EvaluateHandler(
     IExpressionService expressions,
@@ -51,13 +59,13 @@ internal sealed class EvaluateHandler(
     public ExpressionOperationResult Execute(EvaluateRequest request)
     {
         if (request.InputKind == EvaluateInputKind.Closed)
-            return EvaluateClosed(request.Expression);
+            return EvaluateClosed(request.Source);
 
         object? input;
         try
         {
             input = request.InputKind == EvaluateInputKind.Source
-                ? sources.Read(request.SourcePath, request.SourceOptions, request.Scalar).ToArray()
+                ? ReadSource(request)
                 : values.Parse(request.Input ?? string.Empty);
         }
         catch (FormatException exception)
@@ -68,21 +76,26 @@ internal sealed class EvaluateHandler(
             return new ExpressionInputFailure(message);
         }
 
-        return EvaluateOpen(request.Expression, input);
+        return EvaluateOpen(request.Source, input);
     }
 
-    private ExpressionOperationResult EvaluateClosed(string code)
+    private object?[] ReadSource(EvaluateRequest request)
+        => request.Collect
+            ? sources.CollectJsonDocuments(request.SourcePaths)
+            : sources.Read(request.SourcePaths.SingleOrDefault(), request.SourceOptions, request.Scalar).ToArray();
+
+    private ExpressionOperationResult EvaluateClosed(ExpressionCommandSource source)
     {
         IExpression expression;
         try
         {
-            expression = expressions.CompileClosed(code, new Context());
+            expression = CompileClosed(source, new Context());
         }
-        catch (ExpressionRequiresInputException exception)
+        catch (Exception exception) when (ExpressionFailureClassifier.InputRequired(exception) is not null)
         {
-            var openResult = ValidateOpen(code);
+            var openResult = ValidateOpen(source);
             return openResult is ExpressionSuccessResult
-                ? new ExpressionInputRequiredFailure(exception)
+                ? new ExpressionInputRequiredFailure(ExpressionFailureClassifier.InputRequired(exception)!)
                 : openResult;
         }
         catch (Exception exception) when (ExpressionFailureClassifier.IsValidation(exception))
@@ -97,12 +110,12 @@ internal sealed class EvaluateHandler(
         return Evaluate(expression, null);
     }
 
-    private ExpressionOperationResult EvaluateOpen(string code, object? input)
+    private ExpressionOperationResult EvaluateOpen(ExpressionCommandSource source, object? input)
     {
         IExpression expression;
         try
         {
-            expression = expressions.CompileOpen(code, new Context());
+            expression = CompileOpen(source, new Context());
         }
         catch (Exception exception) when (ExpressionFailureClassifier.IsValidation(exception))
         {
@@ -116,11 +129,11 @@ internal sealed class EvaluateHandler(
         return Evaluate(expression, input);
     }
 
-    private ExpressionOperationResult ValidateOpen(string code)
+    private ExpressionOperationResult ValidateOpen(ExpressionCommandSource source)
     {
         try
         {
-            _ = expressions.CompileOpen(code, new Context());
+            _ = CompileOpen(source, new Context());
             return new ExpressionSuccessResult();
         }
         catch (Exception exception) when (ExpressionFailureClassifier.IsValidation(exception))
@@ -132,6 +145,16 @@ internal sealed class EvaluateHandler(
             return new ExpressionUnexpectedFailure(exception);
         }
     }
+
+    private IExpression CompileOpen(ExpressionCommandSource source, Context context)
+        => source.Plan is not null
+            ? expressions.CompileOpen(source.Plan, context)
+            : expressions.CompileOpen(source.Code!, context);
+
+    private IExpression CompileClosed(ExpressionCommandSource source, Context context)
+        => source.Plan is not null
+            ? expressions.CompileClosed(source.Plan, context)
+            : expressions.CompileClosed(source.Code!, context);
 
     private ExpressionOperationResult Evaluate(IExpression expression, object? input)
     {

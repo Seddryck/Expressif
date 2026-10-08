@@ -3,103 +3,71 @@ layout: docs
 title: Build a predication with C#
 parent: .NET SDK
 nav_order: 50
-description: Compose predicates, negation, and Boolean combinations with PredicationBuilder.
+description: Compose reusable predicates, negation, and Boolean groups with PredicationBuilder.
 ---
 
-`PredicationBuilder` composes a Boolean rule from predicate types. Start the rule with `Create<T>()` or `Not<T>()`, add combinations, and call `Build()` to obtain an executable predicate.
+`PredicationBuilder` is a starter for a non-empty Boolean rule:
 
-## Start a rule
-
-<!-- START INCLUDE "PredicationBuilderTest.cs/Chain_WithParameter_CorrectlyEvaluate" -->
 ```csharp
-var builder = new PredicationBuilder()
-    .Create<StartsWith>("Nik");
-
-var predicate = builder.Build();
-Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
-```
-<!-- END INCLUDE -->
-
-Use `Not<T>()` instead of `Create<T>()` when the first predicate must be negated.
-
-## Combine predicates
-
-Append predicates with `And<T>()`, `Or<T>()`, and `Xor<T>()`:
-
-<!-- START INCLUDE "PredicationBuilderTest.cs/AndOrXor_Generic_CorrectlyEvaluate" -->
-```csharp
-var builder = new PredicationBuilder()
-    .Create<StartsWith>("ola")
-    .Or<EndsWith>("sla")
-    .And<SortedAfter>("Alan Turing")
-    .Xor<SortedBefore>("Marie Curie");
-
-var predicate = builder.Build();
-Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
-```
-<!-- END INCLUDE -->
-
-The fluent call order defines the combination order. For mixed operators, extract a grouped subrule so the intended logic remains visible.
-
-## Negate a combined predicate
-
-Use `AndNot<T>()`, `OrNot<T>()`, or `XorNot<T>()`:
-
-<!-- START INCLUDE "PredicationBuilderTest.cs/Chain_NegateGenericFluent_CorrectlyEvaluate" -->
-```csharp
-var builder = new PredicationBuilder()
-    .Create<StartsWith>("ola")
-    .OrNot<EndsWith>("Tes");
-
-var predicate = builder.Build();
-Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
-```
-<!-- END INCLUDE -->
-
-## Group a subrule
-
-Build a subrule and pass it to `And(...)`, `Or(...)`, or `Xor(...)`. The subrule becomes a group:
-
-{% raw %}
-<!-- START INCLUDE "PredicationBuilderTest.cs/Serialize_SubPredication_CorrectlySerialized" -->
-```csharp
-var name = new PredicationBuilder()
+var environment = ExpressifEnvironment.Default;
+var rule = environment.CreatePredicationBuilder()
     .Create<StartsWith>("Nik")
     .And<EndsWith>("sla");
 
-var builder = new PredicationBuilder()
-    .Create<LowerCase>()
-    .Or(name)
-    .Or<UpperCase>();
-
-var source = builder.Serialize();
-Assert.That(source, Is.EqualTo(
-    "{{lower-case |OR {starts-with(Nik) |AND ends-with(sla)}} |OR upper-case}"
-));
-```
-<!-- END INCLUDE -->
-{% endraw %}
-
-```mermaid
-flowchart LR
-    A[starts-with] --> C[AND group]
-    B[ends-with] --> C
-    C --> D[OR]
-    E[lower-case] --> D
+var predicate = rule.Build();
+var result = predicate.Evaluate("Nikola Tesla"); // true
 ```
 
-## Read parameters from a context
+Only `PredicationBuilder.Rule` exposes Boolean composition, `Build()`, and `ToSource()`, so an empty predication cannot be built through the normal public API.
 
-As with `ExpressionBuilder`, parameter expressions can read variables and the current object from an `IContext`:
+## Combine and group rules
+
+Use `And<T>(...)`, `Or<T>(...)`, and `Xor<T>(...)` for positive leaf predicates. Use their rule-taking overloads for explicit grouping:
 
 ```csharp
-var context = new Context();
-context.Variables.Add<string>("prefix", "Nik");
+var builder = environment.CreatePredicationBuilder();
 
-var builder = new PredicationBuilder(context)
-    .Create<StartsWith>(ctx => ctx.Variables["prefix"]);
-
-var predicate = builder.Build();
+var suffix = builder.Create<EndsWith>("Tes").Not();
+var rule = builder
+    .Create<StartsWith>("ola")
+    .Or(suffix);
 ```
 
-Context parameter expressions are resolved during evaluation, so a shared context can supply changing values to a reusable predicate.
+`Not()` negates the complete current rule, whether it is a leaf or a composed group. This replaces the former `AndNot`, `OrNot`, and `XorNot` overload families.
+
+Generic and runtime-type overloads are available:
+
+```csharp
+var rule = builder
+    .Create(typeof(StartsWith), "Nik")
+    .And(typeof(EndsWith), "sla");
+```
+
+## Use argument scope
+
+Use `Argument.From<T>(...)` for a context-backed argument:
+
+```csharp
+var rule = builder.Create<StartsWith>(
+    Argument.From<string>(scope => scope.GetVariable<string>("prefix")));
+
+var context = EvaluationContext.CreateBuilder()
+    .AddValue("prefix", "Nik")
+    .Build();
+
+var predicate = rule.Build().WithContext(context);
+```
+
+The argument scope is read-only and is created for each argument invocation. It exposes the current value, expression root, enclosing root, and variable lookup without mutating shared state. An `Argument.From<T>(...)` provider is executable host code and cannot be represented as Expressif source, so `ToSource()` throws `NotSupportedException` for a rule containing one.
+
+## Reuse and render a rule
+
+Rules are immutable. Combining or negating a rule leaves the earlier value unchanged. `Build()` is non-consuming and may be called repeatedly. For rules whose arguments can be represented as Expressif source, `ToSource()` is available before or after building:
+
+```csharp
+var source = rule.ToSource();
+var first = rule.Build();
+var second = rule.Build();
+```
+
+Rules combined with `And(Rule)`, `Or(Rule)`, or `Xor(Rule)` must originate from the same builder/factory instance.

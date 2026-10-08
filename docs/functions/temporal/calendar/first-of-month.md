@@ -19,16 +19,13 @@ first-of-month() → date-time
 
 Returns the first day of the month of the same month/year than the argument dateTime.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | first-of-month → #"2024-01-01 00:00:00"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal/calendar`  

@@ -3,128 +3,103 @@ layout: docs
 title: Build an expression with C#
 parent: .NET SDK
 nav_order: 40
-description: Compose an Expressif function pipeline programmatically with ExpressionBuilder.
+description: Compose a reusable Expressif function pipeline programmatically with ExpressionBuilder.
 ---
 
-There are two ways to create an expression from C#.
-
-Use `ExpressionBuilder` when the transformation is part of the program itself. The C# code names each function and supplies its parameters:
+Use `ExpressionBuilder` when the transformation is part of the program itself. Use `CreateExpression(...)` when the transformation arrives as text.
 
 ```csharp
-var expression = new ExpressionBuilder()
-    .Chain<Lower>()
-    .Chain<FirstChars>(5)
-    .Build();
+var environment = ExpressifEnvironment.Default;
 
-var result = expression.Evaluate("Nikola Tesla");
+var pipeline = environment.CreateExpressionBuilder()
+    .Create<Lower>()
+    .Then<FirstChars>(5);
+
+var expression = pipeline.Build();
+var result = expression.Evaluate("Nikola Tesla"); // "nikol"
 ```
 
-Use `Expression.Create(...)` when the transformation arrives as text—for example, from a configuration file, database, or user interface:
-
-```csharp
-var source = configuration["NameTransformation"];
-var expression = Expression.Create(source);
-
-var result = expression.Evaluate("Nikola Tesla");
-```
-
-If `NameTransformation` contains `lower | first-chars(5)`, both examples return `"nikol"`.
-
-The practical difference is who defines the transformation:
-
-- With `ExpressionBuilder`, the developer defines it in C# and changing it normally requires rebuilding the program.
-- With `Expression.Create(...)`, the transformation is data and can change without changing the C# code.
-
-See [Evaluate an expression](../evaluate-expression/) for the text-based API.
-
-## Build a pipeline
-
-Call `Chain<T>()` once for each function, then call `Build()`:
-
-<!-- START INCLUDE "ExpressionBuilderTest.cs/Chain_MultipleWithoutParameters_CorrectlyEvaluate" -->
-```csharp
-var builder = new ExpressionBuilder()
-    .Chain<Lower>()
-    .Chain<Length>();
-
-var expression = builder.Build();
-var result = expression.Evaluate("Nikola Tesla");
-Assert.That(result, Is.EqualTo(12));
-```
-<!-- END INCLUDE -->
-
-Each function receives the result of the preceding function.
+`ExpressionBuilder` is only the starter. `Create(...)` produces a non-empty `ExpressionBuilder.Pipeline`; only that pipeline exposes `Then(...)`, `Build()`, and `ToSource()`. An empty buildable pipeline cannot be represented through the normal public API.
 
 ## Pass literal parameters
 
-Pass constructor parameters to `Chain<T>(...)`:
-
-<!-- START INCLUDE "ExpressionBuilderTest.cs/Chain_WithParameters_CorrectlyEvaluate" -->
-```csharp
-var builder = new ExpressionBuilder()
-    .Chain<PadRight>(15, '*');
-
-var expression = builder.Build();
-Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("Nikola Tesla***"));
-```
-<!-- END INCLUDE -->
-
-The builder resolves a compatible function constructor when it builds the pipeline. Invalid function types or parameter lists fail at build time.
-
-## Compose builders
-
-Chain another builder to insert its functions into the pipeline:
-
-<!-- START INCLUDE "ExpressionBuilderTest.cs/Chain_SubExpression_CorrectlyEvaluate" -->
-```csharp
-var middle = new ExpressionBuilder()
-    .Chain<FirstChars>(5)
-    .Chain<PadRight>(7, '*');
-
-var builder = new ExpressionBuilder()
-    .Chain<Lower>()
-    .Chain(middle)
-    .Chain<Upper>();
-
-var expression = builder.Build();
-Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("NIKOL**"));
-```
-<!-- END INCLUDE -->
-
-This flattens the child builder into the parent pipeline. It does not create a nested expression parameter.
-
-## Select function types at runtime
-
-When the function type is known only at runtime, use the non-generic overload:
-
-<!-- START INCLUDE "ExpressionBuilderTest.cs/Chain_NotGeneric_CorrectlyEvaluate" -->
-```csharp
-var builder = new ExpressionBuilder()
-    .Chain(typeof(Lower))
-    .Chain(typeof(FirstChars), 5)
-    .Chain(typeof(PadRight), 7, '*');
-
-var expression = builder.Build();
-Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikol**"));
-```
-<!-- END INCLUDE -->
-
-The type must implement `IFunction`.
-
-## Treat a builder as single-use
-
-{: .warning }
-`ExpressionBuilder.Build()` consumes every function stored in the builder. After `Build()` returns, calling `Build()` or `Serialize()` on that builder throws `InvalidOperationException`. Never retain or reuse a builder after building the expression.
-
-If you need both the Expressif source and the executable expression, serialize first and build last:
+Arguments passed to `Create<T>(...)` or `Then<T>(...)` retain their runtime types:
 
 ```csharp
-var builder = new ExpressionBuilder()
-    .Chain<Lower>()
-    .Chain<Length>();
+var pipeline = environment.CreateExpressionBuilder()
+    .Create<PadRight>(15, '*');
 
-var source = builder.Serialize(); // The functions are still available.
-var expression = builder.Build(); // The builder is now empty.
+var expression = pipeline.Build();
+var result = expression.Evaluate("Nikola Tesla"); // "Nikola Tesla***"
 ```
 
-See [Serialize a builder](../serialization/) for more about this lifecycle.
+The function type must implement `IFunction`. Runtime-type overloads are available when the type is selected dynamically:
+
+```csharp
+var pipeline = environment.CreateExpressionBuilder()
+    .Create(typeof(Lower))
+    .Then(typeof(FirstChars), 5)
+    .Then(typeof(PadRight), 7, '*');
+```
+
+## Branch and compose pipelines
+
+Pipelines are immutable. `Then(...)` returns a new value and leaves the earlier pipeline unchanged:
+
+```csharp
+var builder = environment.CreateExpressionBuilder();
+var lower = builder.Create<Lower>();
+var shortName = lower.Then<FirstChars>(5);
+
+var lowerResult = lower.Build().Evaluate("Nikola Tesla");       // "nikola tesla"
+var shortResult = shortName.Build().Evaluate("Nikola Tesla"); // "nikol"
+```
+
+Compose pipelines created by the same builder:
+
+```csharp
+var middle = builder
+    .Create<FirstChars>(5)
+    .Then<PadRight>(7, '*');
+
+var complete = builder
+    .Create<Lower>()
+    .Then(middle)
+    .Then<Upper>();
+```
+
+`Then(Pipeline)` appends the child stages without building or consuming it. Pipelines from different builder/factory instances are rejected because they may use different registered libraries.
+
+## Supply an argument provider
+
+Use `Argument.From<T>(...)` when an argument depends on the current immutable evaluation scope:
+
+```csharp
+var pipeline = environment.CreateExpressionBuilder()
+    .Create<Append>(Argument.From<string>(scope =>
+        scope.GetVariable<string>("suffix")));
+
+var context = EvaluationContext.CreateBuilder()
+    .AddValue("suffix", "!")
+    .Build();
+
+var result = pipeline.Build().WithContext(context).Evaluate("Hello"); // "Hello!"
+```
+
+The scope exposes `Current`, `Root`, `EnclosingRoot`, and read-only variable lookup. The operator's argument-evaluation contract determines how often the provider runs. An `Argument.From<T>(...)` provider is executable host code and cannot be represented as Expressif source, so `ToSource()` throws `NotSupportedException` for a pipeline containing one.
+
+## Reuse and render a pipeline
+
+`Build()` is non-consuming. Repeated calls return independent executable expressions. For pipelines whose arguments can be represented as Expressif source, `ToSource()` works before or after any build:
+
+```csharp
+var pipeline = environment.CreateExpressionBuilder()
+    .Create<Lower>()
+    .Then<Length>();
+
+var source = pipeline.ToSource();
+var first = pipeline.Build();
+var second = pipeline.Build();
+```
+
+See [Serialize a builder](../serialization/) for source rendering.

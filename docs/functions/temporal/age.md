@@ -19,16 +19,13 @@ age() → integer
 
 Returns the completed years between the argument dateTime and the current date. Returns `null` for null or future dates. In a non-leap year, a February 29 birthday is reached on February 28.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | age → 2
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

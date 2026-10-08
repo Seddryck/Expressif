@@ -19,15 +19,13 @@ cube-power() → numeric
 
 Returns the the numeric argument value raised to the cube power.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
 
 ## Examples
 
@@ -36,7 +34,6 @@ This function has no parameters.
 10 | cube-power → 1000
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

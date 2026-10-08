@@ -1,0 +1,197 @@
+using Expressif.Hosting;
+using Expressif.Library.Temporal;
+using Expressif.Library.Text;
+using Expressif.Library.Text.Casing;
+using Expressif.Library.Text.Counting;
+using Expressif.Library.Text.Selection;
+
+namespace Expressif.Testing.Documentation;
+
+public class DotNetSdkExamplesTest
+{
+    private static ExpressifEnvironment Environment => ExpressifEnvironment.Default;
+
+    [Test]
+    [Category("documentation")]
+    public void FirstEvaluation_ReturnsUppercaseTrimmedText()
+    {
+        var expression = Environment.CreateExpression("trim | upper");
+        var result = expression.Evaluate("  Alice  ");
+
+        Assert.That(result, Is.EqualTo("ALICE"));
+    }
+
+    [Test]
+    [Category("documentation")]
+    public void InstalledPackage_EvaluatesExpression()
+    {
+        var expression = Environment.CreateExpression("lower");
+        var result = expression.Evaluate("Nikola Tesla");
+
+        Assert.That(result, Is.EqualTo("nikola tesla"));
+    }
+
+    [Test]
+    [Category("documentation")]
+    public void Expression_EvaluatesMultipleInputs()
+    {
+        var normalizeName = Environment.CreateExpression("trim | upper");
+
+        var firstResult = normalizeName.Evaluate("  Nikola Tesla  ");
+        var secondResult = normalizeName.Evaluate("  Ada Lovelace  ");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(firstResult, Is.EqualTo("NIKOLA TESLA"));
+            Assert.That(secondResult, Is.EqualTo("ADA LOVELACE"));
+        });
+    }
+
+    [Test]
+    [Category("documentation")]
+    public void Expression_ResultCanBePatternMatched()
+    {
+        var firstResult = Environment.CreateExpression("trim | upper").Evaluate("  Nikola Tesla  ");
+        string? normalizedName = null;
+
+        if (firstResult is string value)
+            normalizedName = value;
+
+        Assert.That(normalizedName, Is.EqualTo("NIKOLA TESLA"));
+    }
+
+    [Test]
+    [Category("documentation")]
+    public void Expression_UsesVariablesFromEvaluationContext()
+    {
+        var expression = Environment.CreateExpression("suffix(@suffix)");
+
+        var context = EvaluationContext.CreateBuilder()
+            .AddValue("suffix", " Nikola!")
+            .Build();
+
+        var configuredExpression = expression.WithContext(context);
+        var result = configuredExpression.Evaluate("Hello");
+
+        Assert.That(result, Is.EqualTo("Hello Nikola!"));
+    }
+
+    [Test]
+    [Category("documentation")]
+    public void Expression_CanBeReusedWithDifferentContexts()
+    {
+        var expression = Environment.CreateExpression("suffix(@suffix)");
+
+        var excited = expression.WithContext(EvaluationContext.CreateBuilder()
+            .AddValue("suffix", "!")
+            .Build());
+
+        var questioning = expression.WithContext(EvaluationContext.CreateBuilder()
+            .AddValue("suffix", "?")
+            .Build());
+
+        var first = excited.Evaluate("Really");
+        var second = questioning.Evaluate("Really");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(first, Is.EqualTo("Really!"));
+            Assert.That(second, Is.EqualTo("Really?"));
+        });
+    }
+
+    [Test]
+    [Category("documentation")]
+    public void Expression_EvaluatesStructuredValue()
+    {
+        var formatName = Environment.CreateExpression(".name | trim | suffix(^.suffix)");
+
+        var input = new Dictionary<string, object?>
+        {
+            ["name"] = "Ada Lovelace  ",
+            ["suffix"] = " (mathematician)",
+        };
+
+        var result = formatName.Evaluate(input);
+
+        Assert.That(result, Is.EqualTo("Ada Lovelace (mathematician)"));
+    }
+
+    [Test]
+    [Category("documentation")]
+    public void Predication_ReturnsBoolean()
+    {
+        var predication = Environment.CreatePredication("lower-case");
+
+        bool first = predication.Evaluate("Nikola Tesla");
+        bool second = predication.Evaluate("nikola tesla");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(first, Is.False);
+            Assert.That(second, Is.True);
+        });
+    }
+
+    [Test]
+    [Category("documentation")]
+    public void Predication_HasStronglyTypedResult()
+    {
+        object? expressionResult = Environment.CreateExpression("lower-case")
+            .Evaluate("nikola tesla");
+
+        bool predicationResult = Environment.CreatePredication("lower-case")
+            .Evaluate("nikola tesla");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(expressionResult, Is.EqualTo(true));
+            Assert.That(predicationResult, Is.True);
+        });
+    }
+
+    [Test]
+    [Category("documentation")]
+    public void ExpressionBuilder_CreatesPipeline()
+    {
+        var expression = Environment.CreateExpressionBuilder()
+            .Create<Lower>()
+            .Then<FirstChars>(5)
+            .Build();
+
+        var result = expression.Evaluate("Nikola Tesla");
+
+        Assert.That(result, Is.EqualTo("nikol"));
+    }
+
+    [Test]
+    [Category("documentation")]
+    public void ExpressionBuilder_SerializesBeforeBuild()
+    {
+        var builder = Environment.CreateExpressionBuilder()
+            .Create<Lower>()
+            .Then<Length>();
+
+        var source = builder.ToSource();
+        var expression = builder.Build();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(source, Is.EqualTo("lower | length"));
+            Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo(12));
+        });
+    }
+
+    [Test]
+    [Category("documentation")]
+    public void PredicationBuilder_ReadsParametersFromContext()
+    {
+        var context = EvaluationContext.CreateBuilder().AddValue("prefix", "Nik").Build();
+        var builder = Environment.CreatePredicationBuilder()
+            .Create<StartsWith>(Argument.From<string>(ctx => ctx.GetVariable<string>("prefix")));
+
+        var predicate = builder.Build().WithContext(context);
+
+        Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
+    }
+}

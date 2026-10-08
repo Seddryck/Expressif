@@ -27,7 +27,8 @@ Expressions should not be tied to a single runtime or technology stack. The same
 ## Where to continue
 
 - Start with the [Expressif language](../language/) to learn how to read and write expressions.
+- Read [Sovereign by design](../sovereign-by-design/) to understand how open licensing, self-hosting, portable plans, and conformance preserve control and implementation choice.
 - Use the [command-line interface](../cli/) to run Expressif from a terminal or automation workflow.
 - Use the [.NET SDK](../dotnet-sdk/) to install and evaluate Expressif from C#.
-- Browse the [function reference](../functions/), [predicate reference](../predicates/), and [accumulator reference](../accumulators/) for the available operations.
+- Browse the [function reference](../functions/) and [predicate reference](../predicates/) for the available operations, including [array aggregation functions](../functions/array/aggregation/).
 - See [Tooling](../tooling/) for editor support.

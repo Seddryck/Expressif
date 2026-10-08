@@ -21,6 +21,8 @@ is-any-of(
 
 Returns `true` if the list of text values passed as parameter contains the text value passed as argument. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -28,7 +30,15 @@ Returns `true` if the list of text values passed as parameter contains the text 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `references` | `array` | Yes | An array of text values. |
-| `comparer` | `any` | No |  |
+| `comparer` | `any` | No | Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case. |
+## Examples
+
+{% raw %}
+```expressif
+#null | is-any-of(#null) → #false
+#null | is-any-of(#null) → #false
+```
+{% endraw %}
 
 ## Argument evaluation
 

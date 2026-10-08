@@ -16,10 +16,10 @@ generated: true
 numeric →
 format-currency-suffix(
     symbol: text,
-    decimals?: integer,
-    separator?: text,
-    grouping?: text,
-    negative?: text
+    decimals: integer = 2,
+    separator: text = ".",
+    grouping: text = ",",
+    negative: text = "-"
 ) → text
 ```
 
@@ -41,16 +41,6 @@ Formats a numeric value as currency with the symbol after the number. Rounds mid
 
 
 
-## Argument evaluation
-
-- **`symbol`:** Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call.
-- **`decimals`:** Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call.
-- **`separator`:** Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call.
-- **`grouping`:** Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call.
-- **`negative`:** Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -60,6 +50,13 @@ Formats a numeric value as currency with the symbol after the number. Rounds mid
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`symbol`:** Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call.
+- **`decimals`:** Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call.
+- **`separator`:** Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call.
+- **`grouping`:** Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call.
+- **`negative`:** Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call.
 
 **Kind:** Function  
 **Scope:** `numeric/formatting`  

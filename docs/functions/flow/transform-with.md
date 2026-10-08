@@ -31,9 +31,17 @@ Transforms the results of one or more expressions with the same open expression 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `operation` | `expression` | Yes | Open expression evaluated once against each result. |
-| `expressions` | `expression` | Variadic (one or more) | One or more expressions evaluated independently against the original input. |
+| `expressions` | `expression` | Variadic (one or more); no spread | One or more expressions evaluated independently against the original input. |
 
 
+
+## Examples
+
+{% raw %}
+```expressif
+{first-name := " Alice ", last-name := " Smith "} | transform-with(trim, .first-name, .last-name) → T("Alice", "Smith")
+```
+{% endraw %}
 
 ## Argument evaluation
 
@@ -46,17 +54,6 @@ Evaluates the shared operation against each result produced by the other express
 ## Behavior
 
 `transform-with` evaluates every variadic expression independently against the original input, then evaluates the shared open expression against each resulting value. Results preserve expression order and are always returned as a tuple, including for a single expression. Unlike `apply`, the shared expression is evaluated separately for each result rather than once against the input. Unlike collection mapping, the expressions define the values to transform and the input need not be a collection.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{first-name := " Alice ", last-name := " Smith "} | transform-with(trim, .first-name, .last-name) → T("Alice", "Smith")
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `flow`  

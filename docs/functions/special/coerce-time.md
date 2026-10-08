@@ -19,16 +19,13 @@ coerce-time() → time
 
 Attempts to convert the input to a time value. Returns `null` when the input cannot be converted.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 "Hello World" | coerce-time → #null
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `special`  

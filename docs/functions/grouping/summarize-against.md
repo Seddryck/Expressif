@@ -13,12 +13,12 @@ generated: true
 ---
 
 ```
-grouping →
+grouping<K, T> →
 summarize-against(
     local: accumulator,
     global: accumulator,
     combine: expression
-) → dictionary
+) → dictionary<K, U>
 ```
 
 Summarizes each group against one summary of all grouped values and returns an ordered dictionary.
@@ -34,6 +34,26 @@ Summarizes each group against one summary of all grouped values and returns an o
 | `local` | `accumulator` | Yes | The accumulator applied independently to each group's values. |
 | `global` | `accumulator` | Yes | The accumulator applied once across every group's values. |
 | `combine` | `expression` | Yes | The operation combining a finalized local summary with the global summary. |
+## Examples
+
+{% raw %}
+```expressif
+#{("BE" => {100, 50}), ("FR" => {50}), ("DE" => {100})} | summarize-against(sum, sum, divide~) → !{("BE" => 0.5), ("FR" => 0.1666666666666666666666666667), ("DE" => 0.3333333333333333333333333333)}
+#{("BE" => {100, 50}), ("FR" => {50}), ("DE" => {100})} | summarize-against(sum, max, divide~) → !{("BE" => 1.5), ("FR" => 0.5), ("DE" => 1)}
+```
+{% endraw %}
+
+## Value shape
+
+- Pipeline input: `grouping<K, T>`
+- Returns: `dictionary<K, U>`
+- `local`: Receives `T` and returns `L`.
+- `global`: Receives `T` and returns `G`.
+- `combine`: Receives `tuple<L, G>` and returns `U`.
+- Nullability: The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
 
 
 
@@ -49,18 +69,6 @@ Visits each value of each group supplied as pipeline input to this call, in grou
 ## Behavior
 
 Each grouped value updates its group's local accumulator and the shared global accumulator in one traversal. The global result is finalized once, then each local result is finalized and combined in key order. Accumulator null handling and failures are preserved; null combine results remain dictionary values.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-#{("BE" => {100, 50}), ("FR" => {50}), ("DE" => {100})} | summarize-against(sum, sum, divide~) → !{("BE" => 0.5), ("FR" => 0.1666666666666666666666666667), ("DE" => 0.3333333333333333333333333333)}
-#{("BE" => {100, 50}), ("FR" => {50}), ("DE" => {100})} | summarize-against(sum, max, divide~) → !{("BE" => 1.5), ("FR" => 0.5), ("DE" => 1)}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `grouping`  

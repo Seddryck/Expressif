@@ -19,16 +19,13 @@ month-day() → text
 
 returns a textual value at format MM-DD representing the month and day of the date passed as the argument
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | month-day → "01-15"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

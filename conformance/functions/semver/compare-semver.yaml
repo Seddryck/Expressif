@@ -1,0 +1,14 @@
+suite: semver
+kind: function
+operator: compare-semver
+tests:
+  - id: compare-semver.valid.precedence
+    cases:
+      - id: compare-semver.valid.precedence.lower
+        value: '1.0.0-alpha'
+        parameters: ['1.0.0']
+        expected: '#less'
+      - id: compare-semver.valid.precedence.equal-build
+        value: '1.0.0+abc'
+        parameters: ['1.0.0+def']
+        expected: '#equal'

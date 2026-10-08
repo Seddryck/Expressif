@@ -1,0 +1,278 @@
+using System;
+using System.Threading;
+using Expressif.Observability;
+
+namespace Expressif;
+
+internal static class EvaluationRuntime
+{
+    private static readonly AsyncLocal<State?> CurrentState = new();
+    private static readonly AsyncLocal<ActiveObservation?> CurrentObservation = new();
+    private static readonly AsyncLocal<FunctionObservationContext?> CurrentFunction = new();
+
+    public static EvaluationFrame? Frame => CurrentState.Value?.Frame;
+    public static IReadOnlyDictionary<string, object?>? Values => CurrentState.Value?.Values;
+    public static object? ArgumentInput => CurrentState.Value?.ArgumentInput;
+    internal static bool HasFunctionObservations => CurrentObservation.Value?.Functions.Length > 0;
+    internal static bool HasFlowDecisionObservations => CurrentObservation.Value?.FlowDecisions.Length > 0;
+    internal static bool HasDetailedObservations => HasFunctionObservations || HasFlowDecisionObservations;
+
+    internal static IDisposable ActivateObservation(IExpressionObservation observation)
+    {
+        var previous = CurrentObservation.Value;
+        CurrentObservation.Value = ActiveObservation.Create(observation);
+        return new ObservationScope(previous);
+    }
+
+    internal static FunctionScope EnterFunction(FunctionObservationContext context)
+    {
+        var previous = CurrentFunction.Value;
+        CurrentFunction.Value = context;
+        return new FunctionScope(previous);
+    }
+
+    internal static void ReportFunctionCompleted(FunctionObservationContext context, object? input, object? output)
+    {
+        var observers = CurrentObservation.Value?.Functions;
+        if (observers is null || observers.Length == 0)
+            return;
+        foreach (var observer in observers)
+        {
+            try { observer.OnCompleted(context, input, output); }
+            catch (Exception) { }
+        }
+    }
+
+    internal static void ReportFunctionFailed(FunctionObservationContext context, object? input, Exception exception)
+    {
+        var observers = CurrentObservation.Value?.Functions;
+        if (observers is null || observers.Length == 0)
+            return;
+        foreach (var observer in observers)
+        {
+            try { observer.OnFailed(context, input, exception); }
+            catch (Exception) { }
+        }
+    }
+
+    internal static void ReportFlowDecision(
+        FlowDecisionOutcome outcome,
+        int index = -1,
+        int evaluated = 0,
+        bool isFallback = false)
+    {
+        var observation = CurrentObservation.Value;
+        if (observation is null || observation.FlowDecisions.Length == 0 || CurrentFunction.Value is not { } function)
+            return;
+        var decision = new FlowDecision(outcome, index, evaluated, isFallback);
+        foreach (var observer in observation.FlowDecisions)
+        {
+            try { observer.OnDecision(function, decision); }
+            catch (Exception) { }
+        }
+    }
+
+    public static IDisposable Enter(EvaluationFrame frame, EvaluationContext context)
+    {
+        var previous = CurrentState.Value;
+        CurrentState.Value = new State(frame, context.Materialize(frame.Current));
+        return new Scope(previous);
+    }
+
+    public static IDisposable Derive(object? input)
+        => Derive(input, input);
+
+    public static IDisposable Derive(object? input, object? currentInput)
+    {
+        var current = CurrentState.Value;
+        if (current is null)
+        {
+            CurrentState.Value = new State(
+                new EvaluationFrame(currentInput, input),
+                EvaluationContext.Empty.Materialize(input));
+            return new Scope(null);
+        }
+
+        var previous = current;
+        CurrentState.Value = new State(
+            new EvaluationFrame(current.Frame.Scope.Derive(input) with { Current = currentInput }, current.Frame),
+            current.Values,
+            current.Bindings,
+            current.ArgumentInput);
+        return new Scope(previous);
+    }
+
+    public static IDisposable EnterArgument(object? input)
+    {
+        var current = CurrentState.Value;
+        if (current is null)
+        {
+            CurrentState.Value = new State(
+                new EvaluationFrame(input, input),
+                EvaluationContext.Empty.Materialize(input));
+            return new Scope(null);
+        }
+
+        CurrentState.Value = current with { ArgumentInput = input };
+        return new Scope(current);
+    }
+
+    public static IDisposable BindInput(object? input, IReadOnlyDictionary<string, object?> names)
+        => BindInputCore(input, names, inheritBindings: true);
+
+    public static IDisposable BindNamedExpression(object? input, IReadOnlyDictionary<string, object?> names)
+        => BindInputCore(input, names, inheritBindings: false);
+
+    private static IDisposable BindInputCore(
+        object? input,
+        IReadOnlyDictionary<string, object?> names,
+        bool inheritBindings)
+    {
+        var previous = CurrentState.Value;
+        var bindings = new Dictionary<string, object?>(StringComparer.Ordinal);
+        if (inheritBindings && previous?.Bindings is { } inherited)
+        {
+            foreach (var binding in inherited)
+                bindings.Add(binding.Key, binding.Value);
+        }
+        foreach (var binding in names)
+            bindings[binding.Key] = binding.Value;
+        CurrentState.Value = new State(
+            new EvaluationFrame(input, input, parent: inheritBindings ? previous?.Frame : null) { IsInputBound = true },
+            previous?.Values ?? EvaluationContext.Empty.Materialize(input),
+            bindings,
+            previous?.ArgumentInput);
+        return new Scope(previous);
+    }
+
+    public static IDisposable IsolateBindings()
+        => new Scope(CurrentState.Value);
+
+    public static void ExtendBindings(IReadOnlyDictionary<string, object?> names)
+    {
+        var current = CurrentState.Value ?? throw new InvalidOperationException("Lexical bindings require an expression invocation.");
+        var bindings = new Dictionary<string, object?>(StringComparer.Ordinal);
+        if (current.Bindings is { } inherited)
+        {
+            foreach (var binding in inherited)
+                bindings.Add(binding.Key, binding.Value);
+        }
+        foreach (var binding in names)
+            bindings[binding.Key] = binding.Value;
+        CurrentState.Value = current with { Bindings = bindings };
+    }
+
+    public static bool TryGetBinding(string name, out object? value)
+    {
+        value = null;
+        return CurrentState.Value?.Bindings?.TryGetValue(name, out value) == true;
+    }
+
+    public static bool TryGetVariable(string name, out object? value)
+    {
+        name = EvaluationContext.NormalizeName(name);
+        if (TryGetBinding(name, out value))
+            return true;
+        value = null;
+        return CurrentState.Value?.Values.TryGetValue(name, out value) == true;
+    }
+
+    public static object? EvaluateNested(Functions.IFunction expression, object? input)
+        => EvaluateNested(expression, input, input);
+
+    public static object? EvaluateNested(Functions.IFunction expression, object? input, object? currentInput)
+    {
+        if (expression is Functions.IInputBoundFunction { IsInputBound: true })
+            return expression.Evaluate(input);
+        using var scope = Derive(input, currentInput);
+        return expression.Evaluate(input);
+    }
+
+    public static object? CaptureDeferredResult(object? result)
+        => result is System.Collections.IEnumerable sequence
+            && result is not string and not System.Collections.ICollection and not Expressif.Values.IExpressifValueType
+            && CurrentState.Value is { } state
+                ? EnumerateInScope(sequence, state)
+                : result;
+
+    private static IEnumerable<object?> EnumerateInScope(System.Collections.IEnumerable sequence, State state)
+    {
+        System.Collections.IEnumerator iterator;
+        using (Restore(state))
+            iterator = sequence.GetEnumerator();
+        try
+        {
+            while (true)
+            {
+                object? item;
+                using (Restore(state))
+                {
+                    if (!iterator.MoveNext())
+                        yield break;
+                    item = CaptureDeferredResult(iterator.Current);
+                }
+                yield return item;
+            }
+        }
+        finally
+        {
+            using var scope = Restore(state);
+            (iterator as IDisposable)?.Dispose();
+        }
+    }
+
+    private static IDisposable Restore(State state)
+    {
+        var previous = CurrentState.Value;
+        CurrentState.Value = state;
+        return new Scope(previous);
+    }
+
+    private sealed record State(
+        EvaluationFrame Frame,
+        IReadOnlyDictionary<string, object?> Values,
+        IReadOnlyDictionary<string, object?>? Bindings = null,
+        object? ArgumentInput = null);
+
+    private sealed class Scope(State? previous) : IDisposable
+    {
+        public void Dispose() => CurrentState.Value = previous;
+    }
+
+    internal readonly struct FunctionScope(FunctionObservationContext? previous) : IDisposable
+    {
+        public void Dispose() => CurrentFunction.Value = previous;
+    }
+
+    private sealed class ObservationScope(ActiveObservation? previous) : IDisposable
+    {
+        private int disposed;
+
+        public void Dispose()
+        {
+            if (Interlocked.Exchange(ref disposed, 1) == 0)
+                CurrentObservation.Value = previous;
+        }
+    }
+
+    private sealed record ActiveObservation(
+        IExpressionObservation Root,
+        IFunctionObserver[] Functions,
+        IFlowObserver[] FlowDecisions)
+    {
+        private static readonly IFunctionObserver[] EmptyFunctions = [];
+        private static readonly IFlowObserver[] EmptyFlowDecisions = [];
+
+        public static ActiveObservation Create(IExpressionObservation root)
+        {
+            var observations = root is ICompositeExpressionObservation composite
+                ? composite.Children
+                : [root];
+            var functions = observations.OfType<IFunctionObserver>().ToArray();
+            var flows = observations.OfType<IFlowObserver>().ToArray();
+            return new(root,
+                functions.Length == 0 ? EmptyFunctions : functions,
+                flows.Length == 0 ? EmptyFlowDecisions : flows);
+        }
+    }
+}

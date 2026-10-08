@@ -31,12 +31,9 @@ Returns the token at the specified index in the argument value. The index of the
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `index` | `integer` | Yes | An integer value between 0 and +Infinity, defining the position of the token to be returned. |
-| `separator` | `text` | No | A character that delimits the substrings in this instance. |
+| `separator` | `text` | No | A character that delimits the substrings in this instance. When omitted, whitespace characters delimit tokens. |
 
-## Argument evaluation
 
-- **`index`:** Evaluated once in the enclosing context.
-- **`separator`:** Evaluated once in the enclosing context.
 
 ## Examples
 
@@ -47,6 +44,10 @@ Returns the token at the specified index in the argument value. The index of the
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`index`:** Evaluated once in the enclosing context.
+- **`separator`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

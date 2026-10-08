@@ -3,7 +3,7 @@ layout: docs
 title: "matches-regex"
 parent: "Text predicates"
 grand_parent: "Predicates library"
-nav_order: 160
+nav_order: 220
 has_toc: false
 permalink: /predicates/text/matches-regex/
 tags:
@@ -21,6 +21,8 @@ matches-regex(
 
 Returns `true` if the value passed as argument validate the regex passed as parameter. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -28,7 +30,15 @@ Returns `true` if the value passed as argument validate the regex passed as para
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `regex` | `text` | Yes | A string to be compared to the argument value. |
-| `comparer` | `any` | No | A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity). |
+| `comparer` | `any` | No | Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case. |
+## Examples
+
+{% raw %}
+```expressif
+"Hello World" | matches-regex("^Hello") → #true
+"Hello World" | matches-regex("^Hello") → #true
+```
+{% endraw %}
 
 ## Argument evaluation
 

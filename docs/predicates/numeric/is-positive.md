@@ -3,7 +3,7 @@ layout: docs
 title: "is-positive"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 100
+nav_order: 110
 has_toc: false
 permalink: /predicates/numeric/is-positive/
 tags:
@@ -18,17 +18,13 @@ is-positive()
 
 Returns true if the numeric argument is greater than 0.
 
+
+
 ## Parameters
 
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -36,7 +32,6 @@ This predicate has no parameters.
 10 | is-positive → #true
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `numeric`  

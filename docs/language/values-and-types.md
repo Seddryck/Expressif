@@ -24,12 +24,13 @@ Common values can be written directly in an expression.
 | ordering | `#less`, `#equal`, or `#greater` | `#less` |
 | null | `#null` | `#null` |
 | aggregated dimension | `#all` | `#all` |
-| date | `#"yyyy-MM-dd"` | `#"2025-12-16"` |
-| datetime | `#"yyyy-MM-ddTHH:mm:ss"` | `#"2025-12-16T14:30:00"` |
-| time | `#"HH:mm:ss"` | `#"14:30:00"` |
+| date | `#"yyyy-MM-dd"` or `#"yyyy-MM-dd":date` | `#"2025-12-16"` |
+| datetime | `#"yyyy-MM-ddTHH:mm:ss"` or `#"yyyy-MM-ddTHH:mm:ss":datetime` | `#"2025-12-16T14:30:00"` |
+| time | `#"HH:mm:ss"` or `#"HH:mm:ss":time` | `#"14:30:00"` |
 | duration | `#"P[nD][T[nH][nM][nS]]"` | `#"P2DT3H30M"` |
 
 Numeric and temporal literals use invariant notation: the decimal separator is always `.`, and temporal components use the formats shown above. Quotation marks are part of the syntax for text and temporal literals.
+The `:date`, `:datetime`, and `:time` suffixes are optional for these built-in formats. An explicit suffix is preserved when an expression is serialized; custom or ambiguous quoted literals require a suffix.
 
 ## Scalar types
 
@@ -121,7 +122,7 @@ datetime
 time
 ```
 
-Prefix temporal literals with `#` and enclose their value in double quotes:
+Prefix temporal literals with `#` and enclose their canonical representation in double quotes:
 
 ```expressif
 #"2025-12-16"
@@ -130,7 +131,7 @@ Prefix temporal literals with `#` and enclose their value in double quotes:
 #"P2DT3H30M"
 ```
 
-These values represent a date, datetime, time, and duration respectively. Dates use `yyyy-MM-dd`; datetimes separate the date and time with `T`; times use a 24-hour clock; and durations use ISO 8601 duration notation. Duration is a distinct scalar type rather than part of the temporal family. Temporal functions can extract components, shift values, compare them, or calculate durations depending on the function.
+Dates use `yyyy-MM-dd`; datetimes separate the date and time with `T`; times use a 24-hour clock; and durations use ISO 8601 duration notation. These canonical forms have dedicated syntax nodes, so no type suffix is required. Duration is a distinct scalar type rather than part of the temporal family. Temporal functions can extract components, shift values, compare them, or calculate durations depending on the function. Ordinary quoted values such as `"2025-12-16"` remain text.
 
 ### Null
 
@@ -161,7 +162,7 @@ An array represents an ordered sequence of values. Its elements are peers: colle
 {1, 2, 3}
 ```
 
-Arrays are commonly used with functions such as `map`, `filter`, `adjacent`, accumulators, and other collection transformations. An array may already contain all its elements, or its elements may become available progressively while the expression consumes the sequence. A function may therefore process an array element by element, keep a limited amount of intermediate state, reduce it to one value, or collect the complete result when its behavior requires that.
+Arrays are commonly used with functions such as `map`, `filter`, `adjacent`, aggregation functions, and other collection transformations. An array may already contain all its elements, or its elements may become available progressively while the expression consumes the sequence. A function may therefore process an array element by element, keep a limited amount of intermediate state, reduce it to one value, or collect the complete result when its behavior requires that.
 
 ### Tuple
 

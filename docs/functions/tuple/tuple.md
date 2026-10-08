@@ -29,16 +29,7 @@ Constructs a new tuple by evaluating zero or more positional expressions from le
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `values` | `any` | Variadic (zero or more) | Zero or more expressions whose evaluated values become the positions of the resulting tuple. |
-
-
-
-## Argument evaluation
-
-- **`values`:** Each supplied expression is evaluated once against the value entering this call.
-
-
-
+| `values` | `any` | Variadic (zero or more); accepts spread | Zero or more expressions whose evaluated values become the positions of the resulting tuple. Omission supplies an empty variadic sequence. |
 ## Examples
 
 {% raw %}
@@ -49,6 +40,9 @@ Constructs a new tuple by evaluating zero or more positional expressions from le
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`values`:** Each supplied expression is evaluated once against the value entering this call.
 
 **Kind:** Function  
 **Scope:** `tuple`  

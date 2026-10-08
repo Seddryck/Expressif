@@ -484,4 +484,4 @@ echo "$result"
 
 ## Next steps
 
-See the Expressif language reference for the available functions, predicates, accumulators, and pipeline syntax.
+See the Expressif language reference for the available functions, predicates, and pipeline syntax.

@@ -19,16 +19,13 @@ hour-minute() → text
 
 returns a textual value at format hh:mm (24 hours format) representing the hours and minutes of the dateTime passed as the argument
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | hour-minute → "12:30"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

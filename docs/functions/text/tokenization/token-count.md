@@ -31,9 +31,7 @@ Returns the count of token within the argument value. By default, the tokenizati
 |:-----|:-----|:---------|:------------|
 | `separator` | `text` | Yes | A character that delimits the substrings in this instance. |
 
-## Argument evaluation
 
-- **`separator`:** Evaluated once in the enclosing context.
 
 ## Examples
 
@@ -43,6 +41,9 @@ Returns the count of token within the argument value. By default, the tokenizati
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`separator`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

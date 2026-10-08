@@ -3,7 +3,7 @@ layout: docs
 title: "is-opposite"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 90
+nav_order: 100
 has_toc: false
 permalink: /predicates/numeric/is-opposite/
 tags:
@@ -20,6 +20,8 @@ is-opposite(
 
 Returns true if the numeric value passed as argument additive inverse of the numeric value passed as parameter. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -27,11 +29,6 @@ Returns true if the numeric value passed as argument additive inverse of the num
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `reference` | `numeric` | Yes | A numeric value to compare to the argument. |
-
-## Argument evaluation
-
-- **`reference`:** Evaluated once in the enclosing context.
-
 ## Examples
 
 {% raw %}
@@ -40,6 +37,9 @@ Returns true if the numeric value passed as argument additive inverse of the num
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`reference`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `numeric`  
